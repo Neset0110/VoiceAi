@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sesli AI Kontrol Paneli</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            slate: {
+              850: '#1e293b',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+    }
+
+    .transcript-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .transcript-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    .transcript-scroll::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 20px;
+    }
+
+    /* Animation */
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Modal Transition Classes */
+    .modal-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+</head>
+
+<body class="text-slate-900">
+
+  <div class="min-h-screen bg-slate-50 flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+          <div class="bg-indigo-600 p-1.5 rounded-lg">
+            <i data-lucide="mic-2" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="text-lg font-bold text-slate-900 tracking-tight">VoiceAuto<span
+              class="text-indigo-600">.ai</span></span>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="hidden md:flex items-center gap-1">
+          <button id="nav-dashboard" onclick="switchView('dashboard')"
+            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md transition-colors">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            Kontrol Paneli
+          </button>
+          <button id="nav-agents" onclick="switchView('agents')"
+            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            Ajanlar
+          </button>
+          <button id="nav-settings" onclick="switchView('settings')"
+            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            Ayarlar
+          </button>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+              <p class="text-sm font-medium text-slate-900">Yönetici</p>
+              <p class="text-xs text-slate-500">İşletme Sahibi</p>
+            </div>
+            <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
+              <img src="https://picsum.photos/100/100" alt="Avatar" class="w-full h-full object-cover" />
+            </div>
+          </div>
+          <button class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="log-out" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <!-- ==================== VIEW: DASHBOARD ==================== -->
+      <div id="view-dashboard" class="space-y-8 animate-fade-in">
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Sesli Ajan Genel Bakış</h1>
+            <p class="text-slate-500 mt-1">Gerçek zamanlı izleme ve performans takibi.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span
+              class="text-xs font-medium text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+              Canlı Güncelleme
+            </span>
+            <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Total Calls -->
+          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-500">Bugünkü Toplam Arama</p>
+              <h3 class="text-3xl font-bold text-slate-900 mt-2">124</h3>
+              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
+                <i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>
+                <span>+12% düne göre</span>
+              </div>
+            </div>
+            <div class="p-3 bg-indigo-50 rounded-lg">
+              <i data-lucide="phone" class="w-6 h-6 text-indigo-600"></i>
+            </div>
+          </div>
+
+          <!-- Avg Duration -->
+          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-500">Ort. Süre</p>
+              <h3 class="text-3xl font-bold text-slate-900 mt-2">2m 45s</h3>
+              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
+                <i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>
+                <span>Hedef aralığında (2-4dk)</span>
+              </div>
+            </div>
+            <div class="p-3 bg-indigo-50 rounded-lg">
+              <i data-lucide="clock" class="w-6 h-6 text-indigo-600"></i>
+            </div>
+          </div>
+
+          <!-- Success Rate -->
+          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-500">Başarı Oranı</p>
+              <h3 class="text-3xl font-bold text-slate-900 mt-2">92.4%</h3>
+              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
+                <i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>
+                <span>+2.1% bu hafta</span>
+              </div>
+            </div>
+            <div class="p-3 bg-indigo-50 rounded-lg">
+              <i data-lucide="check-circle" class="w-6 h-6 text-indigo-600"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+
+          <!-- Table Header / Toolbar -->
+          <div
+            class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 class="text-lg font-semibold text-slate-800">Son Aramalar</h2>
+            <div class="relative">
+              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+              <input type="text" id="search-input" placeholder="Telefona göre ara..."
+                class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full sm:w-64" />
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold">
+                <tr>
+                  <th class="px-6 py-4">Durum</th>
+                  <th class="px-6 py-4">Müşteri Telefonu</th>
+                  <th class="px-6 py-4">Saat</th>
+                  <th class="px-6 py-4">Süre</th>
+                  <th class="px-6 py-4 text-right">İşlemler</th>
+                </tr>
+              </thead>
+              <tbody id="calls-table-body" class="divide-y divide-slate-100">
+                <!-- Rows will be populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== VIEW: AGENTS ==================== -->
+      <div id="view-agents" class="hidden space-y-8 animate-fade-in">
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Ajanları Yönet</h1>
+            <p class="text-slate-500 mt-1">Yapay zeka asistanlarınızı yapılandırın, komutlarını ve ses özelliklerini
+              ayarlayın.
+            </p>
+          </div>
+          <button
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Yeni Ajan Oluştur
+          </button>
+        </div>
+
+        <!-- Agents Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Agent Card 1 -->
+          <div
+            class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
+            <div class="flex justify-between items-start mb-4">
+              <div class="p-3 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                <i data-lucide="headset" class="w-6 h-6 text-indigo-600"></i>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">Aktif</span>
+              </div>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Müşteri Desteği</h3>
+            <p class="text-sm text-slate-500 mt-1">Gelen aramalar için genel soruları ve SSS'leri yanıtlar.</p>
+
+            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i>
+                  Ses</span>
+                <span class="font-medium text-slate-700">Sarah (Neural)</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i>
+                  Model</span>
+                <span class="font-medium text-slate-700">GPT-4o</span>
+              </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+              <button onclick="alert('Playing voice sample...')"
+                class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
+                <i data-lucide="play" class="w-3 h-3"></i> Test Et
+              </button>
+              <button
+                class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
+            </div>
+          </div>
+
+          <!-- Agent Card 2 -->
+          <div
+            class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
+            <div class="flex justify-between items-start mb-4">
+              <div class="p-3 bg-amber-50 rounded-lg group-hover:bg-amber-100 transition-colors">
+                <i data-lucide="megaphone" class="w-6 h-6 text-amber-600"></i>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">Duraklatıldı</span>
+              </div>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Satış Araması</h3>
+            <p class="text-sm text-slate-500 mt-1">Potansiyel müşteri değerlendirmesi için giden arama ajanı.</p>
+
+            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i>
+                  Ses</span>
+                <span class="font-medium text-slate-700">Marcus (Deep)</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i>
+                  Model</span>
+                <span class="font-medium text-slate-700">Claude 3.5</span>
+              </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+              <button onclick="alert('Playing voice sample...')"
+                class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
+                <i data-lucide="play" class="w-3 h-3"></i> Test Et
+              </button>
+              <button
+                class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
+            </div>
+          </div>
+
+          <!-- Agent Card 3 -->
+          <div
+            class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
+            <div class="flex justify-between items-start mb-4">
+              <div class="p-3 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
+                <i data-lucide="calendar" class="w-6 h-6 text-purple-600"></i>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">Aktif</span>
+              </div>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Randevu Planlayıcı</h3>
+            <p class="text-sm text-slate-500 mt-1">Takvim rezervasyonlarını ve yeniden planlamayı yönetir.</p>
+
+            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i>
+                  Ses</span>
+                <span class="font-medium text-slate-700">Emily (Soft)</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i>
+                  Model</span>
+                <span class="font-medium text-slate-700">GPT-4o Mini</span>
+              </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+              <button onclick="alert('Playing voice sample...')"
+                class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
+                <i data-lucide="play" class="w-3 h-3"></i> Test Et
+              </button>
+              <button
+                class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==================== VIEW: SETTINGS ==================== -->
+      <div id="view-settings" class="hidden space-y-8 animate-fade-in">
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Ayarlar</h1>
+            <p class="text-slate-500 mt-1">Hesabınızı, faturalandırmayı ve API tercihlerinizi yönetin.</p>
+          </div>
+          <button
+            class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+            Değişiklikleri Kaydet
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Sidebar -->
+          <div class="lg:col-span-1 space-y-2">
+            <button onclick="switchSettingsTab('general')" id="tab-btn-general"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-indigo-50 text-indigo-700 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="user" class="w-4 h-4"></i> Genel Profil
+            </button>
+            <button onclick="switchSettingsTab('api')" id="tab-btn-api"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="key" class="w-4 h-4"></i> API Anahtarları
+            </button>
+            <button onclick="switchSettingsTab('billing')" id="tab-btn-billing"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="credit-card" class="w-4 h-4"></i> Billing & Plans
+            </button>
+            <button onclick="switchSettingsTab('notifications')" id="tab-btn-notifications"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="bell" class="w-4 h-4"></i> Bildirimler
+            </button>
+          </div>
+
+          <!-- Form Area -->
+          <div class="lg:col-span-2">
+
+            <!-- TAB: GENERAL -->
+            <div id="settings-tab-general" class="space-y-6 settings-content">
+              <!-- Profile Section -->
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Profil Bilgileri</h3>
+                <div class="flex items-center gap-6 mb-6">
+                  <div
+                    class="w-20 h-20 bg-slate-200 rounded-full border border-slate-300 overflow-hidden relative group cursor-pointer">
+                    <img src="https://picsum.photos/100/100" alt="Avatar" class="w-full h-full object-cover" />
+                    <div
+                      class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      class="text-sm text-indigo-600 font-medium border border-indigo-200 px-3 py-1.5 rounded-md hover:bg-indigo-50 transition-colors">Fotoğrafı
+                      Değiştir</button>
+                    <p class="text-xs text-slate-500 mt-2">JPG, GIF veya PNG. Maks boyut 800K</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Ad</label>
+                    <input type="text" value="Admin"
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Soyad</label>
+                    <input type="text" value="User"
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">E-posta Adresi</label>
+                    <input type="email" value="admin@voiceauto.ai"
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Company Section -->
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Şirket Bilgileri</h3>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Şirket Adı</label>
+                    <input type="text" value="VoiceAuto Inc."
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Saat Dilimi</label>
+                    <select
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow bg-white">
+                      <option>Pacific Time (US & Canada)</option>
+                      <option>Eastern Time (US & Canada)</option>
+                      <option selected>UTC (Coordinated Universal Time)</option>
+                      <option>Europe/Istanbul</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: API KEYS -->
+            <div id="settings-tab-api" class="space-y-6 settings-content hidden">
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-1">API Kimlik Bilgileri</h3>
+                <p class="text-sm text-slate-500 mb-6">Sesli Ajan SDK'sına erişmek için API anahtarlarınızı yönetin.</p>
+
+                <div class="space-y-4">
+                  <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-slate-900">Prodüksiyon Anahtarı</p>
+                      <p class="text-xs text-slate-500 font-mono mt-1">pk_live_****************23f9</p>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-md transition-colors"><i
+                          data-lucide="copy" class="w-4 h-4"></i></button>
+                      <button
+                        class="p-2 text-slate-500 hover:text-red-600 hover:bg-white rounded-md transition-colors"><i
+                          data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                  </div>
+                  <button class="text-sm text-indigo-600 font-medium flex items-center gap-2 hover:text-indigo-800">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Yeni Anahtar Oluştur
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: Billing (Placeholder) -->
+            <div id="settings-tab-billing" class="space-y-6 settings-content hidden">
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm text-center py-12">
+                <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i data-lucide="credit-card" class="w-8 h-8 text-indigo-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-900">Faturalandırma Portalı</h3>
+                <p class="text-sm text-slate-500 max-w-xs mx-auto mt-2">Aboneliğinizi yönetin, faturalarınızı
+                  görüntüleyin ve
+                  ödeme yöntemlerinizi güvenle güncelleyin.</p>
+                <button
+                  class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                  Müşteri Portalını Aç
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB: Notifications (Placeholder) -->
+            <div id="settings-tab-notifications" class="space-y-6 settings-content hidden">
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">E-posta Bildirimleri</h3>
+                <div class="space-y-4">
+                  <label
+                    class="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 cursor-pointer">
+                    <span class="text-sm text-slate-700">Haftalık Performans Raporu</span>
+                    <input type="checkbox" checked
+                      class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                  </label>
+                  <label
+                    class="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 cursor-pointer">
+                    <span class="text-sm text-slate-700">Yeni Ajan Uyarıları</span>
+                    <input type="checkbox" checked
+                      class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                  </label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal (Hidden by default) -->
+  <div id="call-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 modal-hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h3 id="modal-phone" class="text-lg font-semibold text-slate-800"></h3>
+            <div id="modal-status-badge"></div>
+          </div>
+          <p id="modal-meta" class="text-sm text-slate-500"></p>
+        </div>
+        <button id="modal-close-btn"
+          class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="overflow-y-auto p-6 space-y-6 transcript-scroll">
+
+        <!-- Audio Player Placeholder -->
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+          <div class="flex items-center gap-4">
+            <button
+              class="w-10 h-10 flex items-center justify-center bg-indigo-600 rounded-full text-white hover:bg-indigo-700 shadow-md transition-colors">
+              <i data-lucide="play" class="w-5 h-5 ml-1"></i>
+            </button>
+            <div class="flex-1">
+              <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full w-1/3 bg-indigo-500 rounded-full"></div>
+              </div>
+              <div class="flex justify-between mt-1.5 text-xs text-slate-500 font-medium">
+                <span>0:45</span>
+                <span id="modal-duration-display"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Summary -->
+        <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-4">
+          <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2">Yapay Zeka Özeti</h4>
+          <p id="modal-summary" class="text-sm text-slate-700 leading-relaxed"></p>
+        </div>
+
+        <!-- Transcript -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+            Döküm</h4>
+          <div id="modal-transcript" class="space-y-4">
+            <!-- Chat bubbles go here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Data ---
+    const MOCK_CALLS = [
+      {
+        id: "101",
+        customerPhone: "+90 555 123 4567",
+        status: "live",
+        startTime: "14:30",
+        duration: "02:15",
+        summary: "Abonelik yenileme hakkında devam eden görüşme.",
+        transcript: [
+          { role: "ai", text: "Merhaba, Vapi Çözümlerinden arıyorum. Bugün size nasıl yardımcı olabilirim?" },
+          { role: "user", text: "Merhaba, aboneliğimi erken yenileyebilir miyim diye sormak istedim." },
+          { role: "ai", text: "Tabii ki. Bu konuda size yardımcı olabilirim. Aynı planı devam ettirmek ister misiniz?" }
+        ]
+      },
+      {
+        id: "102",
+        customerPhone: "+1 202 555 0199",
+        status: "completed",
+        startTime: "13:45",
+        duration: "04:12",
+        summary: "Müşteri gelecek Salı için demo randevusu planladı.",
+        transcript: [
+          { role: "ai", text: "Merhaba! Vapi'yi aradığınız için teşekkürler. Size nasıl yardımcı olabilirim?" },
+          { role: "user", text: "CRM entegrasyonunuz için bir demo rezervasyonu yapmak istiyorum." },
+          { role: "ai", text: "Harika seçim. Bunu planlayabilirim. Salı günü saat 14:00 sizin için uygun mu?" },
+          { role: "user", text: "Evet, mükemmel olur." },
+          { role: "ai", text: "Onaylandı. Kısa süre içinde bir e-posta alacaksınız. Hoşça kalın!" }
+        ]
+      },
+      {
+        id: "103",
+        customerPhone: "+44 7700 900077",
+        status: "handed-off",
+        startTime: "12:15",
+        duration: "01:30",
+        summary: "Karmaşık faturalandırma anlaşmazlığı insan müdahalesi gerektirdi.",
+        transcript: [
+          { role: "ai", text: "Merhaba, Vapi Destek hattı." },
+          { role: "user", text: "#99283 numaralı faturamın üzerinde mükerrer ücret var." },
+          { role: "ai", text: "Faturayı görüyorum. İşlem geçmişini kontrol edeyim." },
+          { role: "user", text: "Bu gerçekten sinir bozucu, bunu hemen çözmeniz gerekiyor." },
+          { role: "ai", text: "Anlıyorum. Bu, sahip olmadığım bir yetki gerektiriyor. Sizi şimdi bir faturalandırma uzmanına bağlıyorum." }
+        ]
+      },
+      {
+        id: "104",
+        customerPhone: "+90 532 999 8877",
+        status: "completed",
+        startTime: "11:00",
+        duration: "02:45",
+        summary: "Müşteri çalışma saatleri ve konum hakkında bilgi sordu.",
+        transcript: [
+          { role: "ai", text: "Merhaba, size nasıl yardımcı olabilirim?" },
+          { role: "user", text: "Pazar günleri açık mısınız?" },
+          { role: "ai", text: "Evet, Pazar günleri saat 10:00'dan 16:00'ya kadar açığız." },
+          { role: "user", text: "Harika, teşekkürler!" }
+        ]
+      },
+      {
+        id: "105",
+        customerPhone: "+1 415 555 2233",
+        status: "completed",
+        startTime: "10:20",
+        duration: "03:10",
+        summary: "API fiyatlandırma kademeleri hakkında bilgi talebi.",
+        transcript: [
+          { role: "ai", text: "Vapi'ye hoş geldiniz. Aramanızı nasıl yönlendirebilirim?" },
+          { role: "user", text: "Kurumsal planın fiyatı ne kadar?" },
+          { role: "ai", text: "Kurumsal fiyatlandırma hacme göre özelleştirilir. Bir satış temsilcisinin sizinle iletişime geçmesini ister misiniz?" }
+        ]
+      }
+    ];
+
+    // --- View Switching Logic ---
+    function switchView(viewName) {
+      // Views
+      const views = ['dashboard', 'agents', 'settings'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (v === viewName) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      // Nav Buttons
+      const navs = ['nav-dashboard', 'nav-agents', 'nav-settings'];
+      const activeClass = "text-indigo-600 bg-indigo-50".split(" ");
+      const inactiveClass = "text-slate-600 hover:text-indigo-600 hover:bg-slate-50".split(" ");
+
+      navs.forEach(n => {
+        const btn = document.getElementById(n);
+        if (n === 'nav-' + viewName) {
+          // Make Active
+          btn.classList.remove(...inactiveClass);
+          btn.classList.add(...activeClass);
+        } else {
+          // Make Inactive
+          btn.classList.remove(...activeClass);
+          btn.classList.add(...inactiveClass);
+        }
+      });
+
+      // Re-render icons just in case
+      setTimeout(() => lucide.createIcons(), 50);
+    }
+
+    // --- Settings Tab Switching ---
+    function switchSettingsTab(tabName) {
+      // Hide all tab contents
+      const contents = document.querySelectorAll('.settings-content');
+      contents.forEach(c => c.classList.add('hidden'));
+
+      // Show selected tab
+      document.getElementById('settings-tab-' + tabName).classList.remove('hidden');
+
+      // Update button styles
+      const buttons = document.querySelectorAll('.settings-tab-btn');
+      const activeClass = "bg-indigo-50 text-indigo-700".split(" ");
+      const inactiveClass = "text-slate-600 hover:bg-slate-50".split(" ");
+
+      buttons.forEach(btn => {
+        if (btn.id === 'tab-btn-' + tabName) {
+          btn.classList.remove(...inactiveClass);
+          btn.classList.add(...activeClass);
+        } else {
+          btn.classList.remove(...activeClass);
+          btn.classList.add(...inactiveClass);
+        }
+      });
+
+      setTimeout(() => lucide.createIcons(), 50);
+    }
+
+    // --- Helper Functions ---
+    function getStatusBadgeHTML(status) {
+      switch (status) {
+        case 'live':
+          return `
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        <span class="relative flex h-2 w-2 mr-1.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Canlı
+                    </span>`;
+        case 'completed':
+          return `
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                        <i data-lucide="check-circle-2" class="w-3 h-3 mr-1.5 inline"></i>
+                        Tamamlandı
+                    </span>`;
+        case 'handed-off':
+          return `
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                        <i data-lucide="phone-forwarded" class="w-3 h-3 mr-1.5 inline"></i>
+                        Aktarıldı
+                    </span>`;
+        default:
+          return '';
+      }
+    }
+
+    // --- Render Functions ---
+    const tableBody = document.getElementById('calls-table-body');
+    const searchInput = document.getElementById('search-input');
+
+    function renderTable(calls) {
+      if (!tableBody) return;
+      tableBody.innerHTML = '';
+      calls.forEach(call => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/50 transition-colors group";
+        tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${getStatusBadgeHTML(call.status)}
+                    </td>
+                    <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
+                        ${call.customerPhone}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
+                        ${call.startTime}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap font-mono">
+                        ${call.duration}
+                    </td>
+                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                        <button 
+                            onclick="openModal('${call.id}')"
+                            class="text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-md transition-colors"
+                        >
+                            İncele
+                        </button>
+                    </td>
+                `;
+        tableBody.appendChild(tr);
+      });
+      lucide.createIcons(); // Re-initialize icons for new DOM elements
+    }
+
+    // --- Modal Logic ---
+    const modal = document.getElementById('call-modal');
+    const modalPhone = document.getElementById('modal-phone');
+    const modalBadge = document.getElementById('modal-status-badge');
+    const modalMeta = document.getElementById('modal-meta');
+    const modalSummary = document.getElementById('modal-summary');
+    const modalTranscript = document.getElementById('modal-transcript');
+    const modalDuration = document.getElementById('modal-duration-display');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+    function openModal(callId) {
+      const call = MOCK_CALLS.find(c => c.id === callId);
+      if (!call) return;
+
+      // Populate Data
+      modalPhone.textContent = call.customerPhone;
+      modalBadge.innerHTML = getStatusBadgeHTML(call.status);
+      modalMeta.textContent = `${call.startTime} • Süre: ${call.duration}`;
+      modalSummary.textContent = call.summary;
+      modalDuration.textContent = call.duration;
+
+      // Render Transcript
+      modalTranscript.innerHTML = '';
+      call.transcript.forEach(msg => {
+        const isAi = msg.role === 'ai';
+        const div = document.createElement('div');
+        div.className = `flex ${isAi ? 'justify-start' : 'justify-end'}`;
+        div.innerHTML = `
+                  <div class="flex max-w-[80%] gap-3 ${!isAi ? 'flex-row-reverse' : ''}">
+                    <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${isAi ? 'bg-slate-100 text-slate-600' : 'bg-indigo-100 text-indigo-600'}">
+                       <i data-lucide="${isAi ? 'bot' : 'user'}" class="w-4 h-4"></i>
+                    </div>
+                    <div class="p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${isAi ? 'bg-white border border-slate-200 text-slate-700 rounded-tl-none' : 'bg-indigo-600 text-white rounded-tr-none'}">
+                      ${msg.text}
+                    </div>
+                  </div>
+                `;
+        modalTranscript.appendChild(div);
+      });
+
+      // Show Modal
+      modal.classList.remove('modal-hidden');
+      modal.classList.add('modal-visible');
+
+      // Re-init icons inside modal
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      modal.classList.remove('modal-visible');
+      modal.classList.add('modal-hidden');
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // --- Search Logic ---
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = MOCK_CALLS.filter(call =>
+        call.customerPhone.toLowerCase().includes(term)
+      );
+      renderTable(filtered);
+    });
+
+    // --- Initialization ---
+    renderTable(MOCK_CALLS);
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

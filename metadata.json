@@ -1,0 +1,5 @@
+{
+  "name": "Voice AI Admin Dashboard",
+  "description": "A corporate minimalist dashboard for monitoring AI voice agent performance, including real-time call tracking, KPIs, and transcript reviews.",
+  "requestFramePermissions": []
+}
