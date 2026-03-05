@@ -109,7 +109,7 @@
         <!-- Nav Links -->
         <nav class="hidden md:flex items-center gap-1">
           <a href="index.html" id="nav-dashboard"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
             <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
             Kontrol Paneli
           </a>
@@ -119,7 +119,7 @@
             Ajanlar
           </a>
           <a href="settings.html" id="nav-settings"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md transition-colors">
             <i data-lucide="settings" class="w-4 h-4"></i>
             Ayarlar
           </a>
@@ -146,102 +146,173 @@
     <!-- Main Content Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-
-      <!-- ==================== VIEW: DASHBOARD ==================== -->
-      <div id="view-dashboard" class="space-y-8 animate-fade-in">
+      <!-- ==================== VIEW: SETTINGS ==================== -->
+      <div id="view-settings" class=" space-y-8 animate-fade-in">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Sesli Ajan Genel Bakış</h1>
-            <p class="text-slate-500 mt-1">Gerçek zamanlı izleme ve performans takibi.</p>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Ayarlar</h1>
+            <p class="text-slate-500 mt-1">Hesabınızı, faturalandırmayı ve API tercihlerinizi yönetin.</p>
           </div>
-          <div class="flex items-center gap-3">
-            <span
-              class="text-xs font-medium text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
-              Canlı Güncelleme
-            </span>
-            <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          </div>
+          <button
+            class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+            Değişiklikleri Kaydet
+          </button>
         </div>
 
-        <!-- KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Total Calls -->
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
-            <div>
-              <p class="text-sm font-medium text-slate-500">Bugünkü Toplam Arama</p>
-              <h3 class="text-3xl font-bold text-slate-900 mt-2">124</h3>
-              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
-                <i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>
-                <span>+12% düne göre</span>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Sidebar -->
+          <div class="lg:col-span-1 space-y-2">
+            <button onclick="switchSettingsTab('general')" id="tab-btn-general"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-indigo-50 text-indigo-700 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="user" class="w-4 h-4"></i> Genel Profil
+            </button>
+            <button onclick="switchSettingsTab('api')" id="tab-btn-api"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="key" class="w-4 h-4"></i> API Anahtarları
+            </button>
+            <button onclick="switchSettingsTab('billing')" id="tab-btn-billing"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="credit-card" class="w-4 h-4"></i> Billing & Plans
+            </button>
+            <button onclick="switchSettingsTab('notifications')" id="tab-btn-notifications"
+              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
+              <i data-lucide="bell" class="w-4 h-4"></i> Bildirimler
+            </button>
+          </div>
+
+          <!-- Form Area -->
+          <div class="lg:col-span-2">
+
+            <!-- TAB: GENERAL -->
+            <div id="settings-tab-general" class="space-y-6 settings-content">
+              <!-- Profile Section -->
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Profil Bilgileri</h3>
+                <div class="flex items-center gap-6 mb-6">
+                  <div
+                    class="w-20 h-20 bg-slate-200 rounded-full border border-slate-300 overflow-hidden relative group cursor-pointer">
+                    <img src="https://picsum.photos/100/100" alt="Avatar" class="w-full h-full object-cover" />
+                    <div
+                      class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      class="text-sm text-indigo-600 font-medium border border-indigo-200 px-3 py-1.5 rounded-md hover:bg-indigo-50 transition-colors">Fotoğrafı
+                      Değiştir</button>
+                    <p class="text-xs text-slate-500 mt-2">JPG, GIF veya PNG. Maks boyut 800K</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Ad</label>
+                    <input type="text" value="Admin"
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Soyad</label>
+                    <input type="text" value="User"
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">E-posta Adresi</label>
+                    <input type="email" value="admin@voiceauto.ai"
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Company Section -->
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Şirket Bilgileri</h3>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Şirket Adı</label>
+                    <input type="text" value="VoiceAuto Inc."
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Saat Dilimi</label>
+                    <select
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow bg-white">
+                      <option>Pacific Time (US & Canada)</option>
+                      <option>Eastern Time (US & Canada)</option>
+                      <option selected>UTC (Coordinated Universal Time)</option>
+                      <option>Europe/Istanbul</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="p-3 bg-indigo-50 rounded-lg">
-              <i data-lucide="phone" class="w-6 h-6 text-indigo-600"></i>
-            </div>
-          </div>
 
-          <!-- Avg Duration -->
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
-            <div>
-              <p class="text-sm font-medium text-slate-500">Ort. Süre</p>
-              <h3 class="text-3xl font-bold text-slate-900 mt-2">2m 45s</h3>
-              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
-                <i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>
-                <span>Hedef aralığında (2-4dk)</span>
+            <!-- TAB: API KEYS -->
+            <div id="settings-tab-api" class="space-y-6 settings-content hidden">
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-1">API Kimlik Bilgileri</h3>
+                <p class="text-sm text-slate-500 mb-6">Sesli Ajan SDK'sına erişmek için API anahtarlarınızı yönetin.</p>
+
+                <div class="space-y-4">
+                  <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-slate-900">Prodüksiyon Anahtarı</p>
+                      <p class="text-xs text-slate-500 font-mono mt-1">pk_live_****************23f9</p>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-md transition-colors"><i
+                          data-lucide="copy" class="w-4 h-4"></i></button>
+                      <button
+                        class="p-2 text-slate-500 hover:text-red-600 hover:bg-white rounded-md transition-colors"><i
+                          data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                  </div>
+                  <button class="text-sm text-indigo-600 font-medium flex items-center gap-2 hover:text-indigo-800">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Yeni Anahtar Oluştur
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="p-3 bg-indigo-50 rounded-lg">
-              <i data-lucide="clock" class="w-6 h-6 text-indigo-600"></i>
-            </div>
-          </div>
 
-          <!-- Success Rate -->
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
-            <div>
-              <p class="text-sm font-medium text-slate-500">Başarı Oranı</p>
-              <h3 class="text-3xl font-bold text-slate-900 mt-2">92.4%</h3>
-              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
-                <i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>
-                <span>+2.1% bu hafta</span>
+            <!-- TAB: Billing (Placeholder) -->
+            <div id="settings-tab-billing" class="space-y-6 settings-content hidden">
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm text-center py-12">
+                <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i data-lucide="credit-card" class="w-8 h-8 text-indigo-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-900">Faturalandırma Portalı</h3>
+                <p class="text-sm text-slate-500 max-w-xs mx-auto mt-2">Aboneliğinizi yönetin, faturalarınızı
+                  görüntüleyin ve
+                  ödeme yöntemlerinizi güvenle güncelleyin.</p>
+                <button
+                  class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                  Müşteri Portalını Aç
+                </button>
               </div>
             </div>
-            <div class="p-3 bg-indigo-50 rounded-lg">
-              <i data-lucide="check-circle" class="w-6 h-6 text-indigo-600"></i>
+
+            <!-- TAB: Notifications (Placeholder) -->
+            <div id="settings-tab-notifications" class="space-y-6 settings-content hidden">
+              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">E-posta Bildirimleri</h3>
+                <div class="space-y-4">
+                  <label
+                    class="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 cursor-pointer">
+                    <span class="text-sm text-slate-700">Haftalık Performans Raporu</span>
+                    <input type="checkbox" checked
+                      class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                  </label>
+                  <label
+                    class="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 cursor-pointer">
+                    <span class="text-sm text-slate-700">Yeni Ajan Uyarıları</span>
+                    <input type="checkbox" checked
+                      class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                  </label>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Main Content Area -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-
-          <!-- Table Header / Toolbar -->
-          <div
-            class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 class="text-lg font-semibold text-slate-800">Son Aramalar</h2>
-            <div class="relative">
-              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-              <input type="text" id="search-input" placeholder="Telefona göre ara..."
-                class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full sm:w-64" />
-            </div>
-          </div>
-
-          <!-- Table -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold">
-                <tr>
-                  <th class="px-6 py-4">Durum</th>
-                  <th class="px-6 py-4">Müşteri Telefonu</th>
-                  <th class="px-6 py-4">Saat</th>
-                  <th class="px-6 py-4">Süre</th>
-                  <th class="px-6 py-4 text-right">İşlemler</th>
-                </tr>
-              </thead>
-              <tbody id="calls-table-body" class="divide-y divide-slate-100">
-                <!-- Rows will be populated by JS -->
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -415,15 +486,15 @@
       navs.forEach(n => {
         const btn = document.getElementById(n);
         if (navs.includes(n) && btn) {
-          if (n === 'nav-' + viewName) {
-            // Make Active
-            btn.classList.remove(...inactiveClass);
-            btn.classList.add(...activeClass);
-          } else {
-            // Make Inactive
-            btn.classList.remove(...activeClass);
-            btn.classList.add(...inactiveClass);
-          }
+        if (n === 'nav-' + viewName) {
+          // Make Active
+          btn.classList.remove(...inactiveClass);
+          btn.classList.add(...activeClass);
+        } else {
+          // Make Inactive
+          btn.classList.remove(...activeClass);
+          btn.classList.add(...inactiveClass);
+        }
         }
       });
 
@@ -440,7 +511,7 @@
       // Show selected tab
       const tabEl = document.getElementById('settings-tab-' + tabName);
       if (tabEl) {
-        tabEl.classList.remove('hidden');
+          tabEl.classList.remove('hidden');
       }
 
       // Update button styles
@@ -601,16 +672,16 @@
     }
 
     if (modalCloseBtn) {
-      modalCloseBtn.addEventListener('click', closeModal);
+        modalCloseBtn.addEventListener('click', closeModal);
     }
 
     // Close on background click
     if (modal) {
-      modal.addEventListener('click', (e) => {
+        modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-          closeModal();
+            closeModal();
         }
-      });
+        });
     }
 
     // ==========================================
@@ -619,27 +690,26 @@
     // Tablonun üstündeki arama kutusuna yazı yazıldığında,
     // numaralar arasında o yazıyı içerenleri bulup tabloyu anında günceller.
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
+        searchInput.addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = MOCK_CALLS.filter(call =>
-          call.customerPhone.toLowerCase().includes(term)
+            call.customerPhone.toLowerCase().includes(term)
         );
         renderTable(filtered);
-      });
+        });
     }
 
     // ==========================================
     // 6. SAYFA İLK AÇILDIĞINDA ÇALIŞACAK KODLAR
     // ==========================================
     if (tableBody) {
-      renderTable(MOCK_CALLS); // Tabloyu ilk verilerle doldur
+        renderTable(MOCK_CALLS); // Tabloyu ilk verilerle doldur
     }
-
+    
     // Sayfadaki ikonları (kalem, çöp kutusu vs.) yükle
     if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
+        lucide.createIcons();    
     }
   </script>
 </body>
-
 </html>
