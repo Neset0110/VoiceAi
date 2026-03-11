@@ -86,6 +86,14 @@
   }
 }
 </script>
+  <script>
+    // Oturum Kontrolü (Giriş yapılmamışsa login'e yönlendir)
+    const firmaDataStr = localStorage.getItem('firma');
+    if (!firmaDataStr) {
+      window.location.href = 'login.html';
+    }
+    const firma = JSON.parse(firmaDataStr);
+  </script>
 </head>
 
 <body class="text-slate-900">
@@ -129,11 +137,11 @@
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-3">
             <div class="text-right hidden sm:block">
-              <p class="text-sm font-medium text-slate-900">Yönetici</p>
+              <p class="text-sm font-medium text-slate-900" id="header-isim">Yükleniyor...</p>
               <p class="text-xs text-slate-500">İşletme Sahibi</p>
             </div>
             <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
-              <img src="https://picsum.photos/100/100" alt="Avatar" class="w-full h-full object-cover" />
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5" alt="Avatar" class="w-full h-full object-cover" />
             </div>
           </div>
           <button class="text-slate-400 hover:text-slate-600">
@@ -672,6 +680,25 @@
         renderTable(MOCK_CALLS); // Tabloyu ilk verilerle doldur
     }
     
+    // Kullanıcı bilgilerini Header'a yerleştir
+    function headerVerileriniDoldur() {
+      if (!firma) return;
+      const avatarUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firma.firma_adi) + '&background=e0e7ff&color=4f46e5';
+      const headerIsim = document.getElementById('header-isim');
+      const headerAvatar = document.getElementById('header-avatar');
+      
+      if (headerIsim) headerIsim.textContent = firma.firma_adi;
+      if (headerAvatar) headerAvatar.src = avatarUrl;
+    }
+
+    headerVerileriniDoldur();
+
+    // Çıkış Yap Butonu İşlevi
+    document.querySelector('button i[data-lucide="log-out"]').parentElement.addEventListener('click', () => {
+        localStorage.removeItem('firma');
+        window.location.href = 'login.html';
+    });
+
     // Sayfadaki ikonları (kalem, çöp kutusu vs.) yükle
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();    

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giriş Yap - VoiceAuto.ai</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Arka plan animasyonu */
+        .bg-animated {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Form geçiş animasyonu */
+        .form-slide {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Input odaklanma efekti */
+        .input-glow:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Buton hover efekti */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+            transition: all 0.5s ease;
+        }
+
+        .btn-shine:hover::after {
+            transform: translateX(100%);
+        }
+
+        /* Bildirim kutusu animasyonu */
+        .toast-enter {
+            animation: toastIn 0.4s ease-out;
+        }
+
+        @keyframes toastIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Yüzen daireler */
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-animated flex items-center justify-center p-4 relative overflow-hidden">
+
+    <!-- Dekoratif Yüzen Daireler -->
+    <div class="floating-circle w-72 h-72 top-10 -left-20" style="animation-delay: 0s;"></div>
+    <div class="floating-circle w-96 h-96 -bottom-20 -right-20" style="animation-delay: 2s;"></div>
+    <div class="floating-circle w-48 h-48 top-1/3 right-10" style="animation-delay: 4s;"></div>
+
+    <!-- Ana Kart -->
+    <div class="w-full max-w-md relative z-10">
+
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <div class="bg-white/20 backdrop-blur-sm p-3 rounded-2xl border border-white/20">
+                    <i data-lucide="mic-2" class="w-8 h-8 text-white"></i>
+                </div>
+                <span class="text-3xl font-extrabold text-white tracking-tight">
+                    VoiceAuto<span class="text-indigo-200">.ai</span>
+                </span>
+            </div>
+            <p class="text-indigo-100/80 text-sm">Yapay Zeka Destekli Sesli Ajan Yönetim Paneli</p>
+        </div>
+
+        <!-- Form Kartı -->
+        <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/20">
+
+            <!-- Sekme Butonları -->
+            <div class="flex border-b border-slate-100">
+                <button id="tab-giris" onclick="sekmeDegistir('giris')"
+                    class="flex-1 py-4 text-sm font-semibold text-indigo-600 border-b-2 border-indigo-600 transition-all duration-300 flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    Giriş Yap
+                </button>
+                <button id="tab-kayit" onclick="sekmeDegistir('kayit')"
+                    class="flex-1 py-4 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all duration-300 flex items-center justify-center gap-2">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    Kayıt Ol
+                </button>
+            </div>
+
+            <!-- Giriş Formu -->
+            <div id="form-giris" class="p-8 form-slide">
+                <div class="space-y-5">
+                    <!-- E-posta -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">E-posta Adresi</label>
+                        <div class="relative">
+                            <i data-lucide="mail"
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="email" id="giris-email" placeholder="ornek@firma.com"
+                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                        </div>
+                    </div>
+
+                    <!-- Şifre -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Şifre</label>
+                        <div class="relative">
+                            <i data-lucide="lock"
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="password" id="giris-sifre" placeholder="••••••••"
+                                class="input-glow w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                            <button type="button" onclick="sifreGoster('giris-sifre', this)"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Giriş Butonu -->
+                    <button onclick="girisYap()" id="btn-giris"
+                        class="btn-shine w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 flex items-center justify-center gap-2">
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        Giriş Yap
+                    </button>
+                </div>
+
+                <!-- Alt Bilgi -->
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-slate-500">
+                        Hesabınız yok mu?
+                        <button onclick="sekmeDegistir('kayit')"
+                            class="text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
+                            Kayıt Olun
+                        </button>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Kayıt Formu -->
+            <div id="form-kayit" class="p-8 form-slide hidden">
+                <div class="space-y-5">
+                    <!-- Firma Adı -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Firma Adı</label>
+                        <div class="relative">
+                            <i data-lucide="building-2"
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="text" id="kayit-firma" placeholder="Firma adınız"
+                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                        </div>
+                    </div>
+
+                    <!-- E-posta -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">E-posta Adresi</label>
+                        <div class="relative">
+                            <i data-lucide="mail"
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="email" id="kayit-email" placeholder="ornek@firma.com"
+                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                        </div>
+                        <!-- Doğrulama Bekleme Alanı -->
+                        <div id="bekleme-alani"
+                            class="hidden mt-3 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+                            <div class="flex items-center gap-2 text-indigo-700 text-xs font-medium">
+                                <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
+                                <span>E-posta doğrulaması bekleniyor...</span>
+                                <span id="sayac"
+                                    class="ml-auto bg-indigo-600 text-white px-2 py-0.5 rounded-full text-[10px]">120s</span>
+                            </div>
+                            <p class="text-[10px] text-indigo-500 mt-1.5 leading-tight">
+                                Lütfen e-postanızı (Spam dahil) kontrol edin. Linke tıkladıktan sonra giriş
+                                yapabilirsiniz.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Şifre -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Şifre</label>
+                        <div class="relative">
+                            <i data-lucide="lock"
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="password" id="kayit-sifre" placeholder="En az 4 karakter"
+                                class="input-glow w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                            <button type="button" onclick="sifreGoster('kayit-sifre', this)"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Telefon (opsiyonel) -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Telefon <span
+                                class="text-slate-400 font-normal">(opsiyonel)</span></label>
+                        <div class="relative">
+                            <i data-lucide="phone"
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="tel" id="kayit-telefon" placeholder="+90 555 123 4567"
+                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                        </div>
+                    </div>
+
+                    <!-- Kayıt Butonu -->
+                    <button onclick="kayitOl()" id="btn-kayit"
+                        class="btn-shine w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 flex items-center justify-center gap-2">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        Kayıt Ol
+                    </button>
+                </div>
+
+                <!-- Alt Bilgi -->
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-slate-500">
+                        Zaten hesabınız var mı?
+                        <button onclick="sekmeDegistir('giris')"
+                            class="text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
+                            Giriş Yapın
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alt Metin -->
+        <p class="text-center text-indigo-200/60 text-xs mt-6">
+            © 2026 VoiceAuto.ai — Tüm hakları saklıdır.
+        </p>
+    </div>
+
+    <!-- Bildirim Kutusu (Toast) -->
+    <div id="toast" class="fixed top-6 right-6 z-50 hidden">
+        <div id="toast-content"
+            class="toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm">
+            <i id="toast-icon" class="w-5 h-5 flex-shrink-0"></i>
+            <div>
+                <p id="toast-baslik" class="font-semibold text-sm"></p>
+                <p id="toast-mesaj" class="text-sm mt-0.5 opacity-80"></p>
+            </div>
+            <button onclick="toastKapat()" class="ml-auto text-current opacity-40 hover:opacity-70 transition-opacity">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // BACKEND API ADRESİ
+        // ============================================================
+        // server.js'nin çalıştığı adres. Eğer farklı bir portta çalıştırıyorsan
+        // bu adresi değiştirmen yeterli.
+        const API_URL = 'http://localhost:3001';
+
+        // ============================================================
+        // SEKME DEĞİŞTİRME (Giriş ↔ Kayıt)
+        // ============================================================
+        // Üstteki "Giriş Yap" ve "Kayıt Ol" butonlarına tıklandığında
+        // ilgili formu gösterip diğerini gizler.
+        function sekmeDegistir(sekme) {
+            const tabGiris = document.getElementById('tab-giris');
+            const tabKayit = document.getElementById('tab-kayit');
+            const formGiris = document.getElementById('form-giris');
+            const formKayit = document.getElementById('form-kayit');
+            const btnKayit = document.getElementById('btn-kayit');
+            const beklemeAlani = document.getElementById('bekleme-alani');
+
+            if (sekme === 'giris') {
+                // Giriş sekmesini aktif yap
+                tabGiris.classList.add('text-indigo-600', 'border-indigo-600');
+                tabGiris.classList.remove('text-slate-400', 'border-transparent');
+                tabKayit.classList.add('text-slate-400', 'border-transparent');
+                tabKayit.classList.remove('text-indigo-600', 'border-indigo-600');
+                formGiris.classList.remove('hidden');
+                formKayit.classList.add('hidden');
+
+                // Kayıt formundaki sayaç ve UI durumunu sıfırla
+                if (sayacInterval) clearInterval(sayacInterval);
+                if (pollingInterval) clearInterval(pollingInterval);
+                beklemeAlani.classList.add('hidden');
+                btnKayit.disabled = false;
+                btnKayit.onclick = kayitOl;
+                btnKayit.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnKayit.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4"></i> Kayıt Ol';
+                lucide.createIcons();
+            } else {
+                // Kayıt sekmesini aktif yap
+                tabKayit.classList.add('text-indigo-600', 'border-indigo-600');
+                tabKayit.classList.remove('text-slate-400', 'border-transparent');
+                tabGiris.classList.add('text-slate-400', 'border-transparent');
+                tabGiris.classList.remove('text-indigo-600', 'border-indigo-600');
+                formKayit.classList.remove('hidden');
+                formGiris.classList.add('hidden');
+            }
+        }
+
+        // ============================================================
+        // ŞİFRE GÖSTER/GİZLE
+        // ============================================================
+        function sifreGoster(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        // ============================================================
+        // BİLDİRİM KUTUSU (TOAST)
+        // ============================================================
+        // Ekranın sağ üstünde kısa süreli mesaj gösterir.
+        function toastGoster(tur, baslik, mesaj) {
+            const toast = document.getElementById('toast');
+            const content = document.getElementById('toast-content');
+            const icon = document.getElementById('toast-icon');
+            const baslikEl = document.getElementById('toast-baslik');
+            const mesajEl = document.getElementById('toast-mesaj');
+
+            // Türe göre renk ve ikon ayarla
+            if (tur === 'basarili') {
+                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm bg-emerald-50 border-emerald-200 text-emerald-800';
+                icon.setAttribute('data-lucide', 'check-circle');
+                icon.className = 'w-5 h-5 flex-shrink-0 text-emerald-600';
+            } else if (tur === 'hata') {
+                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm bg-red-50 border-red-200 text-red-800';
+                icon.setAttribute('data-lucide', 'alert-circle');
+                icon.className = 'w-5 h-5 flex-shrink-0 text-red-600';
+            } else {
+                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm bg-blue-50 border-blue-200 text-blue-800';
+                icon.setAttribute('data-lucide', 'info');
+                icon.className = 'w-5 h-5 flex-shrink-0 text-blue-600';
+            }
+
+            baslikEl.textContent = baslik;
+            mesajEl.textContent = mesaj;
+            toast.classList.remove('hidden');
+            lucide.createIcons();
+
+            // 5 saniye sonra otomatik kapat
+            setTimeout(() => toastKapat(), 5000);
+        }
+
+        function toastKapat() {
+            document.getElementById('toast').classList.add('hidden');
+        }
+
+        // ============================================================
+        // GİRİŞ YAP FONKSİYONU
+        // ============================================================
+        // Kullanıcının girdiği e-posta ve şifreyi backend'e gönderir.
+        // Backend yanıtına göre:
+        //   - Başarılı → Ana sayfaya (index.html) yönlendir
+        //   - Hata → Hata mesajı göster
+        async function girisYap() {
+            const email = document.getElementById('giris-email').value.trim();
+            const sifre = document.getElementById('giris-sifre').value;
+            const btn = document.getElementById('btn-giris');
+
+            // Boş alan kontrolü
+            if (!email || !sifre) {
+                toastGoster('hata', 'Eksik Bilgi', 'Lütfen e-posta ve şifre alanlarını doldurun.');
+                return;
+            }
+
+            // Geliştirici / Admin hızlı giriş bypass
+            if (email === 'admin' && sifre === 'admin') {
+                localStorage.setItem('firma', JSON.stringify({ firma_adi: 'Admin (Geliştirici)', email: 'admin' }));
+                toastGoster('basarili', 'Hoş Geldiniz!', 'Geliştirici girişi başarılı.');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+                return;
+            }
+
+            // Butonu yükleniyor durumuna al
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Giriş yapılıyor...';
+
+            try {
+                // Backend'e POST isteği gönder
+                const yanit = await fetch(API_URL + '/api/giris', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, sifre })
+                });
+
+                const veri = await yanit.json();
+
+                if (yanit.ok) {
+                    // Giriş başarılı! Firma bilgisini kaydet ve ana sayfaya yönlendir
+                    localStorage.setItem('firma', JSON.stringify(veri.firma));
+                    toastGoster('basarili', 'Hoş Geldiniz!', veri.firma.firma_adi + ' olarak giriş yapıldı.');
+
+                    // 1.5 saniye bekleyip ana sayfaya yönlendir
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    // Hata mesajını göster
+                    toastGoster('hata', 'Giriş Başarısız', veri.hata);
+                }
+            } catch (hata) {
+                toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanılamadı. Sunucu çalışıyor mu?');
+            }
+
+            // Butonu eski haline getir
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="arrow-right" class="w-4 h-4"></i> Giriş Yap';
+            lucide.createIcons();
+        }
+
+        // ============================================================
+        // KAYIT OL FONKSİYONU
+        // ============================================================
+        let sayacInterval = null;
+        let pollingInterval = null;
+
+        async function kayitOl() {
+            const firma_adi = document.getElementById('kayit-firma').value.trim();
+            const email = document.getElementById('kayit-email').value.trim();
+            const sifre = document.getElementById('kayit-sifre').value;
+            const btn = document.getElementById('btn-kayit');
+            const beklemeAlani = document.getElementById('bekleme-alani');
+            const sayacEl = document.getElementById('sayac');
+
+            // Boş alan kontrolü
+            if (!firma_adi || !email || !sifre) {
+                toastGoster('hata', 'Eksik Bilgi', 'Lütfen tüm zorunlu alanları doldurun.');
+                return;
+            }
+
+            // Şifre uzunluk kontrolü
+            if (sifre.length < 4) {
+                toastGoster('hata', 'Kısa Şifre', 'Şifre en az 4 karakter olmalıdır.');
+                return;
+            }
+
+            // Butonu yükleniyor durumuna al
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Kayıt yapılıyor...';
+
+            try {
+                // Backend'e POST isteği gönder
+                const yanit = await fetch(API_URL + '/api/kayit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ firma_adi, email, sifre })
+                });
+
+                const veri = await yanit.json();
+
+                if (yanit.ok) {
+                    // Kayıt başarılı!
+                    toastGoster('basarili', 'Kayıt Başarılı!', 'E-postanıza gelen doğrulama linkine tıklayın.');
+
+                    // Bekleme alanını ve sayacı göster
+                    beklemeAlani.classList.remove('hidden');
+                    sayacBaslat(120, sayacEl);
+
+                    // Doğrulama kontrolü için Polling (Arka arkaya soru sorma) başlat (3 saniyede bir)
+                    if (pollingInterval) clearInterval(pollingInterval);
+                    pollingInterval = setInterval(async () => {
+                        try {
+                            const pollYanit = await fetch(API_URL + '/api/check-verification/' + encodeURIComponent(email));
+                            if (pollYanit.ok) {
+                                const pollVeri = await pollYanit.json();
+                                if (pollVeri.isVerified) {
+                                    clearInterval(pollingInterval);
+                                    if (sayacInterval) clearInterval(sayacInterval);
+                                    
+                                    beklemeAlani.classList.add('hidden');
+                                    toastGoster('basarili', 'Doğrulama Başarılı!', 'Hesabınız onaylandı. Girişe yönlendiriliyorsunuz...');
+                                    
+                                    setTimeout(() => {
+                                        sekmeDegistir('giris');
+                                        document.getElementById('giris-email').value = email;
+                                    }, 1500);
+                                }
+                            }
+                        } catch (e) { } // Bağlantı hatasını yoksay
+                    }, 3000);
+
+                    // Butonu pasif/bekliyor durumunda tutalım (isteğe bağlı)
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    btn.onclick = null; // Tekrar basılmasın (120 saniyeliğine)
+                    btn.innerHTML = 'Doğrulama Bekleniyor...';
+
+                    // 120 saniye sonra giriş sekmesine yönlendirme (veya butonu temizleme)
+                    setTimeout(() => {
+                        if (!document.getElementById('form-kayit').classList.contains('hidden')) {
+                            if (pollingInterval) clearInterval(pollingInterval);
+                            sekmeDegistir('giris');
+                        }
+                    }, 120000);
+
+                } else {
+                    toastGoster('hata', 'Kayıt Başarısız', veri.hata);
+                }
+            } catch (hata) {
+                toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanılamadı. Sunucu çalışıyor mu?');
+            }
+
+            if (!yanit.ok) {
+                // Sadece hata durumunda butonu eski haline getir
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4"></i> Kayıt Ol';
+                lucide.createIcons();
+            }
+        }
+
+        // ============================================================
+        // SAYAÇ BAŞLATMA FONKSİYONU
+        // ============================================================
+        function sayacBaslat(saniye, element) {
+            if (sayacInterval) clearInterval(sayacInterval);
+
+            let kalan = saniye;
+            element.innerText = kalan + 's';
+
+            sayacInterval = setInterval(() => {
+                kalan--;
+                element.innerText = kalan + 's';
+
+                if (kalan <= 0) {
+                    clearInterval(sayacInterval);
+                }
+            }, 1000);
+        }
+
+        // ============================================================
+        // ENTER TUŞU İLE GÖNDERİM
+        // ============================================================
+        // Kullanıcı şifre alanındayken Enter'a basarsa formu gönder
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const girisFormu = document.getElementById('form-giris');
+                if (!girisFormu.classList.contains('hidden')) {
+                    girisYap();
+                } else {
+                    kayitOl();
+                }
+            }
+        });
+
+        // Sayfa yüklendiğinde Lucide ikonlarını başlat
+        lucide.createIcons();
+    </script>
+
+</body>
+
+</html>

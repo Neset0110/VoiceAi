@@ -86,6 +86,14 @@
   }
 }
 </script>
+  <script>
+    // Oturum Kontrolü
+    const firmaDataStr = localStorage.getItem('firma');
+    if (!firmaDataStr) {
+      window.location.href = 'login.html';
+    }
+    const firma = JSON.parse(firmaDataStr);
+  </script>
 </head>
 
 <body class="text-slate-900">
@@ -129,11 +137,12 @@
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-3">
             <div class="text-right hidden sm:block">
-              <p class="text-sm font-medium text-slate-900">Yönetici</p>
+              <p class="text-sm font-medium text-slate-900" id="header-isim">Yükleniyor...</p>
               <p class="text-xs text-slate-500">İşletme Sahibi</p>
             </div>
             <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
-              <img src="https://picsum.photos/100/100" alt="Avatar" class="w-full h-full object-cover" />
+              <!-- Default Fotoğraf: ui-avatars servisi -->
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5" alt="Avatar" class="w-full h-full object-cover" />
             </div>
           </div>
           <button class="text-slate-400 hover:text-slate-600">
@@ -192,7 +201,7 @@
                 <div class="flex items-center gap-6 mb-6">
                   <div
                     class="w-20 h-20 bg-slate-200 rounded-full border border-slate-300 overflow-hidden relative group cursor-pointer">
-                    <img src="https://picsum.photos/100/100" alt="Avatar" class="w-full h-full object-cover" />
+                    <img id="settings-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5" alt="Avatar" class="w-full h-full object-cover" />
                     <div
                       class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <i data-lucide="camera" class="w-6 h-6 text-white"></i>
@@ -206,20 +215,16 @@
                   </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Ad</label>
-                    <input type="text" value="Admin"
-                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Soyad</label>
-                    <input type="text" value="User"
+                  <!-- Veritabanında "Ad-Soyad" yok, sadece firma adı ve e-posta var, bu yüzden onları yansıtıyoruz -->
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Yetkili / Ad</label>
+                    <input type="text" id="ayar-isim" value=""
                       class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
                   </div>
                   <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-slate-700 mb-1">E-posta Adresi</label>
-                    <input type="email" value="admin@voiceauto.ai"
-                      class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                    <input type="email" id="ayar-email" value="" readonly
+                      class="w-full px-3 py-2 border border-slate-300 bg-slate-50 rounded-lg text-sm focus:outline-none text-slate-500">
                   </div>
                 </div>
               </div>
@@ -230,7 +235,7 @@
                 <div class="space-y-4">
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Şirket Adı</label>
-                    <input type="text" value="VoiceAuto Inc."
+                    <input type="text" id="ayar-firma" value=""
                       class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
                   </div>
                   <div>
@@ -486,15 +491,15 @@
       navs.forEach(n => {
         const btn = document.getElementById(n);
         if (navs.includes(n) && btn) {
-        if (n === 'nav-' + viewName) {
-          // Make Active
-          btn.classList.remove(...inactiveClass);
-          btn.classList.add(...activeClass);
-        } else {
-          // Make Inactive
-          btn.classList.remove(...activeClass);
-          btn.classList.add(...inactiveClass);
-        }
+          if (n === 'nav-' + viewName) {
+            // Make Active
+            btn.classList.remove(...inactiveClass);
+            btn.classList.add(...activeClass);
+          } else {
+            // Make Inactive
+            btn.classList.remove(...activeClass);
+            btn.classList.add(...inactiveClass);
+          }
         }
       });
 
@@ -511,7 +516,7 @@
       // Show selected tab
       const tabEl = document.getElementById('settings-tab-' + tabName);
       if (tabEl) {
-          tabEl.classList.remove('hidden');
+        tabEl.classList.remove('hidden');
       }
 
       // Update button styles
@@ -672,16 +677,16 @@
     }
 
     if (modalCloseBtn) {
-        modalCloseBtn.addEventListener('click', closeModal);
+      modalCloseBtn.addEventListener('click', closeModal);
     }
 
     // Close on background click
     if (modal) {
-        modal.addEventListener('click', (e) => {
+      modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            closeModal();
+          closeModal();
         }
-        });
+      });
     }
 
     // ==========================================
@@ -690,26 +695,60 @@
     // Tablonun üstündeki arama kutusuna yazı yazıldığında,
     // numaralar arasında o yazıyı içerenleri bulup tabloyu anında günceller.
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
+      searchInput.addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = MOCK_CALLS.filter(call =>
-            call.customerPhone.toLowerCase().includes(term)
+          call.customerPhone.toLowerCase().includes(term)
         );
         renderTable(filtered);
-        });
+      });
     }
 
     // ==========================================
     // 6. SAYFA İLK AÇILDIĞINDA ÇALIŞACAK KODLAR
     // ==========================================
     if (tableBody) {
-        renderTable(MOCK_CALLS); // Tabloyu ilk verilerle doldur
+      renderTable(MOCK_CALLS); // Tabloyu ilk verilerle doldur
     }
-    
+
+    // Kullanıcı bilgilerini yerleştir (Kayıttan gelen gerçek veriler)
+    function baslangicVerileriniDoldur() {
+      if (!firma) return;
+      
+      const avatarUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firma.firma_adi) + '&background=e0e7ff&color=4f46e5';
+
+      // Header Güncelle
+      const headerIsim = document.getElementById('header-isim');
+      const headerAvatar = document.getElementById('header-avatar');
+      if (headerIsim) headerIsim.textContent = firma.firma_adi;
+      if (headerAvatar) headerAvatar.src = avatarUrl;
+
+      // Ayarlar Formunu Güncelle
+      const ayarIsim = document.getElementById('ayar-isim');
+      const ayarEmail = document.getElementById('ayar-email');
+      const ayarFirma = document.getElementById('ayar-firma');
+      const settingsAvatar = document.getElementById('settings-avatar');
+
+      // Bilgiler DB'den böyle geliyor: firma = { id, firma_adi, email }
+      if (ayarIsim) ayarIsim.value = firma.firma_adi;
+      if (ayarEmail) ayarEmail.value = firma.email || 'Bilinmiyor';
+      if (ayarFirma) ayarFirma.value = firma.firma_adi;
+      if (settingsAvatar) settingsAvatar.src = avatarUrl;
+    }
+
+    baslangicVerileriniDoldur();
+
+    // Çıkış Yap Butonu İşlevi
+    document.querySelector('button i[data-lucide="log-out"]').parentElement.addEventListener('click', () => {
+        localStorage.removeItem('firma');
+        window.location.href = 'login.html';
+    });
+
     // Sayfadaki ikonları (kalem, çöp kutusu vs.) yükle
     if (typeof lucide !== 'undefined') {
-        lucide.createIcons();    
+      lucide.createIcons();
     }
   </script>
 </body>
+
 </html>
