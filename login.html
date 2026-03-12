@@ -442,16 +442,6 @@
                 return;
             }
 
-            // Geliştirici / Admin hızlı giriş bypass
-            if (email === 'admin' && sifre === 'admin') {
-                localStorage.setItem('firma', JSON.stringify({ firma_adi: 'Admin (Geliştirici)', email: 'admin' }));
-                toastGoster('basarili', 'Hoş Geldiniz!', 'Geliştirici girişi başarılı.');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-                return;
-            }
-
             // Butonu yükleniyor durumuna al
             btn.disabled = true;
             btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Giriş yapılıyor...';

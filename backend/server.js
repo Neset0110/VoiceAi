@@ -7,6 +7,7 @@
 // ============================================================
 
 // --- KULLANILAN KÜTÜPHANELER (IMPORTLAR) ---
+require('dotenv').config();               // Ortam değişkenlerini (.env) yüklemek için
 const express = require('express');       // Web sunucusu oluşturmak için
 const mysql = require('mysql2');          // MySQL veritabanına bağlanmak için
 const cors = require('cors');            // Frontend'in backend'e istek atabilmesi için
@@ -19,7 +20,7 @@ const bcrypt = require('bcryptjs');       // Şifreleri güvenli şekilde hashle
 // 1. EXPRESS UYGULAMASINI OLUŞTUR
 // ============================================================
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // ============================================================
 // 2. ARA YAZILIMLAR (MIDDLEWARE)
@@ -36,13 +37,13 @@ app.use(express.static(path.join(__dirname, '..')));
 // 3. VERİTABANI BAĞLANTISI
 // ============================================================
 // MySQL veritabanına bağlanmak için gerekli bilgiler.
-// Bu bilgiler kendi bilgisayarıma göre ayarladığım yerel veritabanı bilgileri.
+// Bilgiler güvenlik amacıyla .env dosyasından çekilmektedir.
 const db = mysql.createConnection({
-    host: 'localhost',       // Veritabanı adresi (kendi bilgisayarım)
-    user: 'root',            // MySQL kullanıcı adı
-    password: '1234',        // MySQL şifresi
-    database: 'voiceai',     // Kullandığımız veritabanı adı
-    port: 3306               // MySQL'in varsayılan port numarası
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'voiceai',
+    port: process.env.DB_PORT || 3306
 });
 
 // Veritabanına bağlanmayı dene ve sonucu konsola yaz
@@ -60,9 +61,9 @@ db.connect((err) => {
 // Gmail SMTP ile herhangi bir e-posta adresine doğrulama linki göndermek için ayarlar.
 // Gmail hesabınızın 2 Adımlı Doğrulama'sı açık olmalı ve bir Uygulama Şifresi oluşturulmalı.
 
-// Gmail SMTP ayarları
-const GMAIL_KULLANICI = 'nesetatalatist@gmail.com';     // Gmail adresiniz
-const GMAIL_UYGULAMA_SIFRESI = 'rohs dhng bsbd txfl';  // Google Uygulama Şifresi
+// Güvenlik amacıyla SMTP ayarları .env dosyasından çekilir.
+const GMAIL_KULLANICI = process.env.GMAIL_USER;
+const GMAIL_UYGULAMA_SIFRESI = process.env.GMAIL_APP_PASSWORD;
 
 // Nodemailer transporter (e-posta gönderici) oluştur
 const transporter = nodemailer.createTransport({
