@@ -7,6 +7,10 @@
 // ============================================================
 
 // --- KULLANILAN KÜTÜPHANELER (IMPORTLAR) ---
+const dns = require('dns');
+if (typeof dns.setDefaultResultOrder === 'function') {
+    dns.setDefaultResultOrder('ipv4first'); // Force IPv4 to prevent SMTP ENETUNREACH errors on Render
+}
 require('dotenv').config();               // Ortam değişkenlerini (.env) yüklemek için
 const express = require('express');       // Web sunucusu oluşturmak için
 const mysql = require('mysql2');          // MySQL veritabanına bağlanmak için
