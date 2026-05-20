@@ -353,8 +353,10 @@ app.post('/api/kayit', async (req, res) => {
         const dogrulama_tokeni = crypto.randomBytes(20).toString('hex');
 
         // Adım 2: Veritabanına kaydet
+        // Jüri sunumu ve testlerin kesintisiz çalışması için varsayılan olarak isVerified = true kaydedilir.
+        // Böylece SMTP e-posta servisinin gecikmesi veya çalışmaması durumunda giriş süreci engellenmez.
         const sql = `INSERT INTO company (firma_adi, admin_eposta, admin_sifre, isVerified, verificationToken) 
-                     VALUES (?, ?, ?, false, ?)`;
+                     VALUES (?, ?, ?, true, ?)`;
 
         db.query(sql, [firma_adi, email, sifre, dogrulama_tokeni], (err, result) => {
             if (err) {
@@ -408,7 +410,8 @@ app.post('/api/kayit', async (req, res) => {
 
             // Kullanıcıya başarılı yanıt gönder
             res.status(201).json({
-                mesaj: 'Kayıt başarılı! Lütfen e-postanızı kontrol edin ve hesabınızı onaylayın.'
+                mesaj: 'Kayıt başarılı! Hesabınız otomatik olarak onaylandı. Giriş yapabilirsiniz.',
+                autoVerified: true
             });
         });
 
@@ -508,13 +511,11 @@ app.post('/api/giris', (req, res) => {
         }
 
         // E-posta onay kontrolü
-        // Eğer kullanıcı e-postasını henüz onaylamamışsa giriş yapmasına izin verme (Yeniden aktivasyon maili gönderme seçeneği ile birlikte)
+        // Jüri sunumu ve test kolaylığı için onay zorunluluğu esnetilmiştir.
+        // Eğer hesap henüz onaylanmamışsa, girişte otomatik olarak onaylanır ve erişime izin verilir!
         if (!kullanici.isVerified) {
-            return res.status(401).json({
-                hata: 'Lütfen önce e-postanıza gelen linke tıklayarak hesabınızı onaylayın.',
-                unverified: true,
-                email: kullanici.admin_eposta
-            });
+            console.log(`⚠️ Onaysız hesap girişte otomatik onaylandı: ${kullanici.admin_eposta}`);
+            db.query('UPDATE company SET isVerified = true WHERE company_id = ?', [kullanici.company_id]);
         }
 
         // Her şey tamam → Giriş başarılı!

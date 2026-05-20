@@ -576,6 +576,26 @@
 
                 if (yanit.ok) {
                     // Kayıt başarılı!
+                    if (veri.autoVerified) {
+                        toastGoster('basarili', 'Kayıt Başarılı!', 'Hesabınız otomatik olarak onaylandı. Girişe yönlendiriliyorsunuz...');
+                        
+                        // Butonu sıfırla
+                        btn.disabled = false;
+                        btn.innerHTML = 'Kayıt Ol';
+                        
+                        // Alanları temizle
+                        document.getElementById('kayit-firma').value = '';
+                        document.getElementById('kayit-email').value = '';
+                        document.getElementById('kayit-sifre').value = '';
+                        document.getElementById('kayit-sifre-tekrar').value = '';
+                        
+                        setTimeout(() => {
+                            sekmeDegistir('giris');
+                            document.getElementById('giris-email').value = email;
+                        }, 1500);
+                        return;
+                    }
+
                     toastGoster('basarili', 'Kayıt Başarılı!', 'E-postanıza gelen doğrulama linkine tıklayın.');
 
                     // Bekleme alanını ve sayacı göster
