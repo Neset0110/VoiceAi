@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Giriş Yap - VoiceAuto.ai</title>
 
+    <script>
+        // Eğer kullanıcı zaten giriş yapmışsa doğrudan kontrol paneline yönlendir
+        const firmaDataStr = localStorage.getItem('firma');
+        if (firmaDataStr) {
+            window.location.href = 'index.html';
+        }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -187,7 +195,24 @@
                                 class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
+                    </div>
+
+                    <!-- E-posta Onay Uyarısı & Yeniden Gönderme -->
+                    <div id="giris-unverified-alani" class="hidden p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs space-y-2.5 toast-enter">
+                        <div class="flex items-start gap-2.5">
+                            <i data-lucide="alert-triangle" class="w-4.5 h-4.5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                            <div>
+                                <span class="font-bold text-slate-900">Hesabınız onaylanmamış!</span>
+                                <p class="text-amber-800 mt-1 leading-relaxed">
+                                    Lütfen e-posta adresinize gönderilen doğrulama linkine tıklayarak hesabınızı aktif hale getirin. E-posta kutunuzda göremiyorsanız (Spam dahil), aşağıdaki butondan yeni bir link talep edebilirsiniz.
+                                </p>
+                            </div>
                         </div>
+                        <button id="btn-resend" type="button" onclick="aktivasyonMailiGonder()" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-1.5 shadow-sm shadow-amber-100 hover:shadow-md hover:shadow-amber-200 text-[11px]">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            Aktivasyon E-postasını Yeniden Gönder
+                        </button>
+                        <p id="resend-timer-text" class="hidden text-center text-amber-600 font-medium text-[10px] mt-1"></p>
                     </div>
 
                     <!-- Giriş Butonu -->
@@ -264,6 +289,21 @@
                         </div>
                     </div>
 
+                    <!-- Şifre Tekrar -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Şifre Tekrar</label>
+                        <div class="relative">
+                            <i data-lucide="lock"
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="password" id="kayit-sifre-tekrar" placeholder="Şifrenizi tekrar girin"
+                                class="input-glow w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                            <button type="button" onclick="sifreGoster('kayit-sifre-tekrar', this)"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Telefon (opsiyonel) -->
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Telefon <span
@@ -296,11 +336,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Alt Metin -->
-        <p class="text-center text-indigo-200/60 text-xs mt-6">
-            © 2026 VoiceAuto.ai — Tüm hakları saklıdır.
-        </p>
     </div>
 
     <!-- Bildirim Kutusu (Toast) -->
@@ -322,9 +357,11 @@
         // ============================================================
         // BACKEND API ADRESİ
         // ============================================================
-        // server.js'nin çalıştığı adres. Eğer farklı bir portta çalıştırıyorsan
-        // bu adresi değiştirmen yeterli.
-        const API_URL = 'http://localhost:3001';
+        // Dinamik API adresi: Yerelde Live Server veya dosya protokolu ile çalışırken localhost:3001'e gider.
+        // Canlıda (deploy edildiğinde) frontend ve backend aynı sunucuda çalışacağından origin'i kullanır.
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? (window.location.port === '3001' ? window.location.origin : 'http://localhost:3001')
+            : (window.location.protocol === 'file:' ? 'http://localhost:3001' : window.location.origin);
 
         // ============================================================
         // SEKME DEĞİŞTİRME (Giriş ↔ Kayıt)
@@ -435,6 +472,10 @@
             const email = document.getElementById('giris-email').value.trim();
             const sifre = document.getElementById('giris-sifre').value;
             const btn = document.getElementById('btn-giris');
+            const unverifiedAlani = document.getElementById('giris-unverified-alani');
+
+            // Her giriş denemesinde eski doğrulama uyarısını gizle
+            unverifiedAlani.classList.add('hidden');
 
             // Boş alan kontrolü
             if (!email || !sifre) {
@@ -468,6 +509,12 @@
                 } else {
                     // Hata mesajını göster
                     toastGoster('hata', 'Giriş Başarısız', veri.hata);
+
+                    // Eğer hesap doğrulanmamışsa, "Yeniden Gönder" uyarı alanını göster
+                    if (veri.unverified) {
+                        unverifiedAlani.classList.remove('hidden');
+                        lucide.createIcons();
+                    }
                 }
             } catch (hata) {
                 toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanılamadı. Sunucu çalışıyor mu?');
@@ -489,13 +536,20 @@
             const firma_adi = document.getElementById('kayit-firma').value.trim();
             const email = document.getElementById('kayit-email').value.trim();
             const sifre = document.getElementById('kayit-sifre').value;
+            const sifreTekrar = document.getElementById('kayit-sifre-tekrar').value;
             const btn = document.getElementById('btn-kayit');
             const beklemeAlani = document.getElementById('bekleme-alani');
             const sayacEl = document.getElementById('sayac');
 
             // Boş alan kontrolü
-            if (!firma_adi || !email || !sifre) {
+            if (!firma_adi || !email || !sifre || !sifreTekrar) {
                 toastGoster('hata', 'Eksik Bilgi', 'Lütfen tüm zorunlu alanları doldurun.');
+                return;
+            }
+
+            // Şifre eşleşme kontrolü
+            if (sifre !== sifreTekrar) {
+                toastGoster('hata', 'Şifre Uyuşmazlığı', 'Girdiğiniz şifreler birbiriyle eşleşmiyor. Lütfen kontrol edin.');
                 return;
             }
 
@@ -537,10 +591,10 @@
                                 if (pollVeri.isVerified) {
                                     clearInterval(pollingInterval);
                                     if (sayacInterval) clearInterval(sayacInterval);
-                                    
+
                                     beklemeAlani.classList.add('hidden');
                                     toastGoster('basarili', 'Doğrulama Başarılı!', 'Hesabınız onaylandı. Girişe yönlendiriliyorsunuz...');
-                                    
+
                                     setTimeout(() => {
                                         sekmeDegistir('giris');
                                         document.getElementById('giris-email').value = email;
@@ -565,13 +619,14 @@
 
                 } else {
                     toastGoster('hata', 'Kayıt Başarısız', veri.hata);
+                    // Hata durumunda butonu eski haline getir
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4"></i> Kayıt Ol';
+                    lucide.createIcons();
                 }
             } catch (hata) {
                 toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanılamadı. Sunucu çalışıyor mu?');
-            }
-
-            if (!yanit.ok) {
-                // Sadece hata durumunda butonu eski haline getir
+                // Hata durumunda butonu eski haline getir
                 btn.disabled = false;
                 btn.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4"></i> Kayıt Ol';
                 lucide.createIcons();
@@ -611,6 +666,74 @@
                 }
             }
         });
+
+        // ============================================================
+        // AKTİVASYON E-POSTASINI YENİDEN GÖNDERME
+        // ============================================================
+        let resendTimerInterval = null;
+
+        async function aktivasyonMailiGonder() {
+            const email = document.getElementById('giris-email').value.trim();
+            const btnResend = document.getElementById('btn-resend');
+            const timerText = document.getElementById('resend-timer-text');
+
+            if (!email) {
+                toastGoster('hata', 'E-posta Gerekli', 'Lütfen giriş kısmındaki e-posta alanını doldurun.');
+                return;
+            }
+
+            // Butonu yükleniyor durumuna al
+            btnResend.disabled = true;
+            btnResend.classList.add('opacity-50', 'cursor-not-allowed');
+            btnResend.innerHTML = '<svg class="animate-spin w-3.5 h-3.5 mr-1 inline-block" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Gönderiliyor...';
+
+            try {
+                const yanit = await fetch(API_URL + '/api/resend-verification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const veri = await yanit.json();
+
+                if (yanit.ok) {
+                    toastGoster('basarili', 'Gönderildi!', veri.mesaj);
+
+                    // Spam koruması: Butonu 60 saniye boyunca devre dışı bırak ve sayaç göster
+                    let kalanSaniye = 60;
+                    timerText.classList.remove('hidden');
+                    timerText.textContent = `Yeniden göndermek için ${kalanSaniye} saniye bekleyin.`;
+
+                    if (resendTimerInterval) clearInterval(resendTimerInterval);
+                    resendTimerInterval = setInterval(() => {
+                        kalanSaniye--;
+                        if (kalanSaniye <= 0) {
+                            clearInterval(resendTimerInterval);
+                            btnResend.disabled = false;
+                            btnResend.classList.remove('opacity-50', 'cursor-not-allowed');
+                            btnResend.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> Aktivasyon E-postasını Yeniden Gönder';
+                            timerText.classList.add('hidden');
+                            lucide.createIcons();
+                        } else {
+                            timerText.textContent = `Yeniden göndermek için ${kalanSaniye} saniye bekleyin.`;
+                        }
+                    }, 1000);
+
+                } else {
+                    toastGoster('hata', 'Gönderim Başarısız', veri.hata);
+                    btnResend.disabled = false;
+                    btnResend.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btnResend.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> Aktivasyon E-postasını Yeniden Gönder';
+                    lucide.createIcons();
+                }
+            } catch (hata) {
+                toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanılamadı. Lütfen sunucunun çalıştığından emin olun.');
+                btnResend.disabled = false;
+                btnResend.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnResend.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> Aktivasyon E-postasını Yeniden Gönder';
+                lucide.createIcons();
+            }
+        }
 
         // Sayfa yüklendiğinde Lucide ikonlarını başlat
         lucide.createIcons();

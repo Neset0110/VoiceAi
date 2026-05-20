@@ -142,10 +142,11 @@
             </div>
             <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
               <!-- Default Fotoğraf: ui-avatars servisi -->
-              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5" alt="Avatar" class="w-full h-full object-cover" />
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5"
+                alt="Avatar" class="w-full h-full object-cover" />
             </div>
           </div>
-          <button class="text-slate-400 hover:text-slate-600">
+          <button id="btn-logout" class="text-slate-400 hover:text-slate-600">
             <i data-lucide="log-out" class="w-5 h-5"></i>
           </button>
         </div>
@@ -176,10 +177,6 @@
               class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg bg-indigo-50 text-indigo-700 font-medium text-sm flex items-center gap-3 transition-colors">
               <i data-lucide="user" class="w-4 h-4"></i> Genel Profil
             </button>
-            <button onclick="switchSettingsTab('api')" id="tab-btn-api"
-              class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
-              <i data-lucide="key" class="w-4 h-4"></i> API Anahtarları
-            </button>
             <button onclick="switchSettingsTab('billing')" id="tab-btn-billing"
               class="settings-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-3 transition-colors">
               <i data-lucide="credit-card" class="w-4 h-4"></i> Billing & Plans
@@ -198,22 +195,6 @@
               <!-- Profile Section -->
               <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
                 <h3 class="text-lg font-semibold text-slate-900 mb-4">Profil Bilgileri</h3>
-                <div class="flex items-center gap-6 mb-6">
-                  <div
-                    class="w-20 h-20 bg-slate-200 rounded-full border border-slate-300 overflow-hidden relative group cursor-pointer">
-                    <img id="settings-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5" alt="Avatar" class="w-full h-full object-cover" />
-                    <div
-                      class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <i data-lucide="camera" class="w-6 h-6 text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <button
-                      class="text-sm text-indigo-600 font-medium border border-indigo-200 px-3 py-1.5 rounded-md hover:bg-indigo-50 transition-colors">Fotoğrafı
-                      Değiştir</button>
-                    <p class="text-xs text-slate-500 mt-2">JPG, GIF veya PNG. Maks boyut 800K</p>
-                  </div>
-                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <!-- Veritabanında "Ad-Soyad" yok, sadece firma adı ve e-posta var, bu yüzden onları yansıtıyoruz -->
                   <div class="md:col-span-2">
@@ -252,69 +233,245 @@
               </div>
             </div>
 
-            <!-- TAB: API KEYS -->
-            <div id="settings-tab-api" class="space-y-6 settings-content hidden">
-              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-slate-900 mb-1">API Kimlik Bilgileri</h3>
-                <p class="text-sm text-slate-500 mb-6">Sesli Ajan SDK'sına erişmek için API anahtarlarınızı yönetin.</p>
 
-                <div class="space-y-4">
-                  <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
-                    <div>
-                      <p class="text-sm font-medium text-slate-900">Prodüksiyon Anahtarı</p>
-                      <p class="text-xs text-slate-500 font-mono mt-1">pk_live_****************23f9</p>
+
+            <!-- TAB: Billing -->
+            <div id="settings-tab-billing" class="space-y-6 settings-content hidden">
+
+              <!-- Planlar Başlık -->
+              <div class="text-center">
+                <h3 class="text-xl font-bold text-slate-900">İşletmenize Uygun Planı Seçin</h3>
+                <p class="text-sm text-slate-500 mt-1">Her plan özel olarak tasarlanmış AI asistanlar içerir.</p>
+              </div>
+
+              <!-- 3 Dikey Plan Kartı -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                <!-- Kart 1: Starter -->
+                <div
+                  class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                  <div>
+                    <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center mb-4">
+                      <i data-lucide="bot" class="w-5 h-5 text-slate-600"></i>
                     </div>
-                    <div class="flex gap-2">
-                      <button
-                        class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-md transition-colors"><i
-                          data-lucide="copy" class="w-4 h-4"></i></button>
-                      <button
-                        class="p-2 text-slate-500 hover:text-red-600 hover:bg-white rounded-md transition-colors"><i
-                          data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <h4 class="text-lg font-bold text-slate-900">Starter</h4>
+                    <p class="text-sm text-slate-500 mt-1 mb-5">Küçük işletmeler için ideal başlangıç paketi.</p>
+                    <div class="mb-5">
+                      <span class="text-3xl font-extrabold text-slate-900">$18</span>
+                      <span class="text-sm text-slate-500"> / ay</span>
                     </div>
+                    <ul class="space-y-2.5 text-sm text-slate-600">
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>
+                        <strong>1</strong> AI Asistan
+                      </li>
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>
+                        Temel çağrı raporları</li>
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>
+                        E-posta desteği</li>
+                    </ul>
                   </div>
-                  <button class="text-sm text-indigo-600 font-medium flex items-center gap-2 hover:text-indigo-800">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Yeni Anahtar Oluştur
+                  <button type="button" id="btn-plan-starter" onclick="planSecildi('Starter', 18)"
+                    class="mt-6 w-full py-2.5 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition-colors">
+                    Planı Seç
+                  </button>
+                </div>
+
+                <!-- Kart 2: Professional (Öne Çıkan) -->
+                <div
+                  class="bg-indigo-600 border-2 border-indigo-600 rounded-xl p-6 shadow-lg flex flex-col justify-between relative">
+                  <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span
+                      class="bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">Popüler</span>
+                  </div>
+                  <div>
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mb-4">
+                      <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-white">Professional</h4>
+                    <p class="text-sm text-indigo-100 mt-1 mb-5">Büyüyen ekipler için güçlü çözüm.</p>
+                    <div class="mb-5">
+                      <span class="text-3xl font-extrabold text-white">$35</span>
+                      <span class="text-sm text-indigo-200"> / ay</span>
+                    </div>
+                    <ul class="space-y-2.5 text-sm text-indigo-100">
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-300"></i>
+                        <strong class="text-white">2</strong> AI Asistan
+                      </li>
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-300"></i>
+                        Gelişmiş analiz paneli</li>
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-300"></i>
+                        Öncelikli destek</li>
+                    </ul>
+                  </div>
+                  <button type="button" id="btn-plan-professional" onclick="planSecildi('Professional', 35)"
+                    class="mt-6 w-full py-2.5 bg-white text-indigo-600 rounded-lg text-sm font-bold hover:bg-indigo-50 transition-colors shadow-sm">
+                    Planı Seç
+                  </button>
+                </div>
+
+                <!-- Kart 3: Enterprise -->
+                <div
+                  class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                  <div>
+                    <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center mb-4">
+                      <i data-lucide="building" class="w-5 h-5 text-slate-600"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-900">Enterprise</h4>
+                    <p class="text-sm text-slate-500 mt-1 mb-5">Kurumsal düzeyde tam ölçekli erişim.</p>
+                    <div class="mb-5">
+                      <span class="text-3xl font-extrabold text-slate-900">$50</span>
+                      <span class="text-sm text-slate-500"> / ay</span>
+                    </div>
+                    <ul class="space-y-2.5 text-sm text-slate-600">
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>
+                        <strong>3</strong> AI Asistan
+                      </li>
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>
+                        API erişimi</li>
+                      <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>
+                        7/24 öncelikli destek</li>
+                    </ul>
+                  </div>
+                  <button type="button" id="btn-plan-enterprise" onclick="planSecildi('Enterprise', 50)"
+                    class="mt-6 w-full py-2.5 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition-colors">
+                    Planı Seç
                   </button>
                 </div>
               </div>
+
+              <!-- AI Asistan Tasarım Formu (Plan seçilince açılır) -->
+                <div id="design-form-section" class="bg-white border border-slate-200 rounded-xl p-8 shadow-sm hidden max-w-2xl mx-auto">
+                  <div class="mb-8 flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div>
+                      <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="bot" class="w-6 h-6 text-indigo-600"></i>
+                        <span id="form-plan-title">AI Asistanınızı Tasarlayın</span>
+                      </h3>
+                      <p class="text-sm text-slate-500 mt-1">İşletmenize özel asistan konfigürasyonu talep edin.</p>
+                    </div>
+                    <div id="step-indicator" class="bg-indigo-50 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-bold border border-indigo-100">
+                      1 / 1
+                    </div>
+                  </div>
+
+                  <form id="form-design-agent" class="space-y-6">
+                    <!-- Seçilen Plan Bilgisi Gizli -->
+                    <input type="hidden" id="selected-plan-name" value="">
+                    <input type="hidden" id="selected-plan-price" value="">
+
+                    <!-- Agent Forms Container -->
+                    <div id="agent-steps-container">
+                      <!-- Ajan 1 (Default Visible) -->
+                      <div id="step-1" class="step-content space-y-5 animate-fade-in">
+                        <div class="flex items-center gap-3 mb-2">
+                          <span class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">1</span>
+                          <h4 class="font-bold text-slate-800 text-lg">1. Ajan Detayları</h4>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ajan Adı</label>
+                          <input type="text" id="agent-1-name" placeholder="Örn: Satış Temsilcisi Ali" required
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ajan Görevi</label>
+                          <input type="text" id="agent-1-role" placeholder="Örn: Gelen aramalara yanıt verip randevu oluşturmak" required
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Teknik Detaylar & İstekler</label>
+                          <textarea id="agent-1-details" rows="4" placeholder="Örn: Samimi bir ses tonu olsun..." required
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"></textarea>
+                        </div>
+                      </div>
+
+                      <!-- Ajan 2 (Initially Hidden) -->
+                      <div id="step-2" class="step-content space-y-5 animate-fade-in hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                          <span class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">2</span>
+                          <h4 class="font-bold text-slate-800 text-lg">2. Ajan Detayları</h4>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ajan Adı</label>
+                          <input type="text" id="agent-2-name" placeholder="Ajan adı..." 
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ajan Görevi</label>
+                          <input type="text" id="agent-2-role" placeholder="Görevi..." 
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Teknik Detaylar & İstekler</label>
+                          <textarea id="agent-2-details" rows="4" placeholder="Detaylar..." 
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></textarea>
+                        </div>
+                      </div>
+
+                      <!-- Ajan 3 (Initially Hidden) -->
+                      <div id="step-3" class="step-content space-y-5 animate-fade-in hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                          <span class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">3</span>
+                          <h4 class="font-bold text-slate-800 text-lg">3. Ajan Detayları</h4>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ajan Adı</label>
+                          <input type="text" id="agent-3-name" placeholder="Ajan adı..." 
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ajan Görevi</label>
+                          <input type="text" id="agent-3-role" placeholder="Görevi..." 
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Teknik Detaylar & İstekler</label>
+                          <textarea id="agent-3-details" rows="4" placeholder="Detaylar..." 
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></textarea>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-4">
+                      <div id="success-message" class="hidden w-full p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-700 text-center animate-fade-in">
+                        <div class="flex items-center justify-center gap-2 font-bold mb-1">
+                          <i data-lucide="check-circle" class="w-5 h-5"></i>
+                          Ödeme Başarılı ve Talebiniz Alındı!
+                        </div>
+                        <p class="text-sm">En kısa sürede tarafınıza bilgi verilecektir.</p>
+                      </div>
+
+                      <div class="flex flex-col w-full gap-4">
+                        <div class="flex items-center justify-between gap-4">
+                          <button type="button" id="btn-prev-step" onclick="prevStep()" class="hidden px-6 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-all flex items-center gap-2">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Önceki Ajan
+                          </button>
+                          
+                          <button type="button" id="btn-next-step" onclick="nextStep()" class="hidden flex-1 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                            Sonraki Ajan <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                          </button>
+                        </div>
+
+                        <button type="submit" id="btn-pay-design" disabled class="w-full px-6 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                          <i data-lucide="credit-card" class="w-5 h-5"></i> 
+                          <span id="btn-pay-text">Ödeme Yap ve Talebi Gönder</span>
+                        </button>
+                        <p id="validation-info" class="text-[11px] text-slate-400 text-center italic">
+                          Tüm ajan bilgilerini doldurduğunuzda buton aktifleşecektir.
+                        </p>
+                      </div>
+                    </div>
+                  </form>
+                </div>
             </div>
 
-            <!-- TAB: Billing (Placeholder) -->
-            <div id="settings-tab-billing" class="space-y-6 settings-content hidden">
+            <!-- TAB: Notifications -->
+            <div id="settings-tab-notifications" class="space-y-6 settings-content hidden">
               <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm text-center py-12">
                 <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <i data-lucide="credit-card" class="w-8 h-8 text-indigo-600"></i>
+                  <i data-lucide="bell" class="w-8 h-8 text-indigo-600"></i>
                 </div>
-                <h3 class="text-lg font-semibold text-slate-900">Faturalandırma Portalı</h3>
-                <p class="text-sm text-slate-500 max-w-xs mx-auto mt-2">Aboneliğinizi yönetin, faturalarınızı
-                  görüntüleyin ve
-                  ödeme yöntemlerinizi güvenle güncelleyin.</p>
-                <button
-                  class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-sm transition-colors">
-                  Müşteri Portalını Aç
-                </button>
-              </div>
-            </div>
-
-            <!-- TAB: Notifications (Placeholder) -->
-            <div id="settings-tab-notifications" class="space-y-6 settings-content hidden">
-              <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-slate-900 mb-4">E-posta Bildirimleri</h3>
-                <div class="space-y-4">
-                  <label
-                    class="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 cursor-pointer">
-                    <span class="text-sm text-slate-700">Haftalık Performans Raporu</span>
-                    <input type="checkbox" checked
-                      class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
-                  </label>
-                  <label
-                    class="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 cursor-pointer">
-                    <span class="text-sm text-slate-700">Yeni Ajan Uyarıları</span>
-                    <input type="checkbox" checked
-                      class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
-                  </label>
-                </div>
+                <h3 class="text-lg font-semibold text-slate-900">Yakında</h3>
+                <p class="text-sm text-slate-500 max-w-xs mx-auto mt-2">Bu özellik yakında kullanıma sunulacaktır.</p>
               </div>
             </div>
 
@@ -386,6 +543,13 @@
   </div>
 
   <script>
+    // ==========================================
+    // BACKEND API ADRESİ (DİNAMİK)
+    // ==========================================
+    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? (window.location.port === '3001' ? window.location.origin : 'http://localhost:3001')
+      : (window.location.protocol === 'file:' ? 'http://localhost:3001' : window.location.origin);
+
     // ==========================================
     // 1. SAHTE VERİLER (MOCK DATA)
     // ==========================================
@@ -714,7 +878,7 @@
     // Kullanıcı bilgilerini yerleştir (Kayıttan gelen gerçek veriler)
     function baslangicVerileriniDoldur() {
       if (!firma) return;
-      
+
       const avatarUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firma.firma_adi) + '&background=e0e7ff&color=4f46e5';
 
       // Header Güncelle
@@ -736,13 +900,275 @@
       if (settingsAvatar) settingsAvatar.src = avatarUrl;
     }
 
+    // ==========================================
+    // MEVCUT PLAN VE YÜKSELTME MANTIĞI (UX)
+    // ==========================================
+    // Kullanıcının sahip olduğu aktif ajan sayısına göre mevcut planını belirler,
+    // yüksek planlar için "Yükselt", mevcut plan için "Mevcut Planınız",
+    // düşük planlar için ise geçersiz kılma görselleştirmesi sunar.
+    async function mevcutPlaniGuncelle() {
+      console.log('🔄 [Billing] mevcutPlaniGuncelle tetiklendi.');
+      const btnStarter = document.getElementById('btn-plan-starter');
+      const btnProfessional = document.getElementById('btn-plan-professional');
+      const btnEnterprise = document.getElementById('btn-plan-enterprise');
+
+      console.log('🔄 [Billing] Elementler:', { btnStarter, btnProfessional, btnEnterprise });
+      console.log('🔄 [Billing] Oturum Açan Firma:', firma);
+
+      if (!btnStarter || !btnProfessional || !btnEnterprise || !firma) {
+        console.warn('⚠️ [Billing] Gerekli butonlar veya firma oturum verisi eksik. Plan güncellenemedi.');
+        return;
+      }
+
+      try {
+        const fetchUrl = API_URL + '/api/vapi/assistants?companyId=' + firma.id;
+        console.log('📡 [Billing] İstek atılan adres:', fetchUrl);
+        const response = await fetch(fetchUrl);
+        console.log('📡 [Billing] API Yanıt Durumu:', response.status, response.ok);
+        
+        if (!response.ok) {
+          console.error('❌ [Billing] Sunucudan başarısız bir yanıt geldi:', response.status);
+          return;
+        }
+
+        const assistants = await response.json();
+        console.log('🤖 [Billing] Gelen Asistanlar:', assistants);
+        const activeAgentCount = assistants.length;
+        console.log('📊 [Billing] Toplam Ajan Sayısı:', activeAgentCount);
+
+        // Ajan sayısına göre mevcut planı belirleme
+        let currentPlan = 'None';
+        if (activeAgentCount === 1) {
+          currentPlan = 'Starter';
+        } else if (activeAgentCount === 2) {
+          currentPlan = 'Professional';
+        } else if (activeAgentCount >= 3) {
+          currentPlan = 'Enterprise';
+        }
+        console.log('⭐️ [Billing] Belirlenen Mevcut Plan:', currentPlan);
+
+        // Eğer henüz ajan eklenmemişse veya atanmış ajan yoksa, hepsi seçilebilir kalır
+        if (currentPlan === 'None') {
+          console.log('ℹ️ [Billing] Henüz aktif asistan bulunmadığından tüm planlar seçilebilir bırakıldı.');
+          return;
+        }
+
+        // 1. STARTER BUTONU GÜNCELLEME
+        if (currentPlan === 'Starter') {
+          btnStarter.disabled = true;
+          btnStarter.className = "mt-6 w-full py-2.5 bg-slate-100 text-slate-400 rounded-lg text-sm font-semibold cursor-not-allowed border border-slate-200 flex items-center justify-center gap-1.5";
+          btnStarter.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Mevcut Planınız';
+        } else {
+          btnStarter.disabled = true;
+          btnStarter.className = "mt-6 w-full py-2.5 bg-slate-50 text-slate-300 rounded-lg text-sm font-semibold cursor-not-allowed border border-slate-100 flex items-center justify-center gap-1.5";
+          btnStarter.innerHTML = '<i data-lucide="lock" class="w-4 h-4 text-slate-300"></i> Düşürülemez';
+        }
+
+        // 2. PROFESSIONAL BUTONU GÜNCELLEME
+        if (currentPlan === 'Starter') {
+          btnProfessional.disabled = false;
+          btnProfessional.className = "mt-6 w-full py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white rounded-lg text-sm font-bold transition-colors shadow-sm flex items-center justify-center gap-1.5 cursor-pointer";
+          btnProfessional.innerHTML = '<i data-lucide="arrow-up-circle" class="w-4 h-4 text-white"></i> Planı Yükselt';
+          btnProfessional.setAttribute('onclick', "planSecildi('Professional', 35)");
+        } else if (currentPlan === 'Professional') {
+          btnProfessional.disabled = true;
+          btnProfessional.className = "mt-6 w-full py-2.5 bg-indigo-700/80 text-indigo-100 rounded-lg text-sm font-bold cursor-not-allowed shadow-sm flex items-center justify-center gap-1.5 border border-indigo-500";
+          btnProfessional.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-amber-300"></i> Mevcut Planınız';
+        } else {
+          btnProfessional.disabled = true;
+          btnProfessional.className = "mt-6 w-full py-2.5 bg-slate-50 text-slate-300 rounded-lg text-sm font-semibold cursor-not-allowed border border-slate-100 flex items-center justify-center gap-1.5";
+          btnProfessional.innerHTML = '<i data-lucide="lock" class="w-4 h-4 text-slate-300"></i> Düşürülemez';
+        }
+
+        // 3. ENTERPRISE BUTONU GÜNCELLEME
+        if (currentPlan === 'Starter' || currentPlan === 'Professional') {
+          btnEnterprise.disabled = false;
+          btnEnterprise.className = "mt-6 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm cursor-pointer";
+          btnEnterprise.innerHTML = '<i data-lucide="arrow-up-circle" class="w-4 h-4 text-white"></i> Planı Yükselt';
+          btnEnterprise.setAttribute('onclick', "planSecildi('Enterprise', 50)");
+        } else if (currentPlan === 'Enterprise') {
+          btnEnterprise.disabled = true;
+          btnEnterprise.className = "mt-6 w-full py-2.5 bg-slate-100 text-slate-400 rounded-lg text-sm font-semibold cursor-not-allowed border border-slate-200 flex items-center justify-center gap-1.5";
+          btnEnterprise.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Mevcut Planınız';
+        }
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('❌ [Billing] Planlar güncellenirken beklenmedik hata:', err);
+      }
+    }
+
     baslangicVerileriniDoldur();
+    mevcutPlaniGuncelle();
 
     // Çıkış Yap Butonu İşlevi
-    document.querySelector('button i[data-lucide="log-out"]').parentElement.addEventListener('click', () => {
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+      btnLogout.addEventListener('click', () => {
         localStorage.removeItem('firma');
         window.location.href = 'login.html';
-    });
+      });
+    }
+
+    // --- Plan Seçimi ve Mock Ödeme Modülü ---
+    const formDesignSection = document.getElementById('design-form-section');
+    const formDesignAgent = document.getElementById('form-design-agent');
+    const btnPayDesign = document.getElementById('btn-pay-design');
+    const btnPayText = document.getElementById('btn-pay-text');
+    const formPlanTitle = document.getElementById('form-plan-title');
+    const inputPlanName = document.getElementById('selected-plan-name');
+    const inputPlanPrice = document.getElementById('selected-plan-price');
+
+    // --- Plan Seçimi ve Çoklu Adım Form Yönetimi ---
+    const stepIndicator = document.getElementById('step-indicator');
+    const btnNextStep = document.getElementById('btn-next-step');
+    const btnPrevStep = document.getElementById('btn-prev-step');
+
+    let currentStep = 1;
+    let totalSteps = 1;
+
+    // Dikey kartlardan "Planı Seç" dendiğinde çalışan fonksiyon
+    function planSecildi(planIsmi, fiyat) {
+      if (formDesignSection) formDesignSection.classList.remove('hidden');
+      if (formPlanTitle) formPlanTitle.textContent = planIsmi + ' Asistanınızı Tasarlayın';
+      if (inputPlanName) inputPlanName.value = planIsmi;
+      if (inputPlanPrice) inputPlanPrice.value = fiyat;
+
+      // Plan tipine göre adım sayısını belirle
+      if (planIsmi === 'Starter') totalSteps = 1;
+      else if (planIsmi === 'Professional') totalSteps = 2;
+      else if (planIsmi === 'Enterprise') totalSteps = 3;
+
+      currentStep = 1;
+      updateStepUI();
+      formDesignSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateStepUI() {
+      document.querySelectorAll('.step-content').forEach(step => step.classList.add('hidden'));
+      const currentStepEl = document.getElementById(`step-${currentStep}`);
+      if (currentStepEl) currentStepEl.classList.remove('hidden');
+      if (stepIndicator) stepIndicator.textContent = `${currentStep} / ${totalSteps}`;
+
+      // Gezinme butonlarını her zaman göster/gizle (validasyon olmadan)
+      if (btnPrevStep) {
+        if (currentStep > 1) btnPrevStep.classList.remove('hidden');
+        else btnPrevStep.classList.add('hidden');
+      }
+
+      if (btnNextStep) {
+        if (currentStep < totalSteps) btnNextStep.classList.remove('hidden');
+        else btnNextStep.classList.add('hidden');
+      }
+
+      // Gönder butonu her zaman görünür, sadece metni ve aktiflik durumu güncellenir
+      const fiyat = inputPlanPrice ? inputPlanPrice.value : '0';
+      if (btnPayText) btnPayText.textContent = `Ödeme Yap ve Talebi Gönder ($${fiyat})`;
+      
+      checkFormValidity();
+      lucide.createIcons();
+    }
+
+    // Formun genel geçerliliğini kontrol eden fonksiyon
+    function checkFormValidity() {
+      if (!btnPayDesign) return;
+      
+      let allValid = true;
+      for (let i = 1; i <= totalSteps; i++) {
+        const inputs = document.getElementById(`step-${i}`).querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+          if (input.hasAttribute('required') && !input.value.trim()) {
+            allValid = false;
+          }
+        });
+      }
+
+      btnPayDesign.disabled = !allValid;
+      const validationInfo = document.getElementById('validation-info');
+      if (validationInfo) {
+        if (allValid) validationInfo.classList.add('hidden');
+        else validationInfo.classList.remove('hidden');
+      }
+    }
+
+    // Input değişikliklerini dinle
+    if (formDesignAgent) {
+      formDesignAgent.addEventListener('input', checkFormValidity);
+    }
+
+    window.nextStep = function() {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        updateStepUI();
+      }
+    };
+
+    window.prevStep = function() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStepUI();
+      }
+    };
+
+    if (formDesignAgent && btnPayDesign) { // Real logic below
+      formDesignAgent.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Butonu işleniyor moduna al
+        const originalText = btnPayDesign.innerHTML;
+        btnPayDesign.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Gönderiliyor...';
+        btnPayDesign.disabled = true;
+        lucide.createIcons();
+
+        const agents = [];
+        for (let i = 1; i <= totalSteps; i++) {
+          agents.push({
+            name: document.getElementById(`agent-${i}-name`).value,
+            role: document.getElementById(`agent-${i}-role`).value,
+            details: document.getElementById(`agent-${i}-details`).value
+          });
+        }
+
+        const requestData = {
+          firma_adi: firma.firma_adi,
+          email: firma.email || 'Bilinmiyor',
+          plan_name: inputPlanName ? inputPlanName.value : 'Yeni Plan',
+          plan_price: inputPlanPrice ? inputPlanPrice.value : '0',
+          agents: agents
+        };
+
+        try {
+          const response = await fetch(API_URL + '/api/support/request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestData)
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            const successMessage = document.getElementById('success-message');
+            if (successMessage) successMessage.classList.remove('hidden');
+            formDesignAgent.reset();
+            setTimeout(() => {
+              if (formDesignSection) formDesignSection.classList.add('hidden');
+              if (successMessage) successMessage.classList.add('hidden');
+            }, 6000);
+          } else {
+            alert(`❌ Hata: ${result.hata || 'Talep gönderilirken bir hata oluştu.'}`);
+          }
+        } catch (error) {
+          console.error('Talep gönderme hatası:', error);
+          alert('❌ Sunucuya bağlanılamadı. Lütfen sunucunun çalışıp çalışmadığını kontrol edin.');
+        } finally {
+          btnPayDesign.innerHTML = originalText;
+          btnPayDesign.disabled = false;
+          lucide.createIcons();
+        }
+      });
+    }
 
     // Sayfadaki ikonları (kalem, çöp kutusu vs.) yükle
     if (typeof lucide !== 'undefined') {

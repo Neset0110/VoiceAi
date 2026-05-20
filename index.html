@@ -141,10 +141,11 @@
               <p class="text-xs text-slate-500">İşletme Sahibi</p>
             </div>
             <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
-              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5" alt="Avatar" class="w-full h-full object-cover" />
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5"
+                alt="Avatar" class="w-full h-full object-cover" />
             </div>
           </div>
-          <button class="text-slate-400 hover:text-slate-600">
+          <button id="btn-logout" class="text-slate-400 hover:text-slate-600">
             <i data-lucide="log-out" class="w-5 h-5"></i>
           </button>
         </div>
@@ -173,15 +174,15 @@
         </div>
 
         <!-- KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Total Calls -->
+        <div id="kpi-kartlari" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Toplam Arama -->
           <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
             <div>
-              <p class="text-sm font-medium text-slate-500">Bugünkü Toplam Arama</p>
-              <h3 class="text-3xl font-bold text-slate-900 mt-2">124</h3>
-              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
-                <i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>
-                <span>+12% düne göre</span>
+              <p class="text-sm font-medium text-slate-500">Toplam Arama</p>
+              <h3 id="kpi-toplam" class="text-3xl font-bold text-slate-900 mt-2">0</h3>
+              <div class="flex items-center mt-2 text-slate-400 text-sm font-medium">
+                <i data-lucide="phone-incoming" class="w-4 h-4 mr-1"></i>
+                <span>Tüm çağrılar</span>
               </div>
             </div>
             <div class="p-3 bg-indigo-50 rounded-lg">
@@ -189,14 +190,14 @@
             </div>
           </div>
 
-          <!-- Avg Duration -->
+          <!-- Ort. Süre -->
           <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
             <div>
               <p class="text-sm font-medium text-slate-500">Ort. Süre</p>
-              <h3 class="text-3xl font-bold text-slate-900 mt-2">2m 45s</h3>
-              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
-                <i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>
-                <span>Hedef aralığında (2-4dk)</span>
+              <h3 id="kpi-sure" class="text-3xl font-bold text-slate-900 mt-2">0m 0s</h3>
+              <div class="flex items-center mt-2 text-slate-400 text-sm font-medium">
+                <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                <span>Ortalama çağrı süresi</span>
               </div>
             </div>
             <div class="p-3 bg-indigo-50 rounded-lg">
@@ -204,14 +205,14 @@
             </div>
           </div>
 
-          <!-- Success Rate -->
+          <!-- Başarı Oranı -->
           <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
             <div>
               <p class="text-sm font-medium text-slate-500">Başarı Oranı</p>
-              <h3 class="text-3xl font-bold text-slate-900 mt-2">92.4%</h3>
-              <div class="flex items-center mt-2 text-emerald-600 text-sm font-medium">
-                <i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>
-                <span>+2.1% bu hafta</span>
+              <h3 id="kpi-basari" class="text-3xl font-bold text-slate-900 mt-2">0.0%</h3>
+              <div class="flex items-center mt-2 text-slate-400 text-sm font-medium">
+                <i data-lucide="target" class="w-4 h-4 mr-1"></i>
+                <span>Randevu oluşturma oranı</span>
               </div>
             </div>
             <div class="p-3 bg-indigo-50 rounded-lg">
@@ -220,17 +221,41 @@
           </div>
         </div>
 
+        <!-- Dynamic Profile Table (Randevular / Siparişler) -->
+        <div id="dynamic-profile-table-container"
+          class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hidden">
+          <div class="px-6 py-4 border-b border-slate-100">
+            <h2 id="dynamic-table-title" class="text-lg font-semibold text-slate-800">İşlemler</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead id="dynamic-table-head" class="bg-indigo-50 text-xs uppercase text-indigo-700 font-semibold">
+                <!-- Dynamically generated -->
+              </thead>
+              <tbody id="dynamic-table-body" class="divide-y divide-slate-100">
+                <!-- Dynamically generated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- Main Content Area -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mt-8">
 
           <!-- Table Header / Toolbar -->
           <div
             class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 class="text-lg font-semibold text-slate-800">Son Aramalar</h2>
-            <div class="relative">
-              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-              <input type="text" id="search-input" placeholder="Telefona göre ara..."
-                class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full sm:w-64" />
+            <h2 class="text-lg font-semibold text-slate-800">Tüm Çağrı Kayıtları</h2>
+            <div class="flex items-center gap-3">
+              <button id="btn-sync" onclick="vApiSenkronize()" title="Vapi'den kaçırılan çağrıları çek"
+                class="flex items-center justify-center p-2 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors">
+                <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i>
+              </button>
+              <div class="relative">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input type="text" id="search-input" placeholder="Telefona göre ara..."
+                  class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full sm:w-64" />
+              </div>
             </div>
           </div>
 
@@ -239,10 +264,10 @@
             <table class="w-full text-left">
               <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold">
                 <tr>
-                  <th class="px-6 py-4">Durum</th>
                   <th class="px-6 py-4">Müşteri Telefonu</th>
                   <th class="px-6 py-4">Saat</th>
                   <th class="px-6 py-4">Süre</th>
+                  <th class="px-6 py-4">Çıkarılan Veriler (Hata Ayıklama)</th>
                   <th class="px-6 py-4 text-right">İşlemler</th>
                 </tr>
               </thead>
@@ -280,29 +305,30 @@
       <!-- Scrollable Content -->
       <div class="overflow-y-auto p-6 space-y-6 transcript-scroll">
 
-        <!-- Audio Player Placeholder -->
-        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
-          <div class="flex items-center gap-4">
-            <button
-              class="w-10 h-10 flex items-center justify-center bg-indigo-600 rounded-full text-white hover:bg-indigo-700 shadow-md transition-colors">
-              <i data-lucide="play" class="w-5 h-5 ml-1"></i>
-            </button>
-            <div class="flex-1">
-              <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                <div class="h-full w-1/3 bg-indigo-500 rounded-full"></div>
-              </div>
-              <div class="flex justify-between mt-1.5 text-xs text-slate-500 font-medium">
-                <span>0:45</span>
-                <span id="modal-duration-display"></span>
-              </div>
+        <!-- Ses Kaydı Oynatıcı -->
+        <div id="modal-audio-container" class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="p-2 bg-indigo-100 rounded-lg">
+              <i data-lucide="volume-2" class="w-4 h-4 text-indigo-600"></i>
             </div>
+            <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Ses Kaydı</span>
+            <span id="modal-duration-display" class="ml-auto text-xs text-slate-500 font-mono"></span>
           </div>
+          <audio id="modal-audio-player" controls class="w-full h-10 rounded-lg" style="outline: none;">
+            Tarayıcınız ses oynatmayı desteklemiyor.
+          </audio>
         </div>
 
         <!-- AI Summary -->
         <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-4">
           <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2">Yapay Zeka Özeti</h4>
           <p id="modal-summary" class="text-sm text-slate-700 leading-relaxed"></p>
+        </div>
+
+        <!-- Extracted Data -->
+        <div id="modal-extracted-container" class="bg-emerald-50/50 border border-emerald-100 rounded-lg p-4 hidden">
+          <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-2">Alınan Veriler</h4>
+          <div id="modal-extracted-data" class="text-sm text-slate-700 leading-relaxed space-y-2"></div>
         </div>
 
         <!-- Transcript -->
@@ -319,92 +345,121 @@
 
   <script>
     // ==========================================
-    // 1. SAHTE VERİLER (MOCK DATA)
+    // 1. GERÇEK VERİLER (API'DEN ÇEKİLİR)
     // ==========================================
-    // Bu kısım, henüz veritabanı (Backend) tam bağlanmadığı için arayüzde 
-    // test amaçlı gösterdiğimiz geçici verilerdir. 
-    // Daha sonra bu veriler Node.js üzerinden (Express ile) MySQL'den çekilecek.
-    const MOCK_CALLS = [
-      {
-        id: "101",
-        customerPhone: "+90 555 123 4567",
-        status: "devam_ediyor",
-        startTime: "14:30",
-        duration: "02:15",
-        summary: "Abonelik yenileme hakkında devam eden görüşme.",
-        transcript: [
-          { role: "ai", text: "Merhaba, Vapi Çözümlerinden arıyorum. Bugün size nasıl yardımcı olabilirim?" },
-          { role: "user", text: "Merhaba, aboneliğimi erken yenileyebilir miyim diye sormak istedim." },
-          { role: "ai", text: "Tabii ki. Bu konuda size yardımcı olabilirim. Aynı planı devam ettirmek ister misiniz?" }
-        ]
-      },
-      {
-        id: "102",
-        customerPhone: "+1 202 555 0199",
-        status: "basarili",
-        startTime: "13:45",
-        duration: "04:12",
-        summary: "Müşteri gelecek Salı için demo randevusu planladı.",
-        transcript: [
-          { role: "ai", text: "Merhaba! Vapi'yi aradığınız için teşekkürler. Size nasıl yardımcı olabilirim?" },
-          { role: "user", text: "CRM entegrasyonunuz için bir demo rezervasyonu yapmak istiyorum." },
-          { role: "ai", text: "Harika seçim. Bunu planlayabilirim. Salı günü saat 14:00 sizin için uygun mu?" },
-          { role: "user", text: "Evet, mükemmel olur." },
-          { role: "ai", text: "Onaylandı. Kısa süre içinde bir e-posta alacaksınız. Hoşça kalın!" }
-        ]
-      },
-      {
-        id: "103",
-        customerPhone: "+44 7700 900077",
-        status: "basarisiz",
-        startTime: "12:15",
-        duration: "01:30",
-        summary: "Karmaşık faturalandırma anlaşmazlığı çözülemedi.",
-        transcript: [
-          { role: "ai", text: "Merhaba, Vapi Destek hattı." },
-          { role: "user", text: "#99283 numaralı faturamın üzerinde mükerrer ücret var." },
-          { role: "ai", text: "Faturayı görüyorum. İşlem geçmişini kontrol edeyim." },
-          { role: "user", text: "Bu gerçekten sinir bozucu, bunu hemen çözmeniz gerekiyor." },
-          { role: "ai", text: "Anlıyorum. Maalesef bu sorunu şu anda çözemedim. Lütfen daha sonra tekrar arayın." }
-        ]
-      },
-      {
-        id: "104",
-        customerPhone: "+90 532 999 8877",
-        status: "basarili",
-        startTime: "11:00",
-        duration: "02:45",
-        summary: "Müşteri çalışma saatleri ve konum hakkında bilgi sordu.",
-        transcript: [
-          { role: "ai", text: "Merhaba, size nasıl yardımcı olabilirim?" },
-          { role: "user", text: "Pazar günleri açık mısınız?" },
-          { role: "ai", text: "Evet, Pazar günleri saat 10:00'dan 16:00'ya kadar açığız." },
-          { role: "user", text: "Harika, teşekkürler!" }
-        ]
-      },
-      {
-        id: "105",
-        customerPhone: "+1 415 555 2233",
-        status: "basarili",
-        startTime: "10:20",
-        duration: "03:10",
-        summary: "API fiyatlandırma kademeleri hakkında bilgi talebi.",
-        transcript: [
-          { role: "ai", text: "Vapi'ye hoş geldiniz. Aramanızı nasıl yönlendirebilirim?" },
-          { role: "user", text: "Kurumsal planın fiyatı ne kadar?" },
-          { role: "ai", text: "Kurumsal fiyatlandırma hacme göre özelleştirilir. Bir satış temsilcisinin sizinle iletişime geçmesini ister misiniz?" }
-        ]
-      }
-    ];
+    // Bu dizi, backend'den gelen çağrı kayıtlarını tutar.
+    let tumCagrilar = [];
+
+    // Dinamik API adresi: Yerelde Live Server veya dosya protokolu ile çalışırken localhost:3001'e gider.
+    // Canlıda (deploy edildiğinde) frontend ve backend aynı sunucuda çalışacağından origin'i kullanır.
+    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? (window.location.port === '3001' ? window.location.origin : 'http://localhost:3001')
+      : (window.location.protocol === 'file:' ? 'http://localhost:3001' : window.location.origin);
 
     // ==========================================
-    // 2. SAYFA (SEKME) DEĞİŞTİRME MANTIĞI
+    // 2. BACKEND'DEN VERİ ÇEKME FONKSİYONU
     // ==========================================
-    // Bu fonksiyon, sol veya üst menüdeki butonlara tıklandığında
-    // HTML'deki diğer sayfaları gizleyip sadece istenen sayfayı görünür yapar.
-    // Bu sayede sayfa yenilenmeden (Single Page Application hissiyle) geçiş sağlanır.
+    // /api/aramalar endpoint'ine GET isteği atar.
+    // Dönen verileri tabloya yazar.
+    async function verileriCek() {
+      try {
+        const yanit = await fetch(API_URL + '/api/aramalar?companyId=' + firma.id);
+        if (!yanit.ok) throw new Error('API hatası');
+
+        const veriler = await yanit.json();
+
+        tumCagrilar = veriler.map(v => ({
+          id: String(v.vapi_call_id || ''),
+          assistantId: v.assistant_id || '',
+          extractedData: v.extracted_data ? (typeof v.extracted_data === 'string' ? JSON.parse(v.extracted_data) : v.extracted_data) : null,
+          customerPhone: v.telefon_numarasi || 'Bilinmiyor',
+          customerName: v.musteri_adi || '',
+          status: v.cagri_durumu || 'basarili',
+          startTime: v.baslangic_zamani ? new Date(v.baslangic_zamani).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '-',
+          duration: hesaplaSure(v.baslangic_zamani, v.bitis_zamani),
+          summary: v.summary || 'Özet bulunmuyor.',
+          transcript: v.cagri_metni || 'Görüşme metni bulunmuyor.',
+          cost: v.cost_total || 0,
+          endedReason: v.ended_reason || '',
+          recordingUrl: v.ses_kaydi_url || null
+        }));
+
+        renderTable(tumCagrilar);
+        renderDynamicTable(tumCagrilar);
+        istatistikleriGuncelle(tumCagrilar);
+        console.log(`✅ ${tumCagrilar.length} çağrı kaydı yüklendi.`);
+
+      } catch (hata) {
+        console.log('⚠️ Veriler çekilemedi:', hata.message);
+        // Hata durumunda tabloyu boş bırak
+        if (tableBody) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-12 text-center text-slate-400">
+                <i data-lucide="phone-off" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                <p class="text-sm">Henüz çağrı kaydı bulunmuyor.</p>
+                <p class="text-xs mt-1">Asistanınız bir çağrı aldığında burada görünecek.</p>
+              </td>
+            </tr>`;
+          lucide.createIcons();
+        }
+      }
+    }
+
+    // Süre hesaplama: başlangıç ve bitiş zamanından "02:45" formatında süre üret
+    function hesaplaSure(baslangic, bitis) {
+      if (!baslangic || !bitis) return '--:--';
+      const fark = new Date(bitis) - new Date(baslangic);
+      if (fark <= 0) return '--:--';
+      const dakika = Math.floor(fark / 60000);
+      const saniye = Math.floor((fark % 60000) / 1000);
+      return `${String(dakika).padStart(2, '0')}:${String(saniye).padStart(2, '0')}`;
+    }
+
+    // KPI kartlarını güncelle (toplam arama, ort. süre, başarı oranı)
+    function istatistikleriGuncelle(cagrilar) {
+      // Toplam arama sayısı
+      const toplamEl = document.getElementById('kpi-toplam');
+      if (toplamEl) toplamEl.textContent = cagrilar.length;
+
+      // Başarı oranı hesapla
+      // Kaç çağrıda randevu oluşturuldu? (durumu "basarili" olanlar)
+      let basariliSayisi = 0;
+      for (let i = 0; i < cagrilar.length; i++) {
+        if (cagrilar[i].status === 'basarili') {
+          basariliSayisi++;
+        }
+      }
+
+      // Yüzde hesapla: başarılı sayısı / toplam × 100
+      // Örnek: 6 başarılı / 10 toplam × 100 = %60
+      let basariOrani = 0;
+      if (cagrilar.length > 0) {
+        basariOrani = (basariliSayisi / cagrilar.length) * 100;
+      }
+
+      // KPI kartına yaz (virgülden sonra 1 basamak: 60.0%)
+      const basariEl = document.getElementById('kpi-basari');
+      if (basariEl) basariEl.textContent = basariOrani.toFixed(1) + '%';
+
+      // Ortalama süre
+      const sureEl = document.getElementById('kpi-sure');
+      if (sureEl) {
+        const sureler = cagrilar.map(c => {
+          const parcalar = c.duration.split(':');
+          return (parseInt(parcalar[0]) || 0) * 60 + (parseInt(parcalar[1]) || 0);
+        }).filter(s => s > 0);
+        const ortSaniye = sureler.length > 0 ? Math.round(sureler.reduce((a, b) => a + b, 0) / sureler.length) : 0;
+        const ortDk = Math.floor(ortSaniye / 60);
+        const ortSn = ortSaniye % 60;
+        sureEl.textContent = `${ortDk}m ${ortSn}s`;
+      }
+    }
+
+    // ==========================================
+    // 3. SAYFA (SEKME) DEĞİŞTİRME MANTIĞI
+    // ==========================================
     function switchView(viewName) {
-      // Views
       const views = ['dashboard', 'agents', 'settings'];
       views.forEach(v => {
         const el = document.getElementById('view-' + v);
@@ -415,7 +470,6 @@
         }
       });
 
-      // Nav Buttons
       const navs = ['nav-dashboard', 'nav-agents', 'nav-settings'];
       const activeClass = "text-indigo-600 bg-indigo-50".split(" ");
       const inactiveClass = "text-slate-600 hover:text-indigo-600 hover:bg-slate-50".split(" ");
@@ -424,38 +478,26 @@
         const btn = document.getElementById(n);
         if (navs.includes(n) && btn) {
           if (n === 'nav-' + viewName) {
-            // Make Active
             btn.classList.remove(...inactiveClass);
             btn.classList.add(...activeClass);
           } else {
-            // Make Inactive
             btn.classList.remove(...activeClass);
             btn.classList.add(...inactiveClass);
           }
         }
       });
-
-      // Re-render icons just in case
       setTimeout(() => lucide.createIcons(), 50);
     }
 
-    // --- Settings Tab Switching ---
     function switchSettingsTab(tabName) {
-      // Hide all tab contents
       const contents = document.querySelectorAll('.settings-content');
       contents.forEach(c => c.classList.add('hidden'));
-
-      // Show selected tab
       const tabEl = document.getElementById('settings-tab-' + tabName);
-      if (tabEl) {
-        tabEl.classList.remove('hidden');
-      }
+      if (tabEl) tabEl.classList.remove('hidden');
 
-      // Update button styles
       const buttons = document.querySelectorAll('.settings-tab-btn');
       const activeClass = "bg-indigo-50 text-indigo-700".split(" ");
       const inactiveClass = "text-slate-600 hover:bg-slate-50".split(" ");
-
       buttons.forEach(btn => {
         if (btn.id === 'tab-btn-' + tabName) {
           btn.classList.remove(...inactiveClass);
@@ -465,93 +507,283 @@
           btn.classList.add(...inactiveClass);
         }
       });
-
       setTimeout(() => lucide.createIcons(), 50);
     }
 
-    // --- Helper Functions ---
+    // --- Durum Rozeti ---
     function getStatusBadgeHTML(status) {
       switch (status) {
         case 'devam_ediyor':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        <span class="relative flex h-2 w-2 mr-1.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        Devam Ediyor
-                    </span>`;
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    <span class="relative flex h-2 w-2 mr-1.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>Devam Ediyor</span>`;
         case 'basarili':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        <i data-lucide="check-circle-2" class="w-3 h-3 mr-1.5 inline"></i>
-                        Başarılı
-                    </span>`;
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                    <i data-lucide="check-circle-2" class="w-3 h-3 mr-1.5 inline"></i>Başarılı</span>`;
         case 'basarisiz':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-                        <i data-lucide="x-circle" class="w-3 h-3 mr-1.5 inline"></i>
-                        Başarısız
-                    </span>`;
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
+                    <i data-lucide="x-circle" class="w-3 h-3 mr-1.5 inline"></i>Başarısız</span>`;
         case 'iptal':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                        <i data-lucide="ban" class="w-3 h-3 mr-1.5 inline"></i>
-                        İptal
-                    </span>`;
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                    <i data-lucide="ban" class="w-3 h-3 mr-1.5 inline"></i>İptal</span>`;
         default:
           return '';
       }
     }
 
     // ==========================================
-    // 3. TABLO DOLDURMA (RENDER) FONKSİYONU
+    // 4. TABLO DOLDURMA (RENDER) FONKSİYONU
     // ==========================================
-    // Veritabanından veya yukarıdaki sahte verilerden gelen çağrı listesini alıp,
-    // HTML'deki <tbody> etiketinin içine satır satır (<tr>) yazar.
+    // Veritabanından gelen çağrı listesini tabloya yazar.
     const tableBody = document.getElementById('calls-table-body');
     const searchInput = document.getElementById('search-input');
 
     function renderTable(calls) {
       if (!tableBody) return;
-      tableBody.innerHTML = ''; // Önceki satırları temizle
+      tableBody.innerHTML = '';
 
-      // Her bir çağrı için yeni bir Tablo Satırı (tr) oluştururuz
+      if (calls.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-slate-400">
+              <i data-lucide="phone-off" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+              <p class="text-sm">Henüz çağrı kaydı bulunmuyor.</p>
+            </td>
+          </tr>`;
+        lucide.createIcons();
+        return;
+      }
+
       calls.forEach(call => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50/50 transition-colors group";
         tr.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        ${getStatusBadgeHTML(call.status)}
-                    </td>
-                    <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
-                        ${call.customerPhone}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
-                        ${call.startTime}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap font-mono">
-                        ${call.duration}
-                    </td>
-                    <td class="px-6 py-4 text-right whitespace-nowrap">
-                        <button 
-                            onclick="openModal('${call.id}')"
-                            class="text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-md transition-colors"
-                        >
-                            İncele
-                        </button>
-                    </td>
-                `;
+          <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
+            ${call.customerPhone}
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
+            ${call.startTime}
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap font-mono">
+            ${call.duration}
+          </td>
+          <td class="px-6 py-4 text-xs text-slate-400 max-w-xs truncate" title='${JSON.stringify(call.extractedData)}'>
+            ${call.extractedData ? JSON.stringify(call.extractedData) : 'Veri Çıkarılmadı (Null)'}
+          </td>
+          <td class="px-6 py-4 text-right whitespace-nowrap">
+            <button 
+              onclick="openModal('${call.id}')"
+              class="text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-md transition-colors"
+            >İncele</button>
+          </td>`;
         tableBody.appendChild(tr);
       });
-      lucide.createIcons(); // İkonları yeni eklenen HTML satırlarında da çalıştırır
+      lucide.createIcons();
     }
 
     // ==========================================
-    // 4. KÜÇÜK PENCERE (MODAL) YÖNETİMİ
+    // 4.4a TEK TIKLA KOPYALAMA YARDIMCISI (UX)
     // ==========================================
-    // Tablodaki "İncele" butonuna basınca açılan, çağrının detaylarını
-    // (özet, ses kaydı metni vb.) gösteren açılır pencere (Modal) kodları.
+    function kopyalaMetin(metin, btn) {
+      navigator.clipboard.writeText(metin).then(() => {
+        // İkon ve buton durumunu kopyalandı olarak güncelle
+        const icon = btn.querySelector('i');
+        btn.classList.remove('text-slate-400', 'hover:text-indigo-600');
+        btn.classList.add('text-emerald-600', 'bg-emerald-50', 'border-emerald-200');
+        btn.title = "Kopyalandı!";
+        icon.setAttribute('data-lucide', 'check');
+        lucide.createIcons();
+
+        // 2 saniye sonra eski haline geri getir
+        setTimeout(() => {
+          btn.classList.add('text-slate-400', 'hover:text-indigo-600');
+          btn.classList.remove('text-emerald-600', 'bg-emerald-50', 'border-emerald-200');
+          btn.title = "Adresi Kopyala";
+          icon.setAttribute('data-lucide', 'copy');
+          lucide.createIcons();
+        }, 2000);
+      }).catch(err => {
+        console.error('Kopyalama hatası:', err);
+      });
+    }
+
+    // ==========================================
+    // 4.5 DİNAMİK PROFİL TABLOSU RENDER
+    // ==========================================
+    function renderDynamicTable(calls) {
+      const container = document.getElementById('dynamic-profile-table-container');
+      const title = document.getElementById('dynamic-table-title');
+      const thead = document.getElementById('dynamic-table-head');
+      const tbody = document.getElementById('dynamic-table-body');
+
+      if (!calls) return;
+
+      // SADECE durumu başarılı olan ve yapılandırılmış veriye sahip olan çağrıları listele (Mantıksal Düzeltme)
+      const dataCalls = calls.filter(c => c.status === 'basarili' && c.extractedData && Object.keys(c.extractedData).length > 0);
+
+      // Verilerin içinde randevu/tarih ile ilgili anahtarlar varsa clinic, sipariş varsa food diyelim
+      let clinicCount = 0;
+      let foodCount = 0;
+
+      dataCalls.forEach(c => {
+        const d = c.extractedData;
+        if (d.randevu_tarihi || d.sikayet || d.bolum || d.date || d.time || d.appointment) clinicCount++;
+        if (d.siparis_ozeti || d.adres || d.order || d.address) foodCount++;
+      });
+
+      let tableType = null;
+      let relevantCalls = dataCalls;
+
+      if (clinicCount >= foodCount) {
+        tableType = 'clinic';
+        title.innerHTML = '<i data-lucide="calendar" class="w-5 h-5 inline mr-2 text-indigo-600"></i> Yaklaşan Randevular';
+        thead.innerHTML = `
+          <tr>
+            <th class="px-6 py-4">Müşteri</th>
+            <th class="px-6 py-4">Tarih / Saat</th>
+            <th class="px-6 py-4">Detaylar</th>
+            <th class="px-6 py-4">Arama Zamanı</th>
+          </tr>
+        `;
+      } else {
+        tableType = 'food';
+        title.innerHTML = '<i data-lucide="shopping-bag" class="w-5 h-5 inline mr-2 text-indigo-600"></i> Aktif Siparişler';
+        thead.innerHTML = `
+          <tr>
+            <th class="px-6 py-4">Müşteri</th>
+            <th class="px-6 py-4">Sipariş Özeti</th>
+            <th class="px-6 py-4">Teslimat Adresi</th>
+            <th class="px-6 py-4">Sipariş Zamanı</th>
+          </tr>
+        `;
+      }
+
+      container.classList.remove('hidden');
+      tbody.innerHTML = '';
+
+      if (relevantCalls.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="px-6 py-12 text-center text-slate-400 bg-slate-50/30">
+              <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50 text-indigo-400"></i>
+              <p class="text-sm font-medium text-slate-600">Aktif İşlem Bulunmuyor</p>
+              <p class="text-xs mt-1 text-slate-400">Yapay zeka asistanınız başarılı bir görüşme tamamladığında veriler otomatik olarak buraya yansıyacaktır.</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        // Anahtarları büyük/küçük harf bağımsız aramak için yardımcı fonksiyon
+        const findValue = (obj, keywords) => {
+          for (const key of Object.keys(obj)) {
+            const lowerKey = key.toLowerCase();
+            if (keywords.some(kw => lowerKey.includes(kw))) {
+              return obj[key];
+            }
+          }
+          return null;
+        };
+
+        relevantCalls.forEach(call => {
+          const data = call.extractedData || {};
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50/50 transition-colors group cursor-pointer";
+          tr.onclick = () => openModal(call.id);
+
+          const musteriDegeri = findValue(data, ['isim', 'ad', 'name', 'musteri', 'customer']) || call.customerName || call.customerPhone;
+          const tarihDegeri = findValue(data, ['tarih', 'saat', 'zaman', 'date', 'time', 'appointment', 'gun', 'gün']);
+          const detayDegeri = findValue(data, ['sikayet', 'neden', 'bolum', 'sebep', 'reason', 'department', 'detay', 'detail']) || Object.values(data).join(', ');
+          const siparisDegeri = findValue(data, ['siparis', 'order', 'items', 'yemek', 'urun', 'sepet']);
+          const adresDegeri = findValue(data, ['adres', 'address', 'konum', 'location']);
+
+          if (tableType === 'clinic') {
+            tr.innerHTML = `
+            <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-slate-100/80 flex items-center justify-center text-slate-500">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-slate-800 font-semibold">${musteriDegeri}</span>
+                  <span class="text-xs text-slate-400 font-mono font-normal">${call.customerPhone}</span>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap">
+              ${tarihDegeri 
+                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 font-semibold text-xs shadow-sm">
+                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-500"></i>
+                     ${tarihDegeri}
+                   </span>`
+                : `<span class="text-slate-400 italic text-xs">Belirtilmedi</span>`
+              }
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i>
+                <span class="truncate max-w-[200px]" title="${detayDegeri}">${detayDegeri ? detayDegeri : '-'}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-400 font-medium whitespace-nowrap">
+              <div class="flex items-center gap-1">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-300"></i>
+                <span>${call.startTime}</span>
+              </div>
+            </td>
+          `;
+          } else {
+            tr.innerHTML = `
+            <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-slate-100/80 flex items-center justify-center text-slate-500">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-slate-800 font-semibold">${musteriDegeri}</span>
+                  <span class="text-xs text-slate-400 font-mono font-normal">${call.customerPhone}</span>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm">
+              ${siparisDegeri 
+                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 font-semibold text-xs shadow-sm">
+                     <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-emerald-500"></i>
+                     ${siparisDegeri}
+                   </span>`
+                : `<span class="text-slate-400 italic text-xs">Belirtilmedi</span>`
+              }
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 max-w-xs">
+              ${adresDegeri 
+                ? `<div class="flex items-center justify-between gap-2 bg-slate-50 border border-slate-100 rounded-lg p-1.5 pl-2.5">
+                     <span class="truncate text-xs text-slate-600 flex-1">${adresDegeri}</span>
+                     <button onclick="event.stopPropagation(); kopyalaMetin('${adresDegeri.replace(/'/g, "\\'")}', this)" title="Adresi Kopyala" class="p-1 text-slate-400 hover:text-indigo-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-md transition-all shadow-sm flex items-center justify-center">
+                       <i data-lucide="copy" class="w-3 h-3"></i>
+                     </button>
+                   </div>`
+                : `<span class="text-slate-400 italic text-xs">Belirtilmedi</span>`
+              }
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-400 font-medium whitespace-nowrap">
+              <div class="flex items-center gap-1">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-300"></i>
+                <span>${call.startTime}</span>
+              </div>
+            </td>
+          `;
+          }
+          tbody.appendChild(tr);
+        });
+      }
+
+      lucide.createIcons();
+    }
+
+    // ==========================================
+    // 5. KÜÇÜK PENCERE (MODAL) YÖNETİMİ
+    // ==========================================
+    // "İncele" butonuna basınca çağrı detaylarını gösterir.
     const modal = document.getElementById('call-modal');
     const modalPhone = document.getElementById('modal-phone');
     const modalBadge = document.getElementById('modal-status-badge');
@@ -562,42 +794,64 @@
     const modalCloseBtn = document.getElementById('modal-close-btn');
 
     function openModal(callId) {
-      const call = MOCK_CALLS.find(c => c.id === callId);
-      if (!call) return;
+      // Gerçek verilerden çağrıyı bul (tip uyumsuzluğunu önlemek için string'e çevir)
+      const call = tumCagrilar.find(c => String(c.id) === String(callId));
+      if (!call) { console.log('❌ Çağrı bulunamadı, id:', callId); return; }
 
-      // Populate Data
+      // Verileri doldur
       modalPhone.textContent = call.customerPhone;
       modalBadge.innerHTML = getStatusBadgeHTML(call.status);
       modalMeta.textContent = `${call.startTime} • Süre: ${call.duration}`;
       modalSummary.textContent = call.summary;
       modalDuration.textContent = call.duration;
 
-      // Render Transcript
-      modalTranscript.innerHTML = '';
-      call.transcript.forEach(msg => {
-        const isAi = msg.role === 'ai';
-        const div = document.createElement('div');
-        div.className = `flex ${isAi ? 'justify-start' : 'justify-end'}`;
-        div.innerHTML = `
-                  <div class="flex max-w-[80%] gap-3 ${!isAi ? 'flex-row-reverse' : ''}">
-                    <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${isAi ? 'bg-slate-100 text-slate-600' : 'bg-indigo-100 text-indigo-600'}">
-                       <i data-lucide="${isAi ? 'bot' : 'user'}" class="w-4 h-4"></i>
-                    </div>
-                    <div class="p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${isAi ? 'bg-white border border-slate-200 text-slate-700 rounded-tl-none' : 'bg-indigo-600 text-white rounded-tr-none'}">
-                      ${msg.text}
-                    </div>
-                  </div>
-                `;
-        modalTranscript.appendChild(div);
-      });
+      // Ses Kaydını Bağla
+      const audioPlayer = document.getElementById('modal-audio-player');
+      const audioContainer = document.getElementById('modal-audio-container');
+      if (call.recordingUrl) {
+        audioPlayer.src = call.recordingUrl;
+        audioContainer.classList.remove('hidden');
+      } else {
+        audioPlayer.src = '';
+        audioContainer.classList.add('hidden');
+      }
 
-      // Show Modal
+      // Alınan Veriler (Extracted Data)
+      const extractedContainer = document.getElementById('modal-extracted-container');
+      const extractedDataEl = document.getElementById('modal-extracted-data');
+      if (call.extractedData && Object.keys(call.extractedData).length > 0) {
+        extractedDataEl.innerHTML = '';
+        for (const [key, value] of Object.entries(call.extractedData)) {
+          const div = document.createElement('div');
+          div.innerHTML = `<span class="font-medium text-slate-900 capitalize">${key.replace(/_/g, ' ')}:</span> ${value}`;
+          extractedDataEl.appendChild(div);
+        }
+        extractedContainer.classList.remove('hidden');
+      } else {
+        extractedContainer.classList.add('hidden');
+      }
+
+      // Görüşme Metnini Göster
+      modalTranscript.innerHTML = '';
+
+      if (typeof call.transcript === 'string' && call.transcript.length > 0) {
+        // Vapi'den gelen metin formatı: düz metin olarak göster
+        const div = document.createElement('div');
+        div.className = 'p-4 bg-slate-50 rounded-lg text-sm text-slate-700 leading-relaxed whitespace-pre-wrap';
+        div.textContent = call.transcript;
+        modalTranscript.appendChild(div);
+      } else {
+        const div = document.createElement('div');
+        div.className = 'text-sm text-slate-400 text-center py-4';
+        div.textContent = 'Görüşme metni bulunmuyor.';
+        modalTranscript.appendChild(div);
+      }
+
+      // Modalı göster
       if (modal) {
         modal.classList.remove('modal-hidden');
         modal.classList.add('modal-visible');
       }
-
-      // Re-init icons inside modal
       lucide.createIcons();
     }
 
@@ -612,24 +866,19 @@
       modalCloseBtn.addEventListener('click', closeModal);
     }
 
-    // Close on background click
     if (modal) {
       modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          closeModal();
-        }
+        if (e.target === modal) closeModal();
       });
     }
 
     // ==========================================
-    // 5. ARAMA MANTIĞI (FİLTRELEME)
+    // 6. ARAMA MANTIĞI (FİLTRELEME)
     // ==========================================
-    // Tablonun üstündeki arama kutusuna yazı yazıldığında,
-    // numaralar arasında o yazıyı içerenleri bulup tabloyu anında günceller.
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
-        const filtered = MOCK_CALLS.filter(call =>
+        const filtered = tumCagrilar.filter(call =>
           call.customerPhone.toLowerCase().includes(term)
         );
         renderTable(filtered);
@@ -637,10 +886,52 @@
     }
 
     // ==========================================
-    // 6. SAYFA İLK AÇILDIĞINDA ÇALIŞACAK KODLAR
+    // 7. SAYFA İLK AÇILDIĞINDA ÇALIŞACAK KODLAR
     // ==========================================
-    if (tableBody) {
-      renderTable(MOCK_CALLS); // Tabloyu ilk verilerle doldur
+    // Sayfa açılınca verileri çek
+    verileriCek();
+
+    // Her 30 saniyede bir otomatik güncelle (yeni çağrı gelmiş mi kontrol et)
+    setInterval(verileriCek, 30000);
+
+    // ==========================================
+    // 8. VAPİ SENKRONİZASYON FONKSİYONU
+    // ==========================================
+    // "Senkronize Et" butonuna basınca Vapi API'sinden
+    // kaçırılan çağrıları çekip veritabanına ekler.
+    async function vApiSenkronize() {
+      const btn = document.getElementById('btn-sync');
+      const syncIcon = document.getElementById('sync-icon');
+
+      // Butonu devre dışı bırak, ikonu döndür
+      btn.disabled = true;
+      if (!document.querySelector('#spin-style')) {
+        const style = document.createElement('style');
+        style.id = 'spin-style';
+        style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+        document.head.appendChild(style);
+      }
+      syncIcon.style.animation = 'spin 1s linear infinite';
+
+      try {
+        const yanit = await fetch(API_URL + '/api/vapi/sync?companyId=' + firma.id, { method: 'POST' });
+        const veri = await yanit.json();
+
+        if (yanit.ok) {
+          console.log('✅ Senkronizasyon:', veri.mesaj);
+          await verileriCek();
+        } else {
+          console.log('❌ Senkronizasyon hatası:', veri.hata);
+        }
+      } catch (hata) {
+        console.log('❌ Senkronizasyon bağlantı hatası:', hata.message);
+      }
+
+      // Butonu sıfırla
+      setTimeout(() => {
+        btn.disabled = false;
+        syncIcon.style.animation = '';
+      }, 1500);
     }
 
     // Kullanıcı bilgilerini Header'a yerleştir
@@ -649,20 +940,21 @@
       const avatarUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firma.firma_adi) + '&background=e0e7ff&color=4f46e5';
       const headerIsim = document.getElementById('header-isim');
       const headerAvatar = document.getElementById('header-avatar');
-      
       if (headerIsim) headerIsim.textContent = firma.firma_adi;
       if (headerAvatar) headerAvatar.src = avatarUrl;
     }
 
     headerVerileriniDoldur();
 
-    // Çıkış Yap Butonu İşlevi
-    document.querySelector('button i[data-lucide="log-out"]').parentElement.addEventListener('click', () => {
+    // Çıkış Yap Butonu
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+      btnLogout.addEventListener('click', () => {
         localStorage.removeItem('firma');
         window.location.href = 'login.html';
-    });
+      });
+    }
 
-    // Sayfadaki ikonları (kalem, çöp kutusu vs.) yükle
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
     }

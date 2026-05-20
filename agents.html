@@ -36,19 +36,6 @@
       background-color: #f8fafc;
     }
 
-    .transcript-scroll::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .transcript-scroll::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-
-    .transcript-scroll::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
-      border-radius: 20px;
-    }
-
     /* Animation */
     .animate-fade-in {
       animation: fadeIn 0.3s ease-in-out;
@@ -65,27 +52,7 @@
         transform: translateY(0);
       }
     }
-
-    /* Modal Transition Classes */
-    .modal-hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .modal-visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
   </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react/": "https://esm.sh/react@^19.2.3/"
-  }
-}
-</script>
   <script>
     // Oturum Kontrolü (Giriş yapılmamışsa login'e yönlendir)
     const firmaDataStr = localStorage.getItem('firma');
@@ -141,10 +108,11 @@
               <p class="text-xs text-slate-500">İşletme Sahibi</p>
             </div>
             <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
-              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5" alt="Avatar" class="w-full h-full object-cover" />
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5"
+                alt="Avatar" class="w-full h-full object-cover" />
             </div>
           </div>
-          <button class="text-slate-400 hover:text-slate-600">
+          <button id="btn-logout" class="text-slate-400 hover:text-slate-600">
             <i data-lucide="log-out" class="w-5 h-5"></i>
           </button>
         </div>
@@ -155,7 +123,7 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
       <!-- ==================== VIEW: AGENTS ==================== -->
-      <div id="view-agents" class=" space-y-8 animate-fade-in">
+      <div id="view-agents" class="space-y-8 animate-fade-in">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -164,545 +132,156 @@
               ayarlayın.
             </p>
           </div>
-          <button
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            Yeni Ajan Oluştur
+          <button onclick="asistanBagla()"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold shadow-sm hover:bg-indigo-700 transition flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Asistan Bağla
           </button>
         </div>
 
-        <!-- Agents Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-          <!-- Agent Card 1 -->
-          <div
-            class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
+        <!-- Agents Grid (Vapi API'den dinamik doldurulur) -->
+        <div id="agents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Yükleniyor Skeleton -->
+          <div class="skeleton-card bg-white border border-slate-200 rounded-xl p-6 shadow-sm animate-pulse">
             <div class="flex justify-between items-start mb-4">
-              <div class="p-3 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
-                <i data-lucide="headset" class="w-6 h-6 text-indigo-600"></i>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">Aktif</span>
-              </div>
+              <div class="w-12 h-12 bg-slate-200 rounded-lg"></div>
+              <div class="w-16 h-6 bg-slate-200 rounded-full"></div>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Müşteri Desteği</h3>
-            <p class="text-sm text-slate-500 mt-1">Gelen aramalar için genel soruları ve SSS'leri yanıtlar.</p>
-
-            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i>
-                  Ses</span>
-                <span class="font-medium text-slate-700">Sarah (Neural)</span>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i>
-                  Model</span>
-                <span class="font-medium text-slate-700">GPT-4o</span>
-              </div>
-            </div>
-
-            <div class="mt-6 flex gap-3">
-              <button onclick="alert('Playing voice sample...')"
-                class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
-                <i data-lucide="play" class="w-3 h-3"></i> Test Et
-              </button>
-              <button
-                class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
+            <div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-slate-100 rounded w-full"></div>
+            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg">
+              <div class="h-4 bg-slate-200 rounded w-full"></div>
+              <div class="h-4 bg-slate-200 rounded w-full"></div>
             </div>
           </div>
-
-          <!-- Agent Card 2 -->
           <div
-            class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
+            class="skeleton-card bg-white border border-slate-200 rounded-xl p-6 shadow-sm animate-pulse hidden md:block">
             <div class="flex justify-between items-start mb-4">
-              <div class="p-3 bg-amber-50 rounded-lg group-hover:bg-amber-100 transition-colors">
-                <i data-lucide="megaphone" class="w-6 h-6 text-amber-600"></i>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">Duraklatıldı</span>
-              </div>
+              <div class="w-12 h-12 bg-slate-200 rounded-lg"></div>
+              <div class="w-16 h-6 bg-slate-200 rounded-full"></div>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Satış Araması</h3>
-            <p class="text-sm text-slate-500 mt-1">Potansiyel müşteri değerlendirmesi için giden arama ajanı.</p>
-
-            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i>
-                  Ses</span>
-                <span class="font-medium text-slate-700">Marcus (Deep)</span>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i>
-                  Model</span>
-                <span class="font-medium text-slate-700">Claude 3.5</span>
-              </div>
-            </div>
-
-            <div class="mt-6 flex gap-3">
-              <button onclick="alert('Playing voice sample...')"
-                class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
-                <i data-lucide="play" class="w-3 h-3"></i> Test Et
-              </button>
-              <button
-                class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
+            <div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-slate-100 rounded w-full"></div>
+            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg">
+              <div class="h-4 bg-slate-200 rounded w-full"></div>
+              <div class="h-4 bg-slate-200 rounded w-full"></div>
             </div>
           </div>
-
-          <!-- Agent Card 3 -->
-          <div
-            class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-            <div class="flex justify-between items-start mb-4">
-              <div class="p-3 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
-                <i data-lucide="calendar" class="w-6 h-6 text-purple-600"></i>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">Aktif</span>
-              </div>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900">Randevu Planlayıcı</h3>
-            <p class="text-sm text-slate-500 mt-1">Takvim rezervasyonlarını ve yeniden planlamayı yönetir.</p>
-
-            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i>
-                  Ses</span>
-                <span class="font-medium text-slate-700">Emily (Soft)</span>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i>
-                  Model</span>
-                <span class="font-medium text-slate-700">GPT-4o Mini</span>
-              </div>
-            </div>
-
-            <div class="mt-6 flex gap-3">
-              <button onclick="alert('Playing voice sample...')"
-                class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
-                <i data-lucide="play" class="w-3 h-3"></i> Test Et
-              </button>
-              <button
-                class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
-            </div>
-          </div>
-
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- Modal (Hidden by default) -->
-  <div id="call-modal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 modal-hidden">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+  <script>
+    // Dinamik API adresi: Yerelde Live Server veya dosya protokolu ile çalışırken localhost:3001'e gider.
+    // Canlıda (deploy edildiğinde) frontend ve backend aynı sunucuda çalışacağından origin'i kullanır.
+    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? (window.location.port === '3001' ? window.location.origin : 'http://localhost:3001')
+      : (window.location.protocol === 'file:' ? 'http://localhost:3001' : window.location.origin);
 
-      <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-        <div>
-          <div class="flex items-center gap-3 mb-1">
-            <h3 id="modal-phone" class="text-lg font-semibold text-slate-800"></h3>
-            <div id="modal-status-badge"></div>
-          </div>
-          <p id="modal-meta" class="text-sm text-slate-500"></p>
-        </div>
-        <button id="modal-close-btn"
-          class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
+    // Vapi asistanlarını backend'den çek ve kartlara doldur
+    async function ajanlariYukle() {
+      const grid = document.getElementById('agents-grid');
+      try {
+        const yanit = await fetch(API_URL + '/api/vapi/assistants?companyId=' + firma.id);
+        const veri = await yanit.json();
 
-      <!-- Scrollable Content -->
-      <div class="overflow-y-auto p-6 space-y-6 transcript-scroll">
+        grid.innerHTML = '';
 
-        <!-- Audio Player Placeholder -->
-        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
-          <div class="flex items-center gap-4">
-            <button
-              class="w-10 h-10 flex items-center justify-center bg-indigo-600 rounded-full text-white hover:bg-indigo-700 shadow-md transition-colors">
-              <i data-lucide="play" class="w-5 h-5 ml-1"></i>
-            </button>
-            <div class="flex-1">
-              <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                <div class="h-full w-1/3 bg-indigo-500 rounded-full"></div>
+        veri.forEach(a => {
+          const isim = a.name || 'İsimsiz Ajan';
+          const model = a.model?.model || '-';
+          const ses = a.voice?.voiceId || a.voice?.voice || '-';
+          const aciklama = a.firstMessage ? a.firstMessage.substring(0, 80) + '...' : '';
+
+          grid.innerHTML += `
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group animate-fade-in">
+              <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                  <i data-lucide="headset" class="w-6 h-6 text-indigo-600"></i>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">Aktif</span>
+                </div>
               </div>
-              <div class="flex justify-between mt-1.5 text-xs text-slate-500 font-medium">
-                <span>0:45</span>
-                <span id="modal-duration-display"></span>
+              <h3 class="text-lg font-bold text-slate-900">${isim}</h3>
+              <p class="text-sm text-slate-500 mt-1">${aciklama}</p>
+
+              <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i> Ses</span>
+                  <span class="font-medium text-slate-700">${ses}</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i> Model</span>
+                  <span class="font-medium text-slate-700">${model}</span>
+                </div>
+              </div>
+
+              <div class="mt-6 flex gap-3">
+                <button onclick="alert('Yakında')"
+                  class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
+                  <i data-lucide="play" class="w-3 h-3"></i> Test Et
+                </button>
+                <button onclick="alert('Yakında')"
+                  class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- AI Summary -->
-        <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-4">
-          <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2">Yapay Zeka Özeti</h4>
-          <p id="modal-summary" class="text-sm text-slate-700 leading-relaxed"></p>
-        </div>
-
-        <!-- Transcript -->
-        <div>
-          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
-            Döküm</h4>
-          <div id="modal-transcript" class="space-y-4">
-            <!-- Chat bubbles go here -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // ==========================================
-    // 1. SAHTE VERİLER (MOCK DATA)
-    // ==========================================
-    // Bu kısım, henüz veritabanı (Backend) tam bağlanmadığı için arayüzde 
-    // test amaçlı gösterdiğimiz geçici verilerdir. 
-    // Daha sonra bu veriler Node.js üzerinden (Express ile) MySQL'den çekilecek.
-    const MOCK_CALLS = [
-      {
-        id: "101",
-        customerPhone: "+90 555 123 4567",
-        status: "devam_ediyor",
-        startTime: "14:30",
-        duration: "02:15",
-        summary: "Abonelik yenileme hakkında devam eden görüşme.",
-        transcript: [
-          { role: "ai", text: "Merhaba, Vapi Çözümlerinden arıyorum. Bugün size nasıl yardımcı olabilirim?" },
-          { role: "user", text: "Merhaba, aboneliğimi erken yenileyebilir miyim diye sormak istedim." },
-          { role: "ai", text: "Tabii ki. Bu konuda size yardımcı olabilirim. Aynı planı devam ettirmek ister misiniz?" }
-        ]
-      },
-      {
-        id: "102",
-        customerPhone: "+1 202 555 0199",
-        status: "basarili",
-        startTime: "13:45",
-        duration: "04:12",
-        summary: "Müşteri gelecek Salı için demo randevusu planladı.",
-        transcript: [
-          { role: "ai", text: "Merhaba! Vapi'yi aradığınız için teşekkürler. Size nasıl yardımcı olabilirim?" },
-          { role: "user", text: "CRM entegrasyonunuz için bir demo rezervasyonu yapmak istiyorum." },
-          { role: "ai", text: "Harika seçim. Bunu planlayabilirim. Salı günü saat 14:00 sizin için uygun mu?" },
-          { role: "user", text: "Evet, mükemmel olur." },
-          { role: "ai", text: "Onaylandı. Kısa süre içinde bir e-posta alacaksınız. Hoşça kalın!" }
-        ]
-      },
-      {
-        id: "103",
-        customerPhone: "+44 7700 900077",
-        status: "basarisiz",
-        startTime: "12:15",
-        duration: "01:30",
-        summary: "Karmaşık faturalandırma anlaşmazlığı çözülemedi.",
-        transcript: [
-          { role: "ai", text: "Merhaba, Vapi Destek hattı." },
-          { role: "user", text: "#99283 numaralı faturamın üzerinde mükerrer ücret var." },
-          { role: "ai", text: "Faturayı görüyorum. İşlem geçmişini kontrol edeyim." },
-          { role: "user", text: "Bu gerçekten sinir bozucu, bunu hemen çözmeniz gerekiyor." },
-          { role: "ai", text: "Anlıyorum. Maalesef bu sorunu şu anda çözemedim. Lütfen daha sonra tekrar arayın." }
-        ]
-      },
-      {
-        id: "104",
-        customerPhone: "+90 532 999 8877",
-        status: "basarili",
-        startTime: "11:00",
-        duration: "02:45",
-        summary: "Müşteri çalışma saatleri ve konum hakkında bilgi sordu.",
-        transcript: [
-          { role: "ai", text: "Merhaba, size nasıl yardımcı olabilirim?" },
-          { role: "user", text: "Pazar günleri açık mısınız?" },
-          { role: "ai", text: "Evet, Pazar günleri saat 10:00'dan 16:00'ya kadar açığız." },
-          { role: "user", text: "Harika, teşekkürler!" }
-        ]
-      },
-      {
-        id: "105",
-        customerPhone: "+1 415 555 2233",
-        status: "basarili",
-        startTime: "10:20",
-        duration: "03:10",
-        summary: "API fiyatlandırma kademeleri hakkında bilgi talebi.",
-        transcript: [
-          { role: "ai", text: "Vapi'ye hoş geldiniz. Aramanızı nasıl yönlendirebilirim?" },
-          { role: "user", text: "Kurumsal planın fiyatı ne kadar?" },
-          { role: "ai", text: "Kurumsal fiyatlandırma hacme göre özelleştirilir. Bir satış temsilcisinin sizinle iletişime geçmesini ister misiniz?" }
-        ]
-      }
-    ];
-
-    // ==========================================
-    // 2. SAYFA (SEKME) DEĞİŞTİRME MANTIĞI
-    // ==========================================
-    // Bu fonksiyon, sol veya üst menüdeki butonlara tıklandığında
-    // HTML'deki diğer sayfaları gizleyip sadece istenen sayfayı görünür yapar.
-    // Bu sayede sayfa yenilenmeden (Single Page Application hissiyle) geçiş sağlanır.
-    function switchView(viewName) {
-      // Views
-      const views = ['dashboard', 'agents', 'settings'];
-      views.forEach(v => {
-        const el = document.getElementById('view-' + v);
-        if (v === viewName) {
-          el.classList.remove('hidden');
-        } else {
-          el.classList.add('hidden');
-        }
-      });
-
-      // Nav Buttons
-      const navs = ['nav-dashboard', 'nav-agents', 'nav-settings'];
-      const activeClass = "text-indigo-600 bg-indigo-50".split(" ");
-      const inactiveClass = "text-slate-600 hover:text-indigo-600 hover:bg-slate-50".split(" ");
-
-      navs.forEach(n => {
-        const btn = document.getElementById(n);
-        if (navs.includes(n) && btn) {
-        if (n === 'nav-' + viewName) {
-          // Make Active
-          btn.classList.remove(...inactiveClass);
-          btn.classList.add(...activeClass);
-        } else {
-          // Make Inactive
-          btn.classList.remove(...activeClass);
-          btn.classList.add(...inactiveClass);
-        }
-        }
-      });
-
-      // Re-render icons just in case
-      setTimeout(() => lucide.createIcons(), 50);
-    }
-
-    // --- Settings Tab Switching ---
-    function switchSettingsTab(tabName) {
-      // Hide all tab contents
-      const contents = document.querySelectorAll('.settings-content');
-      contents.forEach(c => c.classList.add('hidden'));
-
-      // Show selected tab
-      const tabEl = document.getElementById('settings-tab-' + tabName);
-      if (tabEl) {
-          tabEl.classList.remove('hidden');
-      }
-
-      // Update button styles
-      const buttons = document.querySelectorAll('.settings-tab-btn');
-      const activeClass = "bg-indigo-50 text-indigo-700".split(" ");
-      const inactiveClass = "text-slate-600 hover:bg-slate-50".split(" ");
-
-      buttons.forEach(btn => {
-        if (btn.id === 'tab-btn-' + tabName) {
-          btn.classList.remove(...inactiveClass);
-          btn.classList.add(...activeClass);
-        } else {
-          btn.classList.remove(...activeClass);
-          btn.classList.add(...inactiveClass);
-        }
-      });
-
-      setTimeout(() => lucide.createIcons(), 50);
-    }
-
-    // --- Helper Functions ---
-    function getStatusBadgeHTML(status) {
-      switch (status) {
-        case 'devam_ediyor':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        <span class="relative flex h-2 w-2 mr-1.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        Devam Ediyor
-                    </span>`;
-        case 'basarili':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        <i data-lucide="check-circle-2" class="w-3 h-3 mr-1.5 inline"></i>
-                        Başarılı
-                    </span>`;
-        case 'basarisiz':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-                        <i data-lucide="x-circle" class="w-3 h-3 mr-1.5 inline"></i>
-                        Başarısız
-                    </span>`;
-        case 'iptal':
-          return `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                        <i data-lucide="ban" class="w-3 h-3 mr-1.5 inline"></i>
-                        İptal
-                    </span>`;
-        default:
-          return '';
-      }
-    }
-
-    // ==========================================
-    // 3. TABLO DOLDURMA (RENDER) FONKSİYONU
-    // ==========================================
-    // Veritabanından veya yukarıdaki sahte verilerden gelen çağrı listesini alıp,
-    // HTML'deki <tbody> etiketinin içine satır satır (<tr>) yazar.
-    const tableBody = document.getElementById('calls-table-body');
-    const searchInput = document.getElementById('search-input');
-
-    function renderTable(calls) {
-      if (!tableBody) return;
-      tableBody.innerHTML = ''; // Önceki satırları temizle
-
-      // Her bir çağrı için yeni bir Tablo Satırı (tr) oluştururuz
-      calls.forEach(call => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50/50 transition-colors group";
-        tr.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        ${getStatusBadgeHTML(call.status)}
-                    </td>
-                    <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
-                        ${call.customerPhone}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
-                        ${call.startTime}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap font-mono">
-                        ${call.duration}
-                    </td>
-                    <td class="px-6 py-4 text-right whitespace-nowrap">
-                        <button 
-                            onclick="openModal('${call.id}')"
-                            class="text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-md transition-colors"
-                        >
-                            İncele
-                        </button>
-                    </td>
-                `;
-        tableBody.appendChild(tr);
-      });
-      lucide.createIcons(); // İkonları yeni eklenen HTML satırlarında da çalıştırır
-    }
-
-    // ==========================================
-    // 4. KÜÇÜK PENCERE (MODAL) YÖNETİMİ
-    // ==========================================
-    // Tablodaki "İncele" butonuna basınca açılan, çağrının detaylarını
-    // (özet, ses kaydı metni vb.) gösteren açılır pencere (Modal) kodları.
-    const modal = document.getElementById('call-modal');
-    const modalPhone = document.getElementById('modal-phone');
-    const modalBadge = document.getElementById('modal-status-badge');
-    const modalMeta = document.getElementById('modal-meta');
-    const modalSummary = document.getElementById('modal-summary');
-    const modalTranscript = document.getElementById('modal-transcript');
-    const modalDuration = document.getElementById('modal-duration-display');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
-
-    function openModal(callId) {
-      const call = MOCK_CALLS.find(c => c.id === callId);
-      if (!call) return;
-
-      // Populate Data
-      modalPhone.textContent = call.customerPhone;
-      modalBadge.innerHTML = getStatusBadgeHTML(call.status);
-      modalMeta.textContent = `${call.startTime} • Süre: ${call.duration}`;
-      modalSummary.textContent = call.summary;
-      modalDuration.textContent = call.duration;
-
-      // Render Transcript
-      modalTranscript.innerHTML = '';
-      call.transcript.forEach(msg => {
-        const isAi = msg.role === 'ai';
-        const div = document.createElement('div');
-        div.className = `flex ${isAi ? 'justify-start' : 'justify-end'}`;
-        div.innerHTML = `
-                  <div class="flex max-w-[80%] gap-3 ${!isAi ? 'flex-row-reverse' : ''}">
-                    <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${isAi ? 'bg-slate-100 text-slate-600' : 'bg-indigo-100 text-indigo-600'}">
-                       <i data-lucide="${isAi ? 'bot' : 'user'}" class="w-4 h-4"></i>
-                    </div>
-                    <div class="p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${isAi ? 'bg-white border border-slate-200 text-slate-700 rounded-tl-none' : 'bg-indigo-600 text-white rounded-tr-none'}">
-                      ${msg.text}
-                    </div>
-                  </div>
-                `;
-        modalTranscript.appendChild(div);
-      });
-
-      // Show Modal
-      if (modal) {
-        modal.classList.remove('modal-hidden');
-        modal.classList.add('modal-visible');
-      }
-
-      // Re-init icons inside modal
-      lucide.createIcons();
-    }
-
-    function closeModal() {
-      if (modal) {
-        modal.classList.remove('modal-visible');
-        modal.classList.add('modal-hidden');
-      }
-    }
-
-    if (modalCloseBtn) {
-        modalCloseBtn.addEventListener('click', closeModal);
-    }
-
-    // Close on background click
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
+          `;
         });
+        lucide.createIcons();
+      } catch (e) {
+        grid.innerHTML = '<p class="text-red-500 text-sm p-4">Sunucuya bağlanılamadı.</p>';
+      }
     }
 
-    // ==========================================
-    // 5. ARAMA MANTIĞI (FİLTRELEME)
-    // ==========================================
-    // Tablonun üstündeki arama kutusuna yazı yazıldığında,
-    // numaralar arasında o yazıyı içerenleri bulup tabloyu anında günceller.
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = MOCK_CALLS.filter(call =>
-            call.customerPhone.toLowerCase().includes(term)
-        );
-        renderTable(filtered);
+    // Ajan Bağlama Fonksiyonu
+    async function asistanBagla() {
+      const assistantId = prompt("Lütfen Vapi'den aldığınız Asistan ID'sini giriniz (örn: f3c3...):");
+      if (!assistantId) return;
+
+      try {
+        const yanit = await fetch(API_URL + '/api/agents/assign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyId: firma.id, assistantId: assistantId.trim() })
         });
+        const veri = await yanit.json();
+
+        if (yanit.ok) {
+          alert("Başarılı: " + veri.mesaj);
+          ajanlariYukle(); // Listeyi yenile
+        } else {
+          alert("Hata: " + veri.hata);
+        }
+      } catch (e) {
+        alert("Sunucuya bağlanırken hata oluştu.");
+      }
     }
 
-    // ==========================================
-    // 6. SAYFA İLK AÇILDIĞINDA ÇALIŞACAK KODLAR
-    // ==========================================
-    if (tableBody) {
-        renderTable(MOCK_CALLS); // Tabloyu ilk verilerle doldur
-    }
-    
     // Kullanıcı bilgilerini Header'a yerleştir
     function headerVerileriniDoldur() {
       if (!firma) return;
       const avatarUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firma.firma_adi) + '&background=e0e7ff&color=4f46e5';
       const headerIsim = document.getElementById('header-isim');
       const headerAvatar = document.getElementById('header-avatar');
-      
+
       if (headerIsim) headerIsim.textContent = firma.firma_adi;
       if (headerAvatar) headerAvatar.src = avatarUrl;
     }
 
     headerVerileriniDoldur();
 
-    // Çıkış Yap Butonu İşlevi
-    document.querySelector('button i[data-lucide="log-out"]').parentElement.addEventListener('click', () => {
-        localStorage.removeItem('firma');
-        window.location.href = 'login.html';
+    // Çıkış Yap
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      localStorage.removeItem('firma');
+      window.location.href = 'login.html';
     });
 
-    // Sayfadaki ikonları (kalem, çöp kutusu vs.) yükle
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();    
-    }
+    // İkonları başlat ve asistanları yükle
+    lucide.createIcons();
+    ajanlariYukle();
   </script>
 </body>
+
 </html>
