@@ -100,11 +100,17 @@ const GMAIL_KULLANICI = process.env.GMAIL_USER;
 const GMAIL_UYGULAMA_SIFRESI = process.env.GMAIL_APP_PASSWORD;
 
 // Nodemailer transporter (e-posta gönderici) oluştur
+// Port 587 (STARTTLS) bulut sunucularında (Render) port 465'e göre çok daha kararlı ve engelsiz çalışır.
 const transporter = nodemailer.createTransport({
-    service: 'gmail',           // Gmail SMTP servisini kullan
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // STARTTLS için false olmalı
     auth: {
-        user: GMAIL_KULLANICI,           // Gmail adresiniz
-        pass: GMAIL_UYGULAMA_SIFRESI     // Uygulama şifreniz (normal Gmail şifresi DEĞİL)
+        user: GMAIL_KULLANICI,
+        pass: GMAIL_UYGULAMA_SIFRESI
+    },
+    tls: {
+        rejectUnauthorized: false // SSL/TLS sertifika doğrulama hatalarını aşmak için
     }
 });
 
