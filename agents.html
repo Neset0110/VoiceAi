@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sesli AI Kontrol Paneli</title>
+  <title>Sesli AI - Ajanları Yönet</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -13,13 +13,41 @@
       theme: {
         extend: {
           colors: {
-            slate: {
-              850: '#1e293b',
+            halo: {
+              bg: '#0A0B0F',
+              surface: '#14151C',
+              elevated: '#1E2029',
+              border: '#2A2D38',
+              'border-strong': '#3A3D4A',
+              'on-surface': '#F2F4F8',
+              'on-surface-muted': '#9AA0AE',
+              'on-surface-faint': '#5C6170',
+              primary: '#5B6BFF',
+              'primary-hover': '#7886FF',
+              'primary-pressed': '#4A59E6',
+              success: '#2BE08C',
+              warning: '#F5D547',
+              info: '#3DD7E5',
+              error: '#FF3A5C',
+              focus: 'rgba(91, 107, 255, 0.35)'
             }
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
           },
+          borderRadius: {
+            'sm': '6px',
+            'md': '10px',
+            'lg': '16px',
+            'xl': '24px'
+          },
+          boxShadow: {
+            'halo-sm': '0 1px 0 rgba(255,255,255,0.02) inset, 0 1px 2px rgba(0,0,0,0.4)',
+            'halo-md': '0 8px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.03) inset',
+            'halo-lg': '0 24px 60px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset',
+            'halo-focus': '0 0 0 3px rgba(91, 107, 255, 0.35)'
+          }
         },
       },
     }
@@ -29,11 +57,22 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f8fafc;
+      background-color: #0A0B0F;
+    }
+
+    /* Space background radial glow spots */
+    .space-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      background: radial-gradient(circle, #5B6BFF 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* Animation */
@@ -52,6 +91,33 @@
         transform: translateY(0);
       }
     }
+
+    /* Modal classes */
+    .modal-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Toast entry animation */
+    .toast-enter {
+      animation: toastIn 0.24s cubic-bezier(0.2, 0.6, 0.2, 1);
+    }
+
+    @keyframes toastIn {
+      from {
+        transform: translateY(-20px) scale(0.95);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
   </style>
   <script>
     // Oturum Kontrolü (Giriş yapılmamışsa login'e yönlendir)
@@ -63,38 +129,42 @@
   </script>
 </head>
 
-<body class="text-slate-900">
+<body class="min-h-screen bg-halo-bg text-halo-on-surface flex flex-col font-sans relative overflow-x-hidden">
 
-  <div class="min-h-screen bg-slate-50 flex flex-col">
+  <!-- Glowing background blobs -->
+  <div class="space-glow w-96 h-96 -top-20 -left-20 animate-pulse" style="animation-duration: 10s;"></div>
+  <div class="space-glow w-[500px] h-[500px] top-1/2 right-0 translate-x-1/3 -translate-y-1/2 animate-pulse" style="animation-duration: 14s; animation-delay: 2s;"></div>
+
+  <div class="min-h-screen flex flex-col relative z-10">
 
     <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <header class="bg-halo-surface/85 backdrop-blur-md border-b border-halo-border sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
         <!-- Logo -->
         <div class="flex items-center gap-2">
-          <div class="bg-indigo-600 p-1.5 rounded-lg">
-            <i data-lucide="mic-2" class="w-5 h-5 text-white"></i>
+          <div class="bg-halo-surface border border-halo-border p-2 rounded-md shadow-halo-sm">
+            <i data-lucide="mic-2" class="w-5 h-5 text-halo-primary"></i>
           </div>
-          <span class="text-lg font-bold text-slate-900 tracking-tight">VoiceAuto<span
-              class="text-indigo-600">.ai</span></span>
+          <span class="text-lg font-bold text-halo-on-surface tracking-tight">VoiceAuto<span
+              class="text-halo-primary">.ai</span></span>
         </div>
 
 
         <!-- Nav Links -->
-        <nav class="hidden md:flex items-center gap-1">
+        <nav class="hidden md:flex items-center gap-2">
           <a href="index.html" id="nav-dashboard"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-halo-on-surface-muted hover:text-halo-on-surface hover:bg-halo-surface/50 border border-transparent rounded-md transition-all">
             <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
             Kontrol Paneli
           </a>
           <a href="agents.html" id="nav-agents"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-halo-primary bg-halo-primary/10 border border-halo-primary/20 rounded-md transition-all shadow-halo-sm">
             <i data-lucide="users" class="w-4 h-4"></i>
             Ajanlar
           </a>
           <a href="settings.html" id="nav-settings"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-halo-on-surface-muted hover:text-halo-on-surface hover:bg-halo-surface/50 border border-transparent rounded-md transition-all">
             <i data-lucide="settings" class="w-4 h-4"></i>
             Ayarlar
           </a>
@@ -104,15 +174,15 @@
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-3">
             <div class="text-right hidden sm:block">
-              <p class="text-sm font-medium text-slate-900" id="header-isim">Yükleniyor...</p>
-              <p class="text-xs text-slate-500">İşletme Sahibi</p>
+              <p class="text-sm font-semibold text-halo-on-surface" id="header-isim">Yükleniyor...</p>
+              <p class="text-xs text-halo-on-surface-faint">İşletme Sahibi</p>
             </div>
-            <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
-              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5"
+            <div class="w-9 h-9 bg-halo-surface rounded-full border border-halo-border overflow-hidden">
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=14151C&color=5B6BFF"
                 alt="Avatar" class="w-full h-full object-cover" />
             </div>
           </div>
-          <button id="btn-logout" class="text-slate-400 hover:text-slate-600">
+          <button id="btn-logout" class="text-halo-on-surface-muted hover:text-halo-error transition-colors">
             <i data-lucide="log-out" class="w-5 h-5"></i>
           </button>
         </div>
@@ -120,50 +190,67 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
 
       <!-- ==================== VIEW: AGENTS ==================== -->
       <div id="view-agents" class="space-y-8 animate-fade-in">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Ajanları Yönet</h1>
-            <p class="text-slate-500 mt-1">Yapay zeka asistanlarınızı yapılandırın, komutlarını ve ses özelliklerini
-              ayarlayın.
-            </p>
+            <h1 class="text-2xl font-bold text-halo-on-surface tracking-tight">Ajanları Yönet</h1>
+            <p class="text-halo-on-surface-muted mt-1 text-sm">Yapay zeka asistanlarınızı yapılandırın, komutlarını ve ses özelliklerini ayarlayın.</p>
           </div>
-          <button onclick="asistanBagla()"
-            class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold shadow-sm hover:bg-indigo-700 transition flex items-center gap-2">
-            <i data-lucide="plus" class="w-4 h-4"></i> Asistan Bağla
-          </button>
+          <div class="flex items-center gap-3">
+            <button id="btn-sync" onclick="asistanlariSenkronizeEt()"
+              class="px-4 py-2 bg-halo-surface/40 hover:bg-halo-surface/80 text-halo-on-surface border border-halo-border hover:border-halo-border-strong rounded-md text-sm font-semibold shadow-halo-sm transition flex items-center gap-2">
+              <i data-lucide="refresh-cw" class="w-4 h-4 transition-transform duration-500"></i> Vapi'den Senkronize Et
+            </button>
+            <button onclick="asistanBagla()"
+              class="px-4 py-2 bg-halo-primary text-white hover:bg-halo-primary-hover active:bg-halo-primary-pressed rounded-md text-sm font-semibold shadow-halo-sm transition flex items-center gap-2">
+              <i data-lucide="plus" class="w-4.5 h-4.5"></i> Asistan Bağla
+            </button>
+          </div>
         </div>
 
         <!-- Agents Grid (Vapi API'den dinamik doldurulur) -->
         <div id="agents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Yükleniyor Skeleton -->
-          <div class="skeleton-card bg-white border border-slate-200 rounded-xl p-6 shadow-sm animate-pulse">
+          <div class="skeleton-card bg-halo-surface border border-halo-border rounded-lg p-6 shadow-halo-sm animate-pulse">
             <div class="flex justify-between items-start mb-4">
-              <div class="w-12 h-12 bg-slate-200 rounded-lg"></div>
-              <div class="w-16 h-6 bg-slate-200 rounded-full"></div>
+              <div class="w-12 h-12 bg-halo-elevated rounded-md"></div>
+              <div class="w-16 h-6 bg-halo-elevated rounded-full"></div>
             </div>
-            <div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
-            <div class="h-4 bg-slate-100 rounded w-full"></div>
-            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg">
-              <div class="h-4 bg-slate-200 rounded w-full"></div>
-              <div class="h-4 bg-slate-200 rounded w-full"></div>
+            <div class="h-5 bg-halo-elevated rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-halo-elevated rounded w-full mb-1"></div>
+            <div class="mt-4 space-y-3 bg-halo-bg p-3 rounded-md border border-halo-border">
+              <div class="h-4 bg-halo-elevated rounded w-full"></div>
+              <div class="h-4 bg-halo-elevated rounded w-full"></div>
             </div>
           </div>
           <div
-            class="skeleton-card bg-white border border-slate-200 rounded-xl p-6 shadow-sm animate-pulse hidden md:block">
+            class="skeleton-card bg-halo-surface border border-halo-border rounded-lg p-6 shadow-halo-sm animate-pulse hidden md:block">
             <div class="flex justify-between items-start mb-4">
-              <div class="w-12 h-12 bg-slate-200 rounded-lg"></div>
-              <div class="w-16 h-6 bg-slate-200 rounded-full"></div>
+              <div class="w-12 h-12 bg-halo-elevated rounded-md"></div>
+              <div class="w-16 h-6 bg-halo-elevated rounded-full"></div>
             </div>
-            <div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
-            <div class="h-4 bg-slate-100 rounded w-full"></div>
-            <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg">
-              <div class="h-4 bg-slate-200 rounded w-full"></div>
-              <div class="h-4 bg-slate-200 rounded w-full"></div>
+            <div class="h-5 bg-halo-elevated rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-halo-elevated rounded w-full mb-1"></div>
+            <div class="mt-4 space-y-3 bg-halo-bg p-3 rounded-md border border-halo-border">
+              <div class="h-4 bg-halo-elevated rounded w-full"></div>
+              <div class="h-4 bg-halo-elevated rounded w-full"></div>
+            </div>
+          </div>
+          <div
+            class="skeleton-card bg-halo-surface border border-halo-border rounded-lg p-6 shadow-halo-sm animate-pulse hidden lg:block">
+            <div class="flex justify-between items-start mb-4">
+              <div class="w-12 h-12 bg-halo-elevated rounded-md"></div>
+              <div class="w-16 h-6 bg-halo-elevated rounded-full"></div>
+            </div>
+            <div class="h-5 bg-halo-elevated rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-halo-elevated rounded w-full mb-1"></div>
+            <div class="mt-4 space-y-3 bg-halo-bg p-3 rounded-md border border-halo-border">
+              <div class="h-4 bg-halo-elevated rounded w-full"></div>
+              <div class="h-4 bg-halo-elevated rounded w-full"></div>
             </div>
           </div>
         </div>
@@ -172,12 +259,183 @@
     </main>
   </div>
 
+  <!-- Modal: Asistan Bağla -->
+  <div id="modal-asistan-bagla" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-halo-bg/85 backdrop-blur-sm transition-all duration-300 modal-hidden">
+    <!-- Modal Card -->
+    <div class="bg-halo-surface border border-halo-border rounded-lg max-w-md w-full p-6 shadow-halo-lg transform transition-all duration-300 scale-95 opacity-0 modal-card">
+      <div class="flex justify-between items-center mb-4 border-b border-halo-border pb-3">
+        <h3 class="text-lg font-bold text-halo-on-surface flex items-center gap-2">
+          <i data-lucide="plus" class="text-halo-primary w-5 h-5"></i> Asistan Bağla
+        </h3>
+        <button onclick="closeAsistanModal()" class="text-halo-on-surface-muted hover:text-halo-on-surface transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <div class="space-y-4">
+        <p class="text-sm text-halo-on-surface-muted leading-relaxed">
+          Lütfen Vapi platformundan aldığınız <strong>Asistan ID</strong>'sini giriniz. Bu işlem asistanınızı sisteme bağlayacaktır.
+        </p>
+        <div>
+          <label for="assistant-id-input" class="block text-xs font-semibold text-halo-on-surface-muted uppercase tracking-wider mb-2">Asistan ID</label>
+          <input type="text" id="assistant-id-input" placeholder="örn: f3c3e21b-..." 
+            class="w-full px-3.5 py-2.5 bg-halo-bg border border-halo-border rounded-md text-halo-on-surface font-mono placeholder-halo-on-surface-faint focus:outline-none focus:border-halo-primary focus:shadow-halo-focus transition-all duration-200 text-sm" />
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3 border-t border-halo-border pt-4">
+        <button onclick="closeAsistanModal()" 
+          class="px-4 py-2 text-sm font-semibold text-halo-on-surface-muted bg-halo-surface hover:text-halo-on-surface hover:bg-halo-surface/80 rounded-md border border-halo-border hover:border-halo-border-strong transition shadow-halo-sm">
+          İptal
+        </button>
+        <button onclick="submitAsistanBagla()" 
+          class="px-4 py-2 text-sm font-semibold text-white bg-halo-primary hover:bg-halo-primary-hover active:bg-halo-primary-pressed rounded-md transition shadow-halo-sm flex items-center gap-2">
+          <i data-lucide="check" class="w-4 h-4"></i> Bağla
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bildirim Kutusu (Toast) -->
+  <div id="toast" class="fixed top-6 right-6 z-50 hidden">
+    <div id="toast-content"
+      class="toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-border max-w-sm bg-halo-surface text-halo-on-surface">
+      <i id="toast-icon" class="w-5 h-5 flex-shrink-0"></i>
+      <div>
+        <p id="toast-baslik" class="font-semibold text-sm"></p>
+        <p id="toast-mesaj" class="text-sm mt-0.5 opacity-80"></p>
+      </div>
+      <button onclick="toastKapat()" class="ml-auto text-current opacity-40 hover:opacity-70 transition-opacity">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
   <script>
-    // Dinamik API adresi: Yerelde Live Server veya dosya protokolu ile çalışırken localhost:3001'e gider.
-    // Canlıda (deploy edildiğinde) frontend ve backend aynı sunucuda çalışacağından origin'i kullanır.
+    // Dinamik API adresi
     const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? (window.location.port === '3001' ? window.location.origin : 'http://localhost:3001')
       : (window.location.protocol === 'file:' ? 'http://localhost:3001' : window.location.origin);
+
+    // Toast göster
+    function toastGoster(tur, baslik, mesaj) {
+      const toast = document.getElementById('toast');
+      const content = document.getElementById('toast-content');
+      const icon = document.getElementById('toast-icon');
+      const baslikEl = document.getElementById('toast-baslik');
+      const mesajEl = document.getElementById('toast-mesaj');
+
+      if (tur === 'basarili') {
+        content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-success/20 max-w-sm bg-halo-surface text-halo-on-surface';
+        icon.className = 'w-5 h-5 flex-shrink-0 text-halo-success';
+        icon.setAttribute('data-lucide', 'check-circle');
+      } else if (tur === 'hata') {
+        content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-error/20 max-w-sm bg-halo-surface text-halo-on-surface';
+        icon.className = 'w-5 h-5 flex-shrink-0 text-halo-error';
+        icon.setAttribute('data-lucide', 'alert-circle');
+      } else {
+        content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-border max-w-sm bg-halo-surface text-halo-on-surface';
+        icon.className = 'w-5 h-5 flex-shrink-0 text-halo-primary';
+        icon.setAttribute('data-lucide', 'info');
+      }
+
+      baslikEl.textContent = baslik;
+      mesajEl.textContent = mesaj;
+      
+      lucide.createIcons();
+      toast.classList.remove('hidden');
+
+      // Auto-hide
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => toastKapat(), 5000);
+    }
+
+    function toastKapat() {
+      document.getElementById('toast').classList.add('hidden');
+    }
+
+    // Modal aç / kapat
+    function asistanBagla() {
+      const modal = document.getElementById('modal-asistan-bagla');
+      const card = modal.querySelector('.modal-card');
+      modal.classList.remove('modal-hidden');
+      modal.classList.add('modal-visible');
+      setTimeout(() => {
+        card.classList.remove('scale-95', 'opacity-0');
+        card.classList.add('scale-100', 'opacity-100');
+        document.getElementById('assistant-id-input').focus();
+      }, 50);
+    }
+
+    function closeAsistanModal() {
+      const modal = document.getElementById('modal-asistan-bagla');
+      const card = modal.querySelector('.modal-card');
+      card.classList.remove('scale-100', 'opacity-100');
+      card.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        modal.classList.remove('modal-visible');
+        modal.classList.add('modal-hidden');
+        document.getElementById('assistant-id-input').value = '';
+      }, 150);
+    }
+
+    async function submitAsistanBagla() {
+      const assistantIdInput = document.getElementById('assistant-id-input');
+      const assistantId = assistantIdInput.value.trim();
+      if (!assistantId) {
+        toastGoster('hata', 'Giriş Hatası', 'Lütfen geçerli bir Asistan ID girin.');
+        return;
+      }
+
+      try {
+        const yanit = await fetch(API_URL + '/api/agents/assign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyId: firma.id, assistantId: assistantId })
+        });
+        const veri = await yanit.json();
+
+        if (yanit.ok) {
+          toastGoster('basarili', 'Bağlantı Başarılı', veri.mesaj || "Asistan başarıyla bağlandı.");
+          closeAsistanModal();
+          ajanlariYukle(); // Listeyi yenile
+        } else {
+          toastGoster('hata', 'Bağlantı Başarısız', veri.hata || "Bilinmeyen bir hata oluştu.");
+        }
+      } catch (e) {
+        toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanırken hata oluştu.');
+      }
+    }
+
+    // Vapi asistanlarını manuel senkronize et
+    async function asistanlariSenkronizeEt() {
+      const btn = document.getElementById('btn-sync');
+      const icon = btn ? btn.querySelector('[data-lucide="refresh-cw"]') : null;
+      
+      if (btn) btn.disabled = true;
+      if (icon) icon.classList.add('animate-spin');
+      
+      try {
+        const yanit = await fetch(API_URL + '/api/vapi/assistants/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyId: firma.id })
+        });
+        const veri = await yanit.json();
+        
+        if (yanit.ok) {
+          toastGoster('basarili', 'Senkronizasyon Başarılı', veri.mesaj || "Asistan bilgileri başarıyla güncellendi.");
+          await ajanlariYukle();
+        } else {
+          toastGoster('hata', 'Senkronizasyon Başarısız', veri.hata || "Bilinmeyen bir hata oluştu.");
+        }
+      } catch (e) {
+        toastGoster('hata', 'Senkronizasyon Hatası', 'Sunucuya bağlanırken hata oluştu.');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (icon) icon.classList.remove('animate-spin');
+      }
+    }
 
     // Vapi asistanlarını backend'den çek ve kartlara doldur
     async function ajanlariYukle() {
@@ -188,81 +446,80 @@
 
         grid.innerHTML = '';
 
+        if (!veri || veri.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full py-12 px-4 border border-dashed border-halo-border rounded-lg text-center bg-halo-surface/30">
+              <i data-lucide="headset" class="w-10 h-10 text-halo-on-surface-faint mx-auto mb-3"></i>
+              <h3 class="text-md font-semibold text-halo-on-surface mb-1">Henüz Ajan Bulunmuyor</h3>
+              <p class="text-sm text-halo-on-surface-muted max-w-sm mx-auto mb-5">Vapi asistanlarınızı bağlayarak yapay zeka aramalarını izleyebilir ve yönetebilirsiniz.</p>
+              <button onclick="asistanBagla()" class="px-4 py-2 bg-halo-primary/10 border border-halo-primary/20 hover:bg-halo-primary/20 text-halo-primary text-sm font-semibold rounded-md transition shadow-halo-sm inline-flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> İlk Asistanı Bağla
+              </button>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
         veri.forEach(a => {
           const isim = a.name || 'İsimsiz Ajan';
           const model = a.model?.model || '-';
           const ses = a.voice?.voiceId || a.voice?.voice || '-';
-          const aciklama = a.firstMessage ? a.firstMessage.substring(0, 80) + '...' : '';
+          const aciklama = a.firstMessage ? (a.firstMessage.length > 80 ? a.firstMessage.substring(0, 80) + '...' : a.firstMessage) : 'Açıklama veya ilk mesaj girilmemiş.';
 
           grid.innerHTML += `
-            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group animate-fade-in">
-              <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
-                  <i data-lucide="headset" class="w-6 h-6 text-indigo-600"></i>
+            <div class="bg-halo-surface border border-halo-border rounded-lg p-6 shadow-halo-sm hover:border-halo-border-strong hover:bg-halo-elevated transition-all duration-200 group animate-fade-in relative overflow-hidden flex flex-col justify-between min-h-[320px]">
+              
+              <div>
+                <div class="flex justify-between items-start mb-4">
+                  <div class="p-3 bg-halo-primary/10 border border-halo-primary/20 rounded-md group-hover:bg-halo-primary/25 transition-colors">
+                    <i data-lucide="headset" class="w-6 h-6 text-halo-primary"></i>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-halo-success/10 text-halo-success border border-halo-success/20">Aktif</span>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">Aktif</span>
-                </div>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900">${isim}</h3>
-              <p class="text-sm text-slate-500 mt-1">${aciklama}</p>
-
-              <div class="mt-4 space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-slate-500 flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i> Ses</span>
-                  <span class="font-medium text-slate-700">${ses}</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-slate-500 flex items-center gap-1"><i data-lucide="cpu" class="w-3 h-3"></i> Model</span>
-                  <span class="font-medium text-slate-700">${model}</span>
-                </div>
+                
+                <h3 class="text-lg font-bold text-halo-on-surface leading-tight">${isim}</h3>
+                <p class="text-sm text-halo-on-surface-muted mt-2 leading-relaxed italic">"${aciklama}"</p>
               </div>
 
-              <div class="mt-6 flex gap-3">
-                <button onclick="alert('Yakında')"
-                  class="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
-                  <i data-lucide="play" class="w-3 h-3"></i> Test Et
-                </button>
-                <button onclick="alert('Yakında')"
-                  class="flex-1 px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">Yapılandır</button>
+              <div>
+                <div class="mt-5 space-y-2 bg-halo-bg p-3.5 rounded-md border border-halo-border font-mono text-xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-halo-on-surface-faint flex items-center gap-1.5"><i data-lucide="mic" class="w-3.5 h-3.5"></i> Ses ID</span>
+                    <span class="font-medium text-halo-on-surface-muted truncate max-w-[160px]" title="${ses}">${ses}</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-halo-on-surface-faint flex items-center gap-1.5"><i data-lucide="cpu" class="w-3.5 h-3.5"></i> Model</span>
+                    <span class="font-medium text-halo-on-surface-muted">${model}</span>
+                  </div>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                  <button onclick="toastGoster('bilgi', 'Test Etme', 'Yakında sizlerle...')"
+                    class="flex-1 px-3 py-2 text-sm font-semibold text-halo-on-surface-muted bg-halo-surface hover:text-halo-on-surface hover:bg-halo-surface/80 rounded-md border border-halo-border hover:border-halo-border-strong transition shadow-halo-sm flex items-center justify-center gap-2">
+                    <i data-lucide="play" class="w-3.5 h-3.5"></i> Test Et
+                  </button>
+                  <button onclick="toastGoster('bilgi', 'Yapılandırma', 'Yakında sizlerle...')"
+                    class="flex-1 px-3 py-2 text-sm font-semibold text-white bg-halo-primary hover:bg-halo-primary-hover active:bg-halo-primary-pressed rounded-md transition shadow-halo-sm flex items-center justify-center gap-2">
+                    <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Yapılandır
+                  </button>
+                </div>
               </div>
             </div>
           `;
         });
         lucide.createIcons();
       } catch (e) {
-        grid.innerHTML = '<p class="text-red-500 text-sm p-4">Sunucuya bağlanılamadı.</p>';
-      }
-    }
-
-    // Ajan Bağlama Fonksiyonu
-    async function asistanBagla() {
-      const assistantId = prompt("Lütfen Vapi'den aldığınız Asistan ID'sini giriniz (örn: f3c3...):");
-      if (!assistantId) return;
-
-      try {
-        const yanit = await fetch(API_URL + '/api/agents/assign', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ companyId: firma.id, assistantId: assistantId.trim() })
-        });
-        const veri = await yanit.json();
-
-        if (yanit.ok) {
-          alert("Başarılı: " + veri.mesaj);
-          ajanlariYukle(); // Listeyi yenile
-        } else {
-          alert("Hata: " + veri.hata);
-        }
-      } catch (e) {
-        alert("Sunucuya bağlanırken hata oluştu.");
+        grid.innerHTML = '<div class="col-span-full p-4 border border-halo-error/20 bg-halo-surface/30 text-halo-error text-sm rounded-lg">Sunucuya bağlanılamadı. Lütfen sunucunun çalıştığından emin olun.</div>';
       }
     }
 
     // Kullanıcı bilgilerini Header'a yerleştir
     function headerVerileriniDoldur() {
       if (!firma) return;
-      const avatarUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firma.firma_adi) + '&background=e0e7ff&color=4f46e5';
+      const avatarUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firma.firma_adi) + '&background=14151C&color=5B6BFF';
       const headerIsim = document.getElementById('header-isim');
       const headerAvatar = document.getElementById('header-avatar');
 

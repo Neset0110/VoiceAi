@@ -11,11 +11,11 @@ const dns = require('dns');
 if (typeof dns.setDefaultResultOrder === 'function') {
     dns.setDefaultResultOrder('ipv4first'); // Force IPv4 to prevent SMTP ENETUNREACH errors on Render
 }
-require('dotenv').config();               // Ortam değişkenlerini (.env) yüklemek için
+const path = require('path');            // Dosya yollarını yönetmek için (Node.js dahili modülü)
+require('dotenv').config({ path: path.join(__dirname, '.env') });               // Ortam değişkenlerini (.env) yüklemek için
 const express = require('express');       // Web sunucusu oluşturmak için
 const mysql = require('mysql2');          // MySQL veritabanına bağlanmak için
 const cors = require('cors');            // Frontend'in backend'e istek atabilmesi için
-const path = require('path');            // Dosya yollarını yönetmek için (Node.js dahili modülü)
 const crypto = require('crypto');         // Rastgele doğrulama tokeni üretmek için (Node.js dahili modülü)
 const nodemailer = require('nodemailer'); // Gmail SMTP ile e-posta göndermek için
 // ============================================================
@@ -65,9 +65,31 @@ db.connect((err) => {
             )
         `;
         db.query(createFirmaAjanlarTable, (errTbl) => {
-            if (errTbl) console.log('❌ firma_ajanlar tablosu oluşturulamadı:', errTbl.message);
-            else console.log('✅ firma_ajanlar tablosu hazır.');
+            if (errTbl) {
+                console.log('❌ firma_ajanlar tablosu oluşturulamadı:', errTbl.message);
+            } else {
+                console.log('✅ firma_ajanlar tablosu hazır.');
+                
+                // firma_ajanlar tablosuna detay sütunlarını ekle (eğer yoksa)
+                const checkAjanCols = [
+                    { name: 'name', def: 'VARCHAR(255) NULL' },
+                    { name: 'model', def: 'VARCHAR(255) NULL' },
+                    { name: 'voice', def: 'VARCHAR(255) NULL' },
+                    { name: 'first_message', def: 'TEXT NULL' }
+                ];
+                checkAjanCols.forEach(col => {
+                    db.query(`SHOW COLUMNS FROM firma_ajanlar LIKE '${col.name}'`, (errCol, columns) => {
+                        if (!errCol && columns.length === 0) {
+                            db.query(`ALTER TABLE firma_ajanlar ADD COLUMN ${col.name} ${col.def}`, (errAdd) => {
+                                if (errAdd) console.log(`❌ firma_ajanlar tablosuna ${col.name} sütunu eklenemedi:`, errAdd.message);
+                                else console.log(`✅ firma_ajanlar tablosuna ${col.name} eklendi.`);
+                            });
+                        }
+                    });
+                });
+            }
         });
+
 
         // vapi_call_logs tablosuna gerekli sütunları ekle (eğer yoksa)
         const checkCols = [
@@ -86,6 +108,16 @@ db.connect((err) => {
                 }
             });
         });
+
+        // company tablosuna şifre sıfırlama sütunlarını ekle (eğer yoksa)
+        db.query("SHOW COLUMNS FROM company LIKE 'resetToken'", (errCol, columns) => {
+            if (!errCol && columns.length === 0) {
+                db.query("ALTER TABLE company ADD COLUMN resetToken VARCHAR(255) NULL, ADD COLUMN resetExpires DATETIME NULL", (errAdd) => {
+                    if (errAdd) console.log("❌ Şifre sıfırlama sütunları eklenemedi:", errAdd.message);
+                    else console.log("✅ company tablosuna resetToken ve resetExpires eklendi.");
+                });
+            }
+        });
     }
 });
 
@@ -100,17 +132,11 @@ const GMAIL_KULLANICI = process.env.GMAIL_USER;
 const GMAIL_UYGULAMA_SIFRESI = process.env.GMAIL_APP_PASSWORD;
 
 // Nodemailer transporter (e-posta gönderici) oluştur
-// Port 587 (STARTTLS) bulut sunucularında (Render) port 465'e göre çok daha kararlı ve engelsiz çalışır.
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // STARTTLS için false olmalı
+    service: 'gmail',
     auth: {
         user: GMAIL_KULLANICI,
         pass: GMAIL_UYGULAMA_SIFRESI
-    },
-    tls: {
-        rejectUnauthorized: false // SSL/TLS sertifika doğrulama hatalarını aşmak için
     }
 });
 
@@ -328,6 +354,127 @@ app.post('/api/resend-verification', (req, res) => {
 });
 
 // ============================================================
+// 6b-2. ŞİFREMİ UNUTTUM - PIN KODU GÖNDERME (POST /api/forgot-password)
+// ============================================================
+app.post('/api/forgot-password', (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ hata: 'Lütfen e-posta adresinizi girin.' });
+    }
+
+    const sql = `SELECT * FROM company WHERE admin_eposta = ?`;
+
+    db.query(sql, [email], (err, results) => {
+        if (err) {
+            console.log('❌ Şifre sıfırlama e-posta sorgu hatası:', err.message);
+            return res.status(500).json({ hata: 'Veritabanı hatası oluştu.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ hata: 'Bu e-posta adresiyle kayıtlı bir firma bulunamadı!' });
+        }
+
+        const kullanici = results[0];
+
+        // 6 haneli rastgele PIN kodu üret (100000 - 999999)
+        const pin = Math.floor(100000 + Math.random() * 900000).toString();
+        // 15 dakika geçerli olacak şekilde süre ayarla
+        const sure = new Date(Date.now() + 15 * 60 * 1000);
+
+        // Veritabanına kaydet
+        const guncelleSql = `UPDATE company SET resetToken = ?, resetExpires = ? WHERE admin_eposta = ?`;
+
+        db.query(guncelleSql, [pin, sure, email], (err2) => {
+            if (err2) {
+                console.log('❌ Sıfırlama kodu kaydetme hatası:', err2.message);
+                return res.status(500).json({ hata: 'Sıfırlama kodu oluşturulamadı.' });
+            }
+
+            // E-posta gönder
+            const mailSecenekleri = {
+                from: `"VoiceAuto.ai" <${GMAIL_KULLANICI}>`,
+                to: email,
+                subject: 'Şifre Sıfırlama Kodu - VoiceAuto.ai',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                        <h2 style="color: #4F46E5; text-align: center;">Şifre Sıfırlama Talebi</h2>
+                        <p>Merhaba <strong>${kullanici.firma_adi}</strong>,</p>
+                        <p>Hesabınızın şifresini sıfırlamak için bir talepte bulundunuz. Aşağıdaki 6 haneli güvenlik kodunu kullanarak şifrenizi güncelleyebilirsiniz:</p>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4F46E5; background-color: #F3F4F6; padding: 10px 20px; border-radius: 8px; border: 1px dashed #4F46E5;">
+                                ${pin}
+                            </span>
+                        </div>
+                        <p style="color: #666; font-size: 13px;">
+                            Bu kod <strong>15 dakika</strong> boyunca geçerlidir. Eğer bu talebi siz yapmadıysanız lütfen bu e-postayı dikkate almayınız.
+                        </p>
+                    </div>
+                `
+            };
+
+            transporter.sendMail(mailSecenekleri, (mailErr) => {
+                if (mailErr) {
+                    console.log('⚠️ Şifre sıfırlama e-postası gönderilemedi:', mailErr.message);
+                    return res.status(500).json({ hata: 'E-posta gönderilirken hata oluştu.' });
+                }
+
+                console.log('📬 Şifre sıfırlama e-postası gönderildi:', email);
+                res.json({ mesaj: '6 haneli şifre sıfırlama kodu e-postanıza gönderildi! Lütfen gelen kutunuzu (ve gereksiz kutusunu) kontrol edin.' });
+            });
+        });
+    });
+});
+
+// ============================================================
+// 6b-3. ŞİFREMİ GÜNCELLE - KOD DOĞRULAMA VE ŞİFRE DEĞİŞTİRME (POST /api/reset-password)
+// ============================================================
+app.post('/api/reset-password', (req, res) => {
+    const { email, pin, yeniSifre } = req.body;
+
+    if (!email || !pin || !yeniSifre) {
+        return res.status(400).json({ hata: 'Lütfen tüm alanları doldurun (email, pin, yeniSifre).' });
+    }
+
+    // Kodun doğru ve süresinin geçmemiş olduğunu sorgula
+    const sql = `SELECT * FROM company WHERE admin_eposta = ? AND resetToken = ?`;
+
+    db.query(sql, [email, pin], (err, results) => {
+        if (err) {
+            console.log('❌ Şifre sıfırlama doğrulama sorgu hatası:', err.message);
+            return res.status(500).json({ hata: 'Veritabanı hatası oluştu.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(400).json({ hata: 'Girdiğiniz 6 haneli sıfırlama kodu hatalı!' });
+        }
+
+        const kullanici = results[0];
+
+        // Süreyi kontrol et
+        const simdi = new Date();
+        const sonKullanma = new Date(kullanici.resetExpires);
+
+        if (simdi > sonKullanma) {
+            return res.status(400).json({ hata: 'Şifre sıfırlama kodunun süresi dolmuş! Lütfen yeni bir kod talep edin.' });
+        }
+
+        // Şifreyi güncelle ve token sütunlarını temizle
+        const guncelleSql = `UPDATE company SET admin_sifre = ?, resetToken = NULL, resetExpires = NULL WHERE admin_eposta = ?`;
+
+        db.query(guncelleSql, [yeniSifre, email], (err2) => {
+            if (err2) {
+                console.log('❌ Şifre güncellenemedi:', err2.message);
+                return res.status(500).json({ hata: 'Şifreniz güncellenirken bir hata oluştu.' });
+            }
+
+            console.log(`✅ Şifre başarıyla sıfırlandı: ${email}`);
+            res.json({ mesaj: 'Şifreniz başarıyla sıfırlandı! Yeni şifrenizle giriş yapabilirsiniz.' });
+        });
+    });
+});
+
+// ============================================================
 // 6c. FİRMA KAYIT ROTASI (POST /api/kayit)
 // ============================================================
 // Kullanıcı bu adrese firma adı, e-posta ve şifre gönderir.
@@ -353,10 +500,9 @@ app.post('/api/kayit', async (req, res) => {
         const dogrulama_tokeni = crypto.randomBytes(20).toString('hex');
 
         // Adım 2: Veritabanına kaydet
-        // Jüri sunumu ve testlerin kesintisiz çalışması için varsayılan olarak isVerified = true kaydedilir.
-        // Böylece SMTP e-posta servisinin gecikmesi veya çalışmaması durumunda giriş süreci engellenmez.
+        // E-posta doğrulama akışını aktif etmek için varsayılan olarak isVerified = false (veya 0) kaydedilir.
         const sql = `INSERT INTO company (firma_adi, admin_eposta, admin_sifre, isVerified, verificationToken) 
-                     VALUES (?, ?, ?, true, ?)`;
+                     VALUES (?, ?, ?, false, ?)`;
 
         db.query(sql, [firma_adi, email, sifre, dogrulama_tokeni], (err, result) => {
             if (err) {
@@ -410,8 +556,8 @@ app.post('/api/kayit', async (req, res) => {
 
             // Kullanıcıya başarılı yanıt gönder
             res.status(201).json({
-                mesaj: 'Kayıt başarılı! Hesabınız otomatik olarak onaylandı. Giriş yapabilirsiniz.',
-                autoVerified: true
+                mesaj: 'Kayıt başarılı! Lütfen e-postanıza gönderilen doğrulama linkine tıklayarak hesabınızı onaylayın.',
+                autoVerified: false
             });
         });
 
@@ -511,11 +657,12 @@ app.post('/api/giris', (req, res) => {
         }
 
         // E-posta onay kontrolü
-        // Jüri sunumu ve test kolaylığı için onay zorunluluğu esnetilmiştir.
-        // Eğer hesap henüz onaylanmamışsa, girişte otomatik olarak onaylanır ve erişime izin verilir!
         if (!kullanici.isVerified) {
-            console.log(`⚠️ Onaysız hesap girişte otomatik onaylandı: ${kullanici.admin_eposta}`);
-            db.query('UPDATE company SET isVerified = true WHERE company_id = ?', [kullanici.company_id]);
+            console.log(`⚠️ Onaylanmamış hesap giriş denemesi engellendi: ${kullanici.admin_eposta}`);
+            return res.status(401).json({
+                hata: 'Hesabınız onaylanmamış! Lütfen e-postanıza gönderilen doğrulama linkine tıklayarak hesabınızı onaylayın.',
+                unverified: true
+            });
         }
 
         // Her şey tamam → Giriş başarılı!
@@ -721,15 +868,19 @@ app.get('/api/aramalar', (req, res) => {
 // Vapi.ai hesabındaki asistanları çekip frontend'e döner.
 const VAPI_PRIVATE_KEY = process.env.VAPI_PRIVATE_KEY;
 
-// Tekil Vapi asistanını ID ile çek (tüm listeyi değil, sadece ilgili ID)
-async function fetchAssistantById(assistantId) {
+// Tekil Vapi asistanını ID ile çek (tüm listeyi değil, sadece ilgili ID, timeout korumalı)
+async function fetchAssistantById(assistantId, timeoutMs = 2500) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
     try {
         const r = await fetch(`https://api.vapi.ai/assistant/${assistantId}`, {
             headers: {
                 'Authorization': `Bearer ${VAPI_PRIVATE_KEY}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            signal: controller.signal
         });
+        clearTimeout(id);
         if (r.status === 404) return null; // Silinmiş/erişilemeyen → sessizce atla
         if (!r.ok) {
             const t = await r.text();
@@ -738,8 +889,9 @@ async function fetchAssistantById(assistantId) {
         }
         return await r.json();
     } catch (error) {
-        console.log(`⚠️ Vapi network hatası (${assistantId}):`, error.message);
-        return null; // Ağ hatası durumunda null döndür (örn. internet yok veya engellendi)
+        clearTimeout(id);
+        console.log(`⚠️ Vapi network/timeout hatası (${assistantId}):`, error.message);
+        return null; // Ağ veya zaman aşımı durumunda null döndür
     }
 }
 
@@ -892,44 +1044,79 @@ app.post('/api/vapi/sync', async (req, res) => {
 // ============================================================
 // 6k. VAPI ASİSTAN LİSTESİNİ ALMA (GET /api/vapi/assistants)
 // ============================================================
+// Doğrudan veritabanı önbelleğinden çeker, Vapi API'sine istek ATMAZ.
+// Bu sayede sayfa anında yüklenir ve Vapi API yavaşlığından veya kopmalarından etkilenmez.
 app.get('/api/vapi/assistants', async (req, res) => {
     const companyId = Number(req.query.companyId);
+    if (!companyId) return res.status(400).json({ hata: 'companyId parametresi gerekli.' });
+
+    try {
+        db.query(`SELECT assistant_id, name, model, voice, first_message FROM firma_ajanlar WHERE company_id = ?`, [companyId], (err, results) => {
+            if (err) return res.status(500).json({ hata: 'Veritabanı hatası' });
+
+            const assistants = results.map(row => {
+                return {
+                    id: row.assistant_id,
+                    name: row.name || 'Asistan (' + row.assistant_id.substring(0, 8) + ')',
+                    model: { model: row.model || 'vapi-gpt' },
+                    voice: { voiceId: row.voice || 'default', voice: row.voice || 'TR-Female' },
+                    firstMessage: row.first_message || 'Açıklama veya ilk mesaj girilmemiş.'
+                };
+            });
+
+            return res.json(assistants);
+        });
+    } catch (error) {
+        console.log('❌ Veritabanı hatası:', error.message);
+        res.status(500).json({ hata: 'Asistanlar yüklenemedi.' });
+    }
+});
+
+// ============================================================
+// 6k-2. VAPI ASİSTANLARINI ELLE SENKRONİZE ETME (POST /api/vapi/assistants/sync)
+// ============================================================
+// İstek üzerine Vapi'den en güncel verileri çekip veritabanındaki önbelleği günceller.
+app.post('/api/vapi/assistants/sync', async (req, res) => {
+    const companyId = Number(req.query.companyId || req.body.companyId);
     if (!companyId) return res.status(400).json({ hata: 'companyId parametresi gerekli.' });
 
     try {
         db.query(`SELECT assistant_id FROM firma_ajanlar WHERE company_id = ?`, [companyId], async (err, results) => {
             if (err) return res.status(500).json({ hata: 'Veritabanı hatası' });
 
-            const assistantIds = results.map(row => row.assistant_id);
-            if (assistantIds.length === 0) return res.json([]);
+            if (results.length === 0) return res.json({ mesaj: 'Senkronize edilecek asistan bulunamadı.', syncCount: 0 });
 
             try {
-                // Her ID için ayrı ayrı Vapi isteği (tüm listeyi değil sadece ilgili ID'ler)
-                // Eş zamanlı max 5 istek → hız + rate limit dengesi
-                const assistants = await mapLimit(assistantIds, 5, async (id) => {
-                    const assistant = await fetchAssistantById(id);
-                    if (assistant) return assistant;
-
-                    // Vapi'den çekilemeyen asistanlar için şık mock veri (Çevrimdışı/Mock Asistan Desteği)
-                    return {
-                        id: id,
-                        name: 'Asistan (' + id.substring(0, 8) + ')',
-                        model: { model: 'vapi-gpt' },
-                        voice: { voiceId: 'default', voice: 'TR-Female' },
-                        firstMessage: 'Bu asistan için Vapi bağlantısı çevrimdışı veya geçersiz.',
-                        isOfflineMock: true
-                    };
+                const assistantIds = results.map(row => row.assistant_id);
+                let syncCount = 0;
+                
+                await mapLimit(assistantIds, 5, async (id) => {
+                    const assistant = await fetchAssistantById(id, 4000); // 4sn timeout
+                    if (assistant) {
+                        const name = assistant.name || 'İsimsiz Ajan';
+                        const model = assistant.model?.model || '-';
+                        const voice = assistant.voice?.voiceId || assistant.voice?.voice || '-';
+                        const firstMessage = assistant.firstMessage || '';
+                        
+                        await new Promise((resolve) => {
+                            db.query(
+                                `UPDATE firma_ajanlar SET name = ?, model = ?, voice = ?, first_message = ? WHERE assistant_id = ?`,
+                                [name, model, voice, firstMessage, id],
+                                () => resolve()
+                            );
+                        });
+                        syncCount++;
+                    }
                 });
 
-                return res.json(assistants);
+                return res.json({ mesaj: `Senkronizasyon tamamlandı! ${syncCount} asistan Vapi'den güncellendi.`, syncCount });
             } catch (innerError) {
-                console.log('❌ Asistan çekme hatası:', innerError.message);
-                return res.status(500).json({ hata: 'Asistan yüklenemedi.', detay: innerError.message });
+                console.log('❌ Senkronizasyon hatası:', innerError.message);
+                return res.status(500).json({ hata: 'Senkronizasyon başarısız oldu.', detay: innerError.message });
             }
         });
     } catch (error) {
-        console.log('❌ Vapi hatası:', error.message);
-        res.status(500).json({ hata: 'Vapi asistanları yüklenemedi.', detay: error.message });
+        res.status(500).json({ hata: 'Senkronizasyon hatası: ' + error.message });
     }
 });
 
@@ -958,9 +1145,34 @@ app.post('/api/agents/assign', (req, res) => {
             }
         }
 
-        db.query(`INSERT INTO firma_ajanlar (company_id, assistant_id) VALUES (?, ?)`, [companyId, assistantId], (err2) => {
-            if (err2) return res.status(500).json({ hata: 'Bağlantı yapılırken hata oluştu.' });
-            res.json({ mesaj: 'Asistan hesabınıza başarıyla bağlandı!' });
+        fetchAssistantById(assistantId, 4000).then(assistant => {
+            const name = assistant ? (assistant.name || 'İsimsiz Ajan') : 'Asistan (' + assistantId.substring(0, 8) + ')';
+            const model = assistant ? (assistant.model?.model || '-') : 'vapi-gpt';
+            const voice = assistant ? (assistant.voice?.voiceId || assistant.voice?.voice || '-') : 'TR-Female';
+            const firstMessage = assistant ? (assistant.firstMessage || '') : '';
+
+            db.query(
+                `INSERT INTO firma_ajanlar (company_id, assistant_id, name, model, voice, first_message) VALUES (?, ?, ?, ?, ?, ?)`,
+                [companyId, assistantId, name, model, voice, firstMessage],
+                (err2) => {
+                    if (err2) {
+                        console.log('❌ Ajan ekleme hatası:', err2.message);
+                        return res.status(500).json({ hata: 'Bağlantı yapılırken veritabanı hatası oluştu.' });
+                    }
+                    res.json({ mesaj: 'Asistan hesabınıza başarıyla bağlandı!' });
+                }
+            );
+        }).catch(err => {
+            console.log('❌ Ajan ekleme/Vapi hatası:', err.message);
+            // Vapi hata verse bile asistanı mock verilerle ekle
+            db.query(
+                `INSERT INTO firma_ajanlar (company_id, assistant_id, name, model, voice, first_message) VALUES (?, ?, ?, ?, ?, ?)`,
+                [companyId, assistantId, 'Asistan (' + assistantId.substring(0, 8) + ')', 'vapi-gpt', 'TR-Female', ''],
+                (err2) => {
+                    if (err2) return res.status(500).json({ hata: 'Bağlantı yapılırken hata oluştu.' });
+                    res.json({ mesaj: 'Asistan hesabınıza başarıyla bağlandı (Çevrimdışı Mod)!' });
+                }
+            );
         });
     });
 });
@@ -991,7 +1203,7 @@ app.post('/api/support/request', (req, res) => {
 
     const mailSecenekleri = {
         from: `"VoiceAuto.ai Destek" <${GMAIL_KULLANICI}>`,
-        to: 'nesetatalay19@gmail.com',
+        to: GMAIL_KULLANICI,
         subject: `Yeni Çoklu Ajan Talebi: ${firma_adi}`,
         html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">

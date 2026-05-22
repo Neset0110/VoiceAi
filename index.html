@@ -13,27 +13,56 @@
       theme: {
         extend: {
           colors: {
-            slate: {
-              850: '#1e293b',
+            halo: {
+              bg: '#0A0B0F',
+              surface: '#14151C',
+              elevated: '#1E2029',
+              border: '#2A2D38',
+              'border-strong': '#3A3D4A',
+              'on-surface': '#F2F4F8',
+              'on-surface-muted': '#9AA0AE',
+              'on-surface-faint': '#5C6170',
+              primary: '#5B6BFF',
+              'primary-hover': '#7886FF',
+              'primary-pressed': '#4A59E6',
+              success: '#2BE08C',
+              warning: '#F5D547',
+              info: '#3DD7E5',
+              error: '#FF3A5C',
+              focus: 'rgba(91, 107, 255, 0.35)'
             }
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
           },
+          borderRadius: {
+            'sm': '6px',
+            'md': '10px',
+            'lg': '16px',
+            'xl': '24px'
+          },
+          boxShadow: {
+            'halo-sm': '0 1px 0 rgba(255,255,255,0.02) inset, 0 1px 2px rgba(0,0,0,0.4)',
+            'halo-md': '0 8px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.03) inset',
+            'halo-lg': '0 24px 60px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset',
+            'halo-focus': '0 0 0 3px rgba(91, 107, 255, 0.35)'
+          }
         },
       },
     }
   </script>
 
-  <!-- Lucide Icons -->
+  <!-- Lucide Icons & Chart.js -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f8fafc;
+      background-color: #0A0B0F;
     }
 
     .transcript-scroll::-webkit-scrollbar {
@@ -41,11 +70,11 @@
     }
 
     .transcript-scroll::-webkit-scrollbar-track {
-      background: #f1f5f9;
+      background: #14151C;
     }
 
     .transcript-scroll::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
+      background-color: #2A2D38;
       border-radius: 20px;
     }
 
@@ -96,38 +125,36 @@
   </script>
 </head>
 
-<body class="text-slate-900">
-
-  <div class="min-h-screen bg-slate-50 flex flex-col">
+<body class="min-h-screen bg-halo-bg text-halo-on-surface flex flex-col font-sans">
 
     <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <header class="bg-halo-surface/85 backdrop-blur-md border-b border-halo-border sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
         <!-- Logo -->
         <div class="flex items-center gap-2">
-          <div class="bg-indigo-600 p-1.5 rounded-lg">
-            <i data-lucide="mic-2" class="w-5 h-5 text-white"></i>
+          <div class="bg-halo-surface border border-halo-border p-2 rounded-md shadow-halo-sm">
+            <i data-lucide="mic-2" class="w-5 h-5 text-halo-primary"></i>
           </div>
-          <span class="text-lg font-bold text-slate-900 tracking-tight">VoiceAuto<span
-              class="text-indigo-600">.ai</span></span>
+          <span class="text-lg font-bold text-halo-on-surface tracking-tight">VoiceAuto<span
+              class="text-halo-primary">.ai</span></span>
         </div>
 
 
         <!-- Nav Links -->
-        <nav class="hidden md:flex items-center gap-1">
+        <nav class="hidden md:flex items-center gap-2">
           <a href="index.html" id="nav-dashboard"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-halo-primary bg-halo-primary/10 border border-halo-primary/20 rounded-md transition-all shadow-halo-sm">
             <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
             Kontrol Paneli
           </a>
           <a href="agents.html" id="nav-agents"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-halo-on-surface-muted hover:text-halo-on-surface hover:bg-halo-surface/50 border border-transparent rounded-md transition-all">
             <i data-lucide="users" class="w-4 h-4"></i>
             Ajanlar
           </a>
           <a href="settings.html" id="nav-settings"
-            class="nav-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition-colors">
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-halo-on-surface-muted hover:text-halo-on-surface hover:bg-halo-surface/50 border border-transparent rounded-md transition-all">
             <i data-lucide="settings" class="w-4 h-4"></i>
             Ayarlar
           </a>
@@ -137,15 +164,15 @@
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-3">
             <div class="text-right hidden sm:block">
-              <p class="text-sm font-medium text-slate-900" id="header-isim">Yükleniyor...</p>
-              <p class="text-xs text-slate-500">İşletme Sahibi</p>
+              <p class="text-sm font-semibold text-halo-on-surface" id="header-isim">Yükleniyor...</p>
+              <p class="text-xs text-halo-on-surface-faint">İşletme Sahibi</p>
             </div>
-            <div class="w-9 h-9 bg-slate-200 rounded-full border border-slate-300 overflow-hidden">
-              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=e0e7ff&color=4f46e5"
+            <div class="w-9 h-9 bg-halo-surface rounded-full border border-halo-border overflow-hidden">
+              <img id="header-avatar" src="https://ui-avatars.com/api/?name=A&background=14151C&color=5B6BFF"
                 alt="Avatar" class="w-full h-full object-cover" />
             </div>
           </div>
-          <button id="btn-logout" class="text-slate-400 hover:text-slate-600">
+          <button id="btn-logout" class="text-halo-on-surface-muted hover:text-halo-error transition-colors">
             <i data-lucide="log-out" class="w-5 h-5"></i>
           </button>
         </div>
@@ -153,7 +180,7 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
 
 
       <!-- ==================== VIEW: DASHBOARD ==================== -->
@@ -161,78 +188,102 @@
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Sesli Ajan Genel Bakış</h1>
-            <p class="text-slate-500 mt-1">Gerçek zamanlı izleme ve performans takibi.</p>
+            <h1 class="text-2xl font-bold text-halo-on-surface tracking-tight">Sesli Ajan Genel Bakış</h1>
+            <p class="text-halo-on-surface-muted mt-1 text-sm">Gerçek zamanlı izleme ve performans takibi.</p>
           </div>
           <div class="flex items-center gap-3">
             <span
-              class="text-xs font-medium text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+              class="text-xs font-semibold text-halo-on-surface-muted bg-halo-surface px-3 py-1.5 rounded-md border border-halo-border shadow-halo-sm flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-halo-success animate-pulse"></span>
               Canlı Güncelleme
             </span>
-            <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
           </div>
         </div>
 
-        <!-- KPIs -->
+        <!-- KPIs (Halo Stat Tiles) -->
         <div id="kpi-kartlari" class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Toplam Arama -->
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
+          <div class="bg-halo-surface p-6 rounded-md border border-halo-border border-t-2 border-t-halo-primary shadow-halo-sm flex items-start justify-between transition-all hover:border-halo-border-strong">
             <div>
-              <p class="text-sm font-medium text-slate-500">Toplam Arama</p>
-              <h3 id="kpi-toplam" class="text-3xl font-bold text-slate-900 mt-2">0</h3>
-              <div class="flex items-center mt-2 text-slate-400 text-sm font-medium">
-                <i data-lucide="phone-incoming" class="w-4 h-4 mr-1"></i>
+              <p class="text-sm font-medium text-halo-on-surface-muted">Toplam Arama</p>
+              <h3 id="kpi-toplam" class="text-3xl font-mono font-bold text-halo-on-surface mt-2 tracking-tight">0</h3>
+              <div class="flex items-center mt-3 text-halo-on-surface-faint text-xs font-medium">
+                <i data-lucide="phone-incoming" class="w-3.5 h-3.5 mr-1 text-halo-primary"></i>
                 <span>Tüm çağrılar</span>
               </div>
             </div>
-            <div class="p-3 bg-indigo-50 rounded-lg">
-              <i data-lucide="phone" class="w-6 h-6 text-indigo-600"></i>
+            <div class="p-3 bg-halo-elevated border border-halo-border rounded-md text-halo-primary">
+              <i data-lucide="phone" class="w-5 h-5"></i>
             </div>
           </div>
 
           <!-- Ort. Süre -->
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
+          <div class="bg-halo-surface p-6 rounded-md border border-halo-border border-t-2 border-t-halo-info shadow-halo-sm flex items-start justify-between transition-all hover:border-halo-border-strong">
             <div>
-              <p class="text-sm font-medium text-slate-500">Ort. Süre</p>
-              <h3 id="kpi-sure" class="text-3xl font-bold text-slate-900 mt-2">0m 0s</h3>
-              <div class="flex items-center mt-2 text-slate-400 text-sm font-medium">
-                <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+              <p class="text-sm font-medium text-halo-on-surface-muted">Ort. Süre</p>
+              <h3 id="kpi-sure" class="text-3xl font-mono font-bold text-halo-on-surface mt-2 tracking-tight">0m 0s</h3>
+              <div class="flex items-center mt-3 text-halo-on-surface-faint text-xs font-medium">
+                <i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-halo-info"></i>
                 <span>Ortalama çağrı süresi</span>
               </div>
             </div>
-            <div class="p-3 bg-indigo-50 rounded-lg">
-              <i data-lucide="clock" class="w-6 h-6 text-indigo-600"></i>
+            <div class="p-3 bg-halo-elevated border border-halo-border rounded-md text-halo-info">
+              <i data-lucide="clock" class="w-5 h-5"></i>
             </div>
           </div>
 
           <!-- Başarı Oranı -->
-          <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-start justify-between">
+          <div class="bg-halo-surface p-6 rounded-md border border-halo-border border-t-2 border-t-halo-success shadow-halo-sm flex items-start justify-between transition-all hover:border-halo-border-strong">
             <div>
-              <p class="text-sm font-medium text-slate-500">Başarı Oranı</p>
-              <h3 id="kpi-basari" class="text-3xl font-bold text-slate-900 mt-2">0.0%</h3>
-              <div class="flex items-center mt-2 text-slate-400 text-sm font-medium">
-                <i data-lucide="target" class="w-4 h-4 mr-1"></i>
+              <p class="text-sm font-medium text-halo-on-surface-muted">Başarı Oranı</p>
+              <h3 id="kpi-basari" class="text-3xl font-mono font-bold text-halo-on-surface mt-2 tracking-tight">0.0%</h3>
+              <div class="flex items-center mt-3 text-halo-on-surface-faint text-xs font-medium">
+                <i data-lucide="target" class="w-3.5 h-3.5 mr-1 text-halo-success"></i>
                 <span>Randevu oluşturma oranı</span>
               </div>
             </div>
-            <div class="p-3 bg-indigo-50 rounded-lg">
-              <i data-lucide="check-circle" class="w-6 h-6 text-indigo-600"></i>
+            <div class="p-3 bg-halo-elevated border border-halo-border rounded-md text-halo-success">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart Section (Yoğunluk & Dağılım Analizi) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          <!-- Yoğunluk Chart Card -->
+          <div class="bg-halo-surface border border-halo-border rounded-md p-6 shadow-halo-sm">
+            <h3 class="text-sm font-semibold text-halo-on-surface mb-4 flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-4.5 h-4.5 text-halo-primary"></i>
+              Yoğunluk Analizi (Haftalık Arama Hacmi)
+            </h3>
+            <div class="h-64 relative">
+              <canvas id="yogunluk-chart"></canvas>
+            </div>
+          </div>
+          <!-- Dağılım Chart Card -->
+          <div class="bg-halo-surface border border-halo-border rounded-md p-6 shadow-halo-sm">
+            <h3 class="text-sm font-semibold text-halo-on-surface mb-4 flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4.5 h-4.5 text-halo-info"></i>
+              Dağılım Analizi (Çağrı Durumları)
+            </h3>
+            <div class="h-64 relative flex items-center justify-center">
+              <canvas id="dagilim-chart"></canvas>
             </div>
           </div>
         </div>
 
         <!-- Dynamic Profile Table (Randevular / Siparişler) -->
         <div id="dynamic-profile-table-container"
-          class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hidden">
-          <div class="px-6 py-4 border-b border-slate-100">
-            <h2 id="dynamic-table-title" class="text-lg font-semibold text-slate-800">İşlemler</h2>
+          class="bg-halo-surface rounded-md border border-halo-border shadow-halo-sm overflow-hidden hidden mt-8">
+          <div class="px-6 py-4 border-b border-halo-border bg-halo-surface">
+            <h2 id="dynamic-table-title" class="text-sm font-semibold text-halo-on-surface flex items-center gap-2">İşlemler</h2>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left">
-              <thead id="dynamic-table-head" class="bg-indigo-50 text-xs uppercase text-indigo-700 font-semibold">
+              <thead id="dynamic-table-head" class="bg-halo-elevated text-xs uppercase text-halo-on-surface-muted font-semibold border-b border-halo-border">
                 <!-- Dynamically generated -->
               </thead>
-              <tbody id="dynamic-table-body" class="divide-y divide-slate-100">
+              <tbody id="dynamic-table-body" class="divide-y divide-halo-border text-halo-on-surface">
                 <!-- Dynamically generated -->
               </tbody>
             </table>
@@ -240,21 +291,21 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mt-8">
+        <div class="bg-halo-surface rounded-md border border-halo-border shadow-halo-md overflow-hidden mt-8">
 
           <!-- Table Header / Toolbar -->
           <div
-            class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 class="text-lg font-semibold text-slate-800">Tüm Çağrı Kayıtları</h2>
+            class="px-6 py-4 border-b border-halo-border bg-halo-surface flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 class="text-sm font-semibold text-halo-on-surface">Tüm Çağrı Kayıtları</h2>
             <div class="flex items-center gap-3">
               <button id="btn-sync" onclick="vApiSenkronize()" title="Vapi'den kaçırılan çağrıları çek"
-                class="flex items-center justify-center p-2 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors">
+                class="flex items-center justify-center p-2 text-halo-success bg-halo-success/10 border border-halo-success/20 hover:bg-halo-success/20 rounded-md transition-all shadow-halo-sm">
                 <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i>
               </button>
               <div class="relative">
-                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                 <input type="text" id="search-input" placeholder="Telefona göre ara..."
-                  class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full sm:w-64" />
+                  class="pl-9 pr-4 py-2 text-sm bg-halo-bg border border-halo-border text-halo-on-surface placeholder:text-halo-on-surface-faint rounded-md focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all w-full sm:w-64" />
               </div>
             </div>
           </div>
@@ -262,16 +313,16 @@
           <!-- Table -->
           <div class="overflow-x-auto">
             <table class="w-full text-left">
-              <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold">
+              <thead class="bg-halo-elevated text-xs uppercase text-halo-on-surface-muted border-b border-halo-border font-semibold">
                 <tr>
                   <th class="px-6 py-4">Müşteri Telefonu</th>
                   <th class="px-6 py-4">Saat</th>
                   <th class="px-6 py-4">Süre</th>
-                  <th class="px-6 py-4">Çıkarılan Veriler (Hata Ayıklama)</th>
+                  <th class="px-6 py-4">Alınan Parametreler</th>
                   <th class="px-6 py-4 text-right">İşlemler</th>
                 </tr>
               </thead>
-              <tbody id="calls-table-body" class="divide-y divide-slate-100">
+              <tbody id="calls-table-body" class="divide-y divide-halo-border text-halo-on-surface">
                 <!-- Rows will be populated by JS -->
               </tbody>
             </table>
@@ -280,24 +331,23 @@
       </div>
 
     </main>
-  </div>
 
   <!-- Modal (Hidden by default) -->
   <div id="call-modal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 modal-hidden">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-halo-bg/70 backdrop-blur-md transition-opacity duration-300 modal-hidden">
+    <div class="bg-halo-surface rounded-md border border-halo-border shadow-halo-lg w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
       <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      <div class="px-6 py-4 border-b border-halo-border flex items-center justify-between bg-halo-elevated/50">
         <div>
           <div class="flex items-center gap-3 mb-1">
-            <h3 id="modal-phone" class="text-lg font-semibold text-slate-800"></h3>
+            <h3 id="modal-phone" class="text-base font-bold text-halo-on-surface font-mono"></h3>
             <div id="modal-status-badge"></div>
           </div>
-          <p id="modal-meta" class="text-sm text-slate-500"></p>
+          <p id="modal-meta" class="text-xs text-halo-on-surface-muted font-mono"></p>
         </div>
         <button id="modal-close-btn"
-          class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-600">
+          class="p-2 hover:bg-halo-elevated rounded-full transition-colors text-halo-on-surface-muted hover:text-halo-on-surface">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -306,35 +356,35 @@
       <div class="overflow-y-auto p-6 space-y-6 transcript-scroll">
 
         <!-- Ses Kaydı Oynatıcı -->
-        <div id="modal-audio-container" class="bg-slate-50 border border-slate-200 rounded-lg p-4">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="p-2 bg-indigo-100 rounded-lg">
-              <i data-lucide="volume-2" class="w-4 h-4 text-indigo-600"></i>
+        <div id="modal-audio-container" class="bg-halo-bg border border-halo-border rounded-md p-4">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="p-2 bg-halo-primary/10 border border-halo-primary/20 rounded-md text-halo-primary">
+              <i data-lucide="volume-2" class="w-4 h-4"></i>
             </div>
-            <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Ses Kaydı</span>
-            <span id="modal-duration-display" class="ml-auto text-xs text-slate-500 font-mono"></span>
+            <span class="text-xs font-semibold text-halo-on-surface uppercase tracking-wider">Ses Kaydı</span>
+            <span id="modal-duration-display" class="ml-auto text-xs text-halo-on-surface-muted font-mono"></span>
           </div>
-          <audio id="modal-audio-player" controls class="w-full h-10 rounded-lg" style="outline: none;">
+          <audio id="modal-audio-player" controls class="w-full h-10 rounded-md bg-halo-surface border border-halo-border" style="outline: none;">
             Tarayıcınız ses oynatmayı desteklemiyor.
           </audio>
         </div>
 
         <!-- AI Summary -->
-        <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-4">
-          <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2">Yapay Zeka Özeti</h4>
-          <p id="modal-summary" class="text-sm text-slate-700 leading-relaxed"></p>
+        <div class="bg-halo-primary/5 border border-halo-primary/10 rounded-md p-4">
+          <h4 class="text-xs font-bold text-halo-primary uppercase tracking-wider mb-2">Yapay Zeka Özeti</h4>
+          <p id="modal-summary" class="text-sm text-halo-on-surface-muted leading-relaxed"></p>
         </div>
 
         <!-- Extracted Data -->
-        <div id="modal-extracted-container" class="bg-emerald-50/50 border border-emerald-100 rounded-lg p-4 hidden">
-          <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-2">Alınan Veriler</h4>
-          <div id="modal-extracted-data" class="text-sm text-slate-700 leading-relaxed space-y-2"></div>
+        <div id="modal-extracted-container" class="bg-halo-success/5 border border-halo-success/10 rounded-md p-4 hidden">
+          <h4 class="text-xs font-bold text-halo-success uppercase tracking-wider mb-2">Alınan Veriler</h4>
+          <div id="modal-extracted-data" class="text-sm text-halo-on-surface-muted leading-relaxed space-y-2"></div>
         </div>
 
         <!-- Transcript -->
         <div>
-          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
-            Döküm</h4>
+          <h4 class="text-xs font-bold text-halo-on-surface-faint uppercase tracking-wider mb-4 border-b border-halo-border pb-2">
+            Görüşme Dökümü</h4>
           <div id="modal-transcript" class="space-y-4">
             <!-- Chat bubbles go here -->
           </div>
@@ -349,6 +399,8 @@
     // ==========================================
     // Bu dizi, backend'den gelen çağrı kayıtlarını tutar.
     let tumCagrilar = [];
+    let yogunlukChart = null;
+    let dagilimChart = null;
 
     // Dinamik API adresi: Yerelde Live Server veya dosya protokolu ile çalışırken localhost:3001'e gider.
     // Canlıda (deploy edildiğinde) frontend ve backend aynı sunucuda çalışacağından origin'i kullanır.
@@ -376,6 +428,7 @@
           customerName: v.musteri_adi || '',
           status: v.cagri_durumu || 'basarili',
           startTime: v.baslangic_zamani ? new Date(v.baslangic_zamani).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '-',
+          rawDate: v.baslangic_zamani ? new Date(v.baslangic_zamani) : null,
           duration: hesaplaSure(v.baslangic_zamani, v.bitis_zamani),
           summary: v.summary || 'Özet bulunmuyor.',
           transcript: v.cagri_metni || 'Görüşme metni bulunmuyor.',
@@ -387,6 +440,7 @@
         renderTable(tumCagrilar);
         renderDynamicTable(tumCagrilar);
         istatistikleriGuncelle(tumCagrilar);
+        grafikleriGuncelle(tumCagrilar);
         console.log(`✅ ${tumCagrilar.length} çağrı kaydı yüklendi.`);
 
       } catch (hata) {
@@ -395,8 +449,8 @@
         if (tableBody) {
           tableBody.innerHTML = `
             <tr>
-              <td colspan="5" class="px-6 py-12 text-center text-slate-400">
-                <i data-lucide="phone-off" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+              <td colspan="5" class="px-6 py-12 text-center text-halo-on-surface-faint">
+                <i data-lucide="phone-off" class="w-8 h-8 mx-auto mb-2 opacity-50 text-halo-primary"></i>
                 <p class="text-sm">Henüz çağrı kaydı bulunmuyor.</p>
                 <p class="text-xs mt-1">Asistanınız bir çağrı aldığında burada görünecek.</p>
               </td>
@@ -457,6 +511,137 @@
     }
 
     // ==========================================
+    // 2.5 DİNAMİK GRAFİK GÜNCELLEME FONKSİYONU
+    // ==========================================
+    function grafikleriGuncelle(cagrilar) {
+      const gunler = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+      const gunSayilari = [0, 0, 0, 0, 0, 0, 0];
+      
+      let basarili = 0;
+      let basarisiz = 0;
+      let iptal = 0;
+      let devam = 0;
+      
+      cagrilar.forEach(c => {
+        if (c.rawDate) {
+          const dayIndex = (c.rawDate.getDay() + 6) % 7; // Pazar index 6, Ptesi index 0
+          gunSayilari[dayIndex]++;
+        }
+        
+        if (c.status === 'basarili') basarili++;
+        else if (c.status === 'basarisiz') basarisiz++;
+        else if (c.status === 'iptal') iptal++;
+        else if (c.status === 'devam_ediyor') devam++;
+      });
+      
+      // Line Chart (Yoğunluk)
+      const lineCanvas = document.getElementById('yogunluk-chart');
+      if (lineCanvas) {
+        const lineCtx = lineCanvas.getContext('2d');
+        if (yogunlukChart) {
+          yogunlukChart.data.datasets[0].data = gunSayilari;
+          yogunlukChart.update();
+        } else {
+          yogunlukChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+              labels: gunler,
+              datasets: [{
+                label: 'Çağrı Hacmi',
+                data: gunSayilari,
+                borderColor: '#5B6BFF',
+                backgroundColor: 'rgba(91, 107, 255, 0.12)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: '#5B6BFF',
+                pointBorderColor: '#14151C',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: '#1E2029',
+                  titleColor: '#F2F4F8',
+                  bodyColor: '#9AA0AE',
+                  borderColor: '#2A2D38',
+                  borderWidth: 1,
+                  padding: 10,
+                  bodyFont: { family: 'JetBrains Mono, monospace' }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { color: '#2A2D38' },
+                  ticks: { color: '#9AA0AE', font: { family: 'Inter' } }
+                },
+                y: {
+                  grid: { color: '#2A2D38' },
+                  ticks: { color: '#9AA0AE', precision: 0, font: { family: 'JetBrains Mono' } }
+                }
+              }
+            }
+          });
+        }
+      }
+      
+      // Doughnut Chart (Dağılım)
+      const pieCanvas = document.getElementById('dagilim-chart');
+      if (pieCanvas) {
+        const pieCtx = pieCanvas.getContext('2d');
+        const statusData = [basarili, basarisiz, iptal, devam];
+        
+        if (dagilimChart) {
+          dagilimChart.data.datasets[0].data = statusData;
+          dagilimChart.update();
+        } else {
+          dagilimChart = new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Başarılı', 'Başarısız', 'İptal', 'Devam Ediyor'],
+              datasets: [{
+                data: statusData,
+                backgroundColor: ['#2BE08C', '#FF3A5C', '#F5D547', '#3DD7E5'],
+                borderWidth: 2,
+                borderColor: '#14151C'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: '70%',
+              plugins: {
+                legend: {
+                  position: 'right',
+                  labels: {
+                    color: '#F2F4F8',
+                    font: { family: 'Inter', size: 12 },
+                    padding: 15
+                  }
+                },
+                tooltip: {
+                  backgroundColor: '#1E2029',
+                  titleColor: '#F2F4F8',
+                  bodyColor: '#9AA0AE',
+                  borderColor: '#2A2D38',
+                  borderWidth: 1,
+                  padding: 10,
+                  bodyFont: { family: 'JetBrains Mono, monospace' }
+                }
+              }
+            }
+          });
+        }
+      }
+    }
+
+    // ==========================================
     // 3. SAYFA (SEKME) DEĞİŞTİRME MANTIĞI
     // ==========================================
     function switchView(viewName) {
@@ -471,8 +656,8 @@
       });
 
       const navs = ['nav-dashboard', 'nav-agents', 'nav-settings'];
-      const activeClass = "text-indigo-600 bg-indigo-50".split(" ");
-      const inactiveClass = "text-slate-600 hover:text-indigo-600 hover:bg-slate-50".split(" ");
+      const activeClass = "text-halo-primary bg-halo-primary/10 border border-halo-primary/20 shadow-halo-sm".split(" ");
+      const inactiveClass = "text-halo-on-surface-muted hover:text-halo-on-surface hover:bg-halo-surface/50 border border-transparent".split(" ");
 
       navs.forEach(n => {
         const btn = document.getElementById(n);
@@ -496,8 +681,8 @@
       if (tabEl) tabEl.classList.remove('hidden');
 
       const buttons = document.querySelectorAll('.settings-tab-btn');
-      const activeClass = "bg-indigo-50 text-indigo-700".split(" ");
-      const inactiveClass = "text-slate-600 hover:bg-slate-50".split(" ");
+      const activeClass = "bg-halo-elevated text-halo-primary border border-halo-border-strong".split(" ");
+      const inactiveClass = "text-halo-on-surface-muted hover:bg-halo-surface/50 border border-transparent".split(" ");
       buttons.forEach(btn => {
         if (btn.id === 'tab-btn-' + tabName) {
           btn.classList.remove(...inactiveClass);
@@ -514,20 +699,20 @@
     function getStatusBadgeHTML(status) {
       switch (status) {
         case 'devam_ediyor':
-          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-halo-info/10 text-halo-info border border-halo-info/20">
                     <span class="relative flex h-2 w-2 mr-1.5">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-halo-info opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-halo-info"></span>
                     </span>Devam Ediyor</span>`;
         case 'basarili':
-          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                    <i data-lucide="check-circle-2" class="w-3 h-3 mr-1.5 inline"></i>Başarılı</span>`;
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-halo-success/10 text-halo-success border border-halo-success/20">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1.5 inline"></i>Başarılı</span>`;
         case 'basarisiz':
-          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-                    <i data-lucide="x-circle" class="w-3 h-3 mr-1.5 inline"></i>Başarısız</span>`;
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-halo-error/10 text-halo-error border border-halo-error/20">
+                    <i data-lucide="x-circle" class="w-3.5 h-3.5 mr-1.5 inline"></i>Başarısız</span>`;
         case 'iptal':
-          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                    <i data-lucide="ban" class="w-3 h-3 mr-1.5 inline"></i>İptal</span>`;
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-halo-warning/10 text-halo-warning border border-halo-warning/20">
+                    <i data-lucide="ban" class="w-3.5 h-3.5 mr-1.5 inline"></i>İptal</span>`;
         default:
           return '';
       }
@@ -536,7 +721,6 @@
     // ==========================================
     // 4. TABLO DOLDURMA (RENDER) FONKSİYONU
     // ==========================================
-    // Veritabanından gelen çağrı listesini tabloya yazar.
     const tableBody = document.getElementById('calls-table-body');
     const searchInput = document.getElementById('search-input');
 
@@ -547,8 +731,8 @@
       if (calls.length === 0) {
         tableBody.innerHTML = `
           <tr>
-            <td colspan="5" class="px-6 py-12 text-center text-slate-400">
-              <i data-lucide="phone-off" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+            <td colspan="5" class="px-6 py-12 text-center text-halo-on-surface-faint">
+              <i data-lucide="phone-off" class="w-8 h-8 mx-auto mb-2 opacity-50 text-halo-primary"></i>
               <p class="text-sm">Henüz çağrı kaydı bulunmuyor.</p>
             </td>
           </tr>`;
@@ -558,24 +742,35 @@
 
       calls.forEach(call => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50/50 transition-colors group";
+        tr.className = "hover:bg-halo-elevated/40 border-b border-halo-border transition-colors group";
+        
+        let extractedHTML = '<span class="text-halo-on-surface-faint italic text-xs">Parametre Yok</span>';
+        if (call.extractedData && Object.keys(call.extractedData).length > 0) {
+          extractedHTML = '';
+          for (const [k, val] of Object.entries(call.extractedData)) {
+            if (val) {
+              extractedHTML += `<span class="inline-block bg-halo-primary/10 text-halo-primary border border-halo-primary/20 text-[10px] font-semibold font-mono rounded px-1.5 py-0.5 mr-1.5 mb-1.5 max-w-[150px] truncate" title="${k}: ${val}">${k}: ${val}</span>`;
+            }
+          }
+        }
+
         tr.innerHTML = `
-          <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
+          <td class="px-6 py-4 text-sm font-medium text-halo-on-surface font-mono whitespace-nowrap">
             ${call.customerPhone}
           </td>
-          <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
+          <td class="px-6 py-4 text-sm text-halo-on-surface-muted whitespace-nowrap">
             ${call.startTime}
           </td>
-          <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap font-mono">
+          <td class="px-6 py-4 text-sm text-halo-on-surface-muted whitespace-nowrap font-mono">
             ${call.duration}
           </td>
-          <td class="px-6 py-4 text-xs text-slate-400 max-w-xs truncate" title='${JSON.stringify(call.extractedData)}'>
-            ${call.extractedData ? JSON.stringify(call.extractedData) : 'Veri Çıkarılmadı (Null)'}
+          <td class="px-6 py-4 text-xs max-w-xs">
+            <div class="flex flex-wrap">${extractedHTML}</div>
           </td>
           <td class="px-6 py-4 text-right whitespace-nowrap">
             <button 
               onclick="openModal('${call.id}')"
-              class="text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-md transition-colors"
+              class="text-sm font-semibold text-halo-primary hover:text-halo-primary-hover bg-halo-primary/5 hover:bg-halo-primary/10 border border-halo-primary/20 px-3 py-1.5 rounded-md transition-all shadow-halo-sm"
             >İncele</button>
           </td>`;
         tableBody.appendChild(tr);
@@ -588,18 +783,16 @@
     // ==========================================
     function kopyalaMetin(metin, btn) {
       navigator.clipboard.writeText(metin).then(() => {
-        // İkon ve buton durumunu kopyalandı olarak güncelle
         const icon = btn.querySelector('i');
-        btn.classList.remove('text-slate-400', 'hover:text-indigo-600');
-        btn.classList.add('text-emerald-600', 'bg-emerald-50', 'border-emerald-200');
+        btn.classList.remove('text-halo-on-surface-muted', 'hover:text-halo-primary');
+        btn.classList.add('text-halo-success', 'bg-halo-success/10', 'border-halo-success/20');
         btn.title = "Kopyalandı!";
         icon.setAttribute('data-lucide', 'check');
         lucide.createIcons();
 
-        // 2 saniye sonra eski haline geri getir
         setTimeout(() => {
-          btn.classList.add('text-slate-400', 'hover:text-indigo-600');
-          btn.classList.remove('text-emerald-600', 'bg-emerald-50', 'border-emerald-200');
+          btn.classList.add('text-halo-on-surface-muted', 'hover:text-halo-primary');
+          btn.classList.remove('text-halo-success', 'bg-halo-success/10', 'border-halo-success/20');
           btn.title = "Adresi Kopyala";
           icon.setAttribute('data-lucide', 'copy');
           lucide.createIcons();
@@ -620,10 +813,8 @@
 
       if (!calls) return;
 
-      // SADECE durumu başarılı olan ve yapılandırılmış veriye sahip olan çağrıları listele (Mantıksal Düzeltme)
       const dataCalls = calls.filter(c => c.status === 'basarili' && c.extractedData && Object.keys(c.extractedData).length > 0);
 
-      // Verilerin içinde randevu/tarih ile ilgili anahtarlar varsa clinic, sipariş varsa food diyelim
       let clinicCount = 0;
       let foodCount = 0;
 
@@ -638,7 +829,7 @@
 
       if (clinicCount >= foodCount) {
         tableType = 'clinic';
-        title.innerHTML = '<i data-lucide="calendar" class="w-5 h-5 inline mr-2 text-indigo-600"></i> Yaklaşan Randevular';
+        title.innerHTML = '<i data-lucide="calendar" class="w-4.5 h-4.5 inline mr-2 text-halo-primary"></i> Yaklaşan Randevular';
         thead.innerHTML = `
           <tr>
             <th class="px-6 py-4">Müşteri</th>
@@ -649,7 +840,7 @@
         `;
       } else {
         tableType = 'food';
-        title.innerHTML = '<i data-lucide="shopping-bag" class="w-5 h-5 inline mr-2 text-indigo-600"></i> Aktif Siparişler';
+        title.innerHTML = '<i data-lucide="shopping-bag" class="w-4.5 h-4.5 inline mr-2 text-halo-success"></i> Aktif Siparişler';
         thead.innerHTML = `
           <tr>
             <th class="px-6 py-4">Müşteri</th>
@@ -666,15 +857,14 @@
       if (relevantCalls.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="4" class="px-6 py-12 text-center text-slate-400 bg-slate-50/30">
-              <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50 text-indigo-400"></i>
-              <p class="text-sm font-medium text-slate-600">Aktif İşlem Bulunmuyor</p>
-              <p class="text-xs mt-1 text-slate-400">Yapay zeka asistanınız başarılı bir görüşme tamamladığında veriler otomatik olarak buraya yansıyacaktır.</p>
+            <td colspan="4" class="px-6 py-12 text-center text-halo-on-surface-faint bg-halo-surface/30">
+              <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50 text-halo-primary"></i>
+              <p class="text-sm font-semibold text-halo-on-surface-muted">Aktif İşlem Bulunmuyor</p>
+              <p class="text-xs mt-1 text-halo-on-surface-faint">Yapay zeka asistanınız başarılı bir görüşme tamamladığında veriler otomatik olarak buraya yansıyacaktır.</p>
             </td>
           </tr>
         `;
       } else {
-        // Anahtarları büyük/küçük harf bağımsız aramak için yardımcı fonksiyon
         const findValue = (obj, keywords) => {
           for (const key of Object.keys(obj)) {
             const lowerKey = key.toLowerCase();
@@ -688,7 +878,7 @@
         relevantCalls.forEach(call => {
           const data = call.extractedData || {};
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50/50 transition-colors group cursor-pointer";
+          tr.className = "hover:bg-halo-elevated/40 border-b border-halo-border transition-colors group cursor-pointer text-sm text-halo-on-surface-muted";
           tr.onclick = () => openModal(call.id);
 
           const musteriDegeri = findValue(data, ['isim', 'ad', 'name', 'musteri', 'customer']) || call.customerName || call.customerPhone;
@@ -699,75 +889,75 @@
 
           if (tableType === 'clinic') {
             tr.innerHTML = `
-            <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
+            <td class="px-6 py-4 text-sm font-medium text-halo-on-surface whitespace-nowrap">
               <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-slate-100/80 flex items-center justify-center text-slate-500">
+                <div class="w-8 h-8 rounded-full bg-halo-elevated border border-halo-border flex items-center justify-center text-halo-on-surface-muted">
                   <i data-lucide="user" class="w-4 h-4"></i>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-slate-800 font-semibold">${musteriDegeri}</span>
-                  <span class="text-xs text-slate-400 font-mono font-normal">${call.customerPhone}</span>
+                  <span class="text-halo-on-surface font-semibold">${musteriDegeri}</span>
+                  <span class="text-xs text-halo-on-surface-faint font-mono font-normal">${call.customerPhone}</span>
                 </div>
               </div>
             </td>
             <td class="px-6 py-4 text-sm whitespace-nowrap">
               ${tarihDegeri 
-                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 font-semibold text-xs shadow-sm">
-                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-500"></i>
+                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-halo-primary/10 text-halo-primary border border-halo-primary/20 font-semibold text-xs shadow-halo-sm">
+                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-halo-primary"></i>
                      ${tarihDegeri}
                    </span>`
-                : `<span class="text-slate-400 italic text-xs">Belirtilmedi</span>`
+                : `<span class="text-halo-on-surface-faint italic text-xs">Belirtilmedi</span>`
               }
             </td>
-            <td class="px-6 py-4 text-sm text-slate-600">
+            <td class="px-6 py-4 text-sm text-halo-on-surface-muted">
               <div class="flex items-center gap-1.5">
-                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i>
+                <i data-lucide="info" class="w-3.5 h-3.5 text-halo-on-surface-faint flex-shrink-0"></i>
                 <span class="truncate max-w-[200px]" title="${detayDegeri}">${detayDegeri ? detayDegeri : '-'}</span>
               </div>
             </td>
-            <td class="px-6 py-4 text-sm text-slate-400 font-medium whitespace-nowrap">
+            <td class="px-6 py-4 text-sm text-halo-on-surface-faint font-medium whitespace-nowrap">
               <div class="flex items-center gap-1">
-                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-300"></i>
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-halo-on-surface-faint"></i>
                 <span>${call.startTime}</span>
               </div>
             </td>
           `;
           } else {
             tr.innerHTML = `
-            <td class="px-6 py-4 text-sm font-medium text-slate-700 whitespace-nowrap">
+            <td class="px-6 py-4 text-sm font-medium text-halo-on-surface whitespace-nowrap">
               <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-slate-100/80 flex items-center justify-center text-slate-500">
+                <div class="w-8 h-8 rounded-full bg-halo-elevated border border-halo-border flex items-center justify-center text-halo-on-surface-muted">
                   <i data-lucide="user" class="w-4 h-4"></i>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-slate-800 font-semibold">${musteriDegeri}</span>
-                  <span class="text-xs text-slate-400 font-mono font-normal">${call.customerPhone}</span>
+                  <span class="text-halo-on-surface font-semibold">${musteriDegeri}</span>
+                  <span class="text-xs text-halo-on-surface-faint font-mono font-normal">${call.customerPhone}</span>
                 </div>
               </div>
             </td>
             <td class="px-6 py-4 text-sm">
               ${siparisDegeri 
-                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 font-semibold text-xs shadow-sm">
-                     <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-emerald-500"></i>
+                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-halo-success/10 text-halo-success border border-halo-success/20 font-semibold text-xs shadow-halo-sm">
+                     <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-halo-success"></i>
                      ${siparisDegeri}
                    </span>`
-                : `<span class="text-slate-400 italic text-xs">Belirtilmedi</span>`
+                : `<span class="text-halo-on-surface-faint italic text-xs">Belirtilmedi</span>`
               }
             </td>
-            <td class="px-6 py-4 text-sm text-slate-600 max-w-xs">
+            <td class="px-6 py-4 text-sm text-halo-on-surface-muted max-w-xs">
               ${adresDegeri 
-                ? `<div class="flex items-center justify-between gap-2 bg-slate-50 border border-slate-100 rounded-lg p-1.5 pl-2.5">
-                     <span class="truncate text-xs text-slate-600 flex-1">${adresDegeri}</span>
-                     <button onclick="event.stopPropagation(); kopyalaMetin('${adresDegeri.replace(/'/g, "\\'")}', this)" title="Adresi Kopyala" class="p-1 text-slate-400 hover:text-indigo-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-md transition-all shadow-sm flex items-center justify-center">
+                ? `<div class="flex items-center justify-between gap-2 bg-halo-bg border border-halo-border rounded-md p-1.5 pl-2.5">
+                     <span class="truncate text-xs text-halo-on-surface-muted flex-1">${adresDegeri}</span>
+                     <button onclick="event.stopPropagation(); kopyalaMetin('${adresDegeri.replace(/'/g, "\\'")}', this)" title="Adresi Kopyala" class="p-1 text-halo-on-surface-muted hover:text-halo-primary bg-halo-surface hover:bg-halo-elevated border border-halo-border rounded-md transition-all shadow-halo-sm flex items-center justify-center">
                        <i data-lucide="copy" class="w-3 h-3"></i>
                      </button>
                    </div>`
-                : `<span class="text-slate-400 italic text-xs">Belirtilmedi</span>`
+                : `<span class="text-halo-on-surface-faint italic text-xs">Belirtilmedi</span>`
               }
             </td>
-            <td class="px-6 py-4 text-sm text-slate-400 font-medium whitespace-nowrap">
+            <td class="px-6 py-4 text-sm text-halo-on-surface-faint font-medium whitespace-nowrap">
               <div class="flex items-center gap-1">
-                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-300"></i>
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-halo-on-surface-faint"></i>
                 <span>${call.startTime}</span>
               </div>
             </td>
@@ -783,7 +973,6 @@
     // ==========================================
     // 5. KÜÇÜK PENCERE (MODAL) YÖNETİMİ
     // ==========================================
-    // "İncele" butonuna basınca çağrı detaylarını gösterir.
     const modal = document.getElementById('call-modal');
     const modalPhone = document.getElementById('modal-phone');
     const modalBadge = document.getElementById('modal-status-badge');
@@ -794,18 +983,15 @@
     const modalCloseBtn = document.getElementById('modal-close-btn');
 
     function openModal(callId) {
-      // Gerçek verilerden çağrıyı bul (tip uyumsuzluğunu önlemek için string'e çevir)
       const call = tumCagrilar.find(c => String(c.id) === String(callId));
       if (!call) { console.log('❌ Çağrı bulunamadı, id:', callId); return; }
 
-      // Verileri doldur
       modalPhone.textContent = call.customerPhone;
       modalBadge.innerHTML = getStatusBadgeHTML(call.status);
       modalMeta.textContent = `${call.startTime} • Süre: ${call.duration}`;
       modalSummary.textContent = call.summary;
       modalDuration.textContent = call.duration;
 
-      // Ses Kaydını Bağla
       const audioPlayer = document.getElementById('modal-audio-player');
       const audioContainer = document.getElementById('modal-audio-container');
       if (call.recordingUrl) {
@@ -816,14 +1002,14 @@
         audioContainer.classList.add('hidden');
       }
 
-      // Alınan Veriler (Extracted Data)
       const extractedContainer = document.getElementById('modal-extracted-container');
       const extractedDataEl = document.getElementById('modal-extracted-data');
       if (call.extractedData && Object.keys(call.extractedData).length > 0) {
         extractedDataEl.innerHTML = '';
         for (const [key, value] of Object.entries(call.extractedData)) {
           const div = document.createElement('div');
-          div.innerHTML = `<span class="font-medium text-slate-900 capitalize">${key.replace(/_/g, ' ')}:</span> ${value}`;
+          div.className = 'flex items-center justify-between text-xs py-1.5 border-b border-halo-border/30 last:border-b-0 text-halo-on-surface-muted';
+          div.innerHTML = `<span class="font-semibold text-halo-on-surface capitalize font-mono">${key.replace(/_/g, ' ')}</span> <span class="bg-halo-bg border border-halo-border px-2 py-0.5 rounded text-halo-primary font-semibold font-mono">${value}</span>`;
           extractedDataEl.appendChild(div);
         }
         extractedContainer.classList.remove('hidden');
@@ -831,23 +1017,84 @@
         extractedContainer.classList.add('hidden');
       }
 
-      // Görüşme Metnini Göster
       modalTranscript.innerHTML = '';
 
-      if (typeof call.transcript === 'string' && call.transcript.length > 0) {
-        // Vapi'den gelen metin formatı: düz metin olarak göster
-        const div = document.createElement('div');
-        div.className = 'p-4 bg-slate-50 rounded-lg text-sm text-slate-700 leading-relaxed whitespace-pre-wrap';
-        div.textContent = call.transcript;
-        modalTranscript.appendChild(div);
+      if (typeof call.transcript === 'string' && call.transcript.trim().length > 0) {
+        const lines = call.transcript.split('\n');
+        let hasBubbles = false;
+        
+        lines.forEach(line => {
+          const trimmed = line.trim();
+          if (!trimmed) return;
+          
+          const customerMatch = trimmed.match(/^(müşteri|user|customer|musteri|siz|you)\s*:\s*(.*)$/i);
+          const assistantMatch = trimmed.match(/^(ajan|asistan|assistant|ai|system|agent|bot)\s*:\s*(.*)$/i);
+          
+          if (customerMatch) {
+            hasBubbles = true;
+            const text = customerMatch[2];
+            const bubble = document.createElement('div');
+            bubble.className = "flex items-start gap-2.5 max-w-[85%] animate-fade-in";
+            bubble.innerHTML = `
+              <div class="w-8 h-8 rounded-full bg-halo-elevated border border-halo-border flex items-center justify-center text-halo-on-surface-muted flex-shrink-0">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] text-halo-on-surface-faint font-semibold ml-1">Müşteri</span>
+                <div class="bg-halo-elevated border border-halo-border text-halo-on-surface text-sm rounded-lg rounded-tl-none px-4 py-2.5 leading-relaxed">
+                  ${text}
+                </div>
+              </div>
+            `;
+            modalTranscript.appendChild(bubble);
+          } else if (assistantMatch) {
+            hasBubbles = true;
+            const text = assistantMatch[2];
+            const bubble = document.createElement('div');
+            bubble.className = "flex items-start gap-2.5 max-w-[85%] ml-auto justify-end animate-fade-in";
+            bubble.innerHTML = `
+              <div class="flex flex-col gap-1 items-end">
+                <span class="text-[10px] text-halo-primary font-semibold mr-1">VoiceAuto AI</span>
+                <div class="bg-halo-primary text-white text-sm rounded-lg rounded-tr-none px-4 py-2.5 leading-relaxed shadow-[0_0_16px_rgba(91,107,255,0.12)]">
+                  ${text}
+                </div>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-halo-primary/10 border border-halo-primary/20 flex items-center justify-center text-halo-primary flex-shrink-0">
+                <i data-lucide="bot" class="w-4 h-4"></i>
+              </div>
+            `;
+            modalTranscript.appendChild(bubble);
+          } else {
+            const bubble = document.createElement('div');
+            bubble.className = "flex items-start gap-2.5 max-w-[85%] animate-fade-in";
+            bubble.innerHTML = `
+              <div class="w-8 h-8 rounded-full bg-halo-elevated border border-halo-border flex items-center justify-center text-halo-on-surface-muted flex-shrink-0">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="bg-halo-elevated border border-halo-border text-halo-on-surface-muted text-sm rounded-lg px-4 py-2.5 leading-relaxed">
+                  ${trimmed}
+                </div>
+              </div>
+            `;
+            modalTranscript.appendChild(bubble);
+          }
+        });
+        
+        if (!hasBubbles) {
+          modalTranscript.innerHTML = '';
+          const div = document.createElement('div');
+          div.className = 'p-4 bg-halo-elevated border border-halo-border rounded-md text-sm text-halo-on-surface leading-relaxed whitespace-pre-wrap';
+          div.textContent = call.transcript;
+          modalTranscript.appendChild(div);
+        }
       } else {
         const div = document.createElement('div');
-        div.className = 'text-sm text-slate-400 text-center py-4';
+        div.className = 'text-sm text-halo-on-surface-faint text-center py-4';
         div.textContent = 'Görüşme metni bulunmuyor.';
         modalTranscript.appendChild(div);
       }
 
-      // Modalı göster
       if (modal) {
         modal.classList.remove('modal-hidden');
         modal.classList.add('modal-visible');

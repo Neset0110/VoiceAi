@@ -20,9 +20,42 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                    colors: {
+                        halo: {
+                            bg: '#0A0B0F',
+                            surface: '#14151C',
+                            elevated: '#1E2029',
+                            border: '#2A2D38',
+                            'border-strong': '#3A3D4A',
+                            'on-surface': '#F2F4F8',
+                            'on-surface-muted': '#9AA0AE',
+                            'on-surface-faint': '#5C6170',
+                            primary: '#5B6BFF',
+                            'primary-hover': '#7886FF',
+                            'primary-pressed': '#4A59E6',
+                            success: '#2BE08C',
+                            warning: '#F5D547',
+                            info: '#3DD7E5',
+                            error: '#FF3A5C',
+                            focus: 'rgba(91, 107, 255, 0.35)'
+                        }
                     },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
+                    },
+                    borderRadius: {
+                        'sm': '6px',
+                        'md': '10px',
+                        'lg': '16px',
+                        'xl': '24px'
+                    },
+                    boxShadow: {
+                        'halo-sm': '0 1px 0 rgba(255,255,255,0.02) inset, 0 1px 2px rgba(0,0,0,0.4)',
+                        'halo-md': '0 8px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.03) inset',
+                        'halo-lg': '0 24px 60px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset',
+                        'halo-focus': '0 0 0 3px rgba(91, 107, 255, 0.35)'
+                    }
                 },
             },
         }
@@ -32,193 +65,145 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #0A0B0F;
         }
 
-        /* Arka plan animasyonu */
-        .bg-animated {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 8s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        /* Form geçiş animasyonu */
-        .form-slide {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Input odaklanma efekti */
-        .input-glow:focus {
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        /* Buton hover efekti */
-        .btn-shine {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-shine::after {
-            content: '';
+        /* Space background radial glow spots */
+        .space-glow {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
-            transition: all 0.5s ease;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            background: radial-gradient(circle, #5B6BFF 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .btn-shine:hover::after {
-            transform: translateX(100%);
+        /* Form transition animations */
+        .form-slide {
+            transition: all 0.25s cubic-bezier(0.2, 0.6, 0.2, 1);
         }
 
-        /* Bildirim kutusu animasyonu */
+        /* Toast entry animation */
         .toast-enter {
-            animation: toastIn 0.4s ease-out;
+            animation: toastIn 0.24s cubic-bezier(0.2, 0.6, 0.2, 1);
         }
 
         @keyframes toastIn {
             from {
-                transform: translateY(-20px);
+                transform: translateY(-12px);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
-
-        /* Yüzen daireler */
-        .floating-circle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            50% {
-                transform: translateY(-20px) rotate(10deg);
-            }
-        }
     </style>
 </head>
 
-<body class="min-h-screen bg-animated flex items-center justify-center p-4 relative overflow-hidden">
+<body class="min-h-screen bg-halo-bg text-halo-on-surface flex items-center justify-center p-4 relative overflow-hidden">
 
-    <!-- Dekoratif Yüzen Daireler -->
-    <div class="floating-circle w-72 h-72 top-10 -left-20" style="animation-delay: 0s;"></div>
-    <div class="floating-circle w-96 h-96 -bottom-20 -right-20" style="animation-delay: 2s;"></div>
-    <div class="floating-circle w-48 h-48 top-1/3 right-10" style="animation-delay: 4s;"></div>
+    <!-- Decorative Deep-Space Accents -->
+    <div class="space-glow w-96 h-96 -top-20 -left-20 animate-pulse" style="animation-duration: 10s;"></div>
+    <div class="space-glow w-[500px] h-[500px] -bottom-40 -right-40 animate-pulse" style="animation-duration: 14s; animation-delay: 2s;"></div>
 
-    <!-- Ana Kart -->
+    <!-- Main Container -->
     <div class="w-full max-w-md relative z-10">
 
         <!-- Logo -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center gap-3 mb-4">
-                <div class="bg-white/20 backdrop-blur-sm p-3 rounded-2xl border border-white/20">
-                    <i data-lucide="mic-2" class="w-8 h-8 text-white"></i>
+            <div class="inline-flex items-center gap-3 mb-3">
+                <div class="bg-halo-surface border border-halo-border p-3 rounded-lg shadow-halo-sm">
+                    <i data-lucide="mic-2" class="w-7 h-7 text-halo-primary"></i>
                 </div>
-                <span class="text-3xl font-extrabold text-white tracking-tight">
-                    VoiceAuto<span class="text-indigo-200">.ai</span>
+                <span class="text-3xl font-bold text-halo-on-surface tracking-tight">
+                    VoiceAuto<span class="text-halo-primary">.ai</span>
                 </span>
             </div>
-            <p class="text-indigo-100/80 text-sm">Yapay Zeka Destekli Sesli Ajan Yönetim Paneli</p>
+            <p class="text-halo-on-surface-muted text-sm tracking-wide">Yapay Zeka Destekli Sesli Ajan Yönetim Paneli</p>
         </div>
 
-        <!-- Form Kartı -->
-        <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/20">
+        <!-- Form Card (Charcoal surface with hairline border) -->
+        <div class="bg-halo-surface rounded-lg shadow-halo-lg overflow-hidden border border-halo-border">
 
-            <!-- Sekme Butonları -->
-            <div class="flex border-b border-slate-100">
+            <!-- Tab Header Navigation -->
+            <div id="tab-bar-container" class="flex border-b border-halo-border bg-halo-surface">
                 <button id="tab-giris" onclick="sekmeDegistir('giris')"
-                    class="flex-1 py-4 text-sm font-semibold text-indigo-600 border-b-2 border-indigo-600 transition-all duration-300 flex items-center justify-center gap-2">
-                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    class="flex-1 py-4 text-sm font-semibold text-halo-on-surface border-b border-halo-primary transition-all duration-150 flex items-center justify-center gap-2 focus:outline-none">
+                    <i data-lucide="log-in" class="w-4 h-4 text-halo-primary"></i>
                     Giriş Yap
                 </button>
                 <button id="tab-kayit" onclick="sekmeDegistir('kayit')"
-                    class="flex-1 py-4 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all duration-300 flex items-center justify-center gap-2">
+                    class="flex-1 py-4 text-sm font-semibold text-halo-on-surface-muted border-b border-transparent hover:text-halo-on-surface transition-all duration-150 flex items-center justify-center gap-2 focus:outline-none">
                     <i data-lucide="user-plus" class="w-4 h-4"></i>
                     Kayıt Ol
                 </button>
             </div>
+
 
             <!-- Giriş Formu -->
             <div id="form-giris" class="p-8 form-slide">
                 <div class="space-y-5">
                     <!-- E-posta -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">E-posta Adresi</label>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">E-posta Adresi</label>
                         <div class="relative">
                             <i data-lucide="mail"
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                             <input type="email" id="giris-email" placeholder="ornek@firma.com"
-                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                                class="w-full pl-10 pr-4 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
                         </div>
                     </div>
 
                     <!-- Şifre -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Şifre</label>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">Şifre</label>
                         <div class="relative">
                             <i data-lucide="lock"
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                             <input type="password" id="giris-sifre" placeholder="••••••••"
-                                class="input-glow w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                                class="w-full pl-10 pr-12 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
                             <button type="button" onclick="sifreGoster('giris-sifre', this)"
-                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-halo-on-surface-muted hover:text-halo-on-surface transition-colors">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
 
+                    <!-- Şifremi Unuttum Bağlantısı -->
+                    <div class="flex justify-end !mt-1">
+                        <button type="button" onclick="sekmeDegistir('forgot')"
+                            class="text-xs font-semibold text-halo-primary hover:text-halo-primary-hover transition-colors">
+                            Şifremi Unuttum?
+                        </button>
+                    </div>
+
                     <!-- E-posta Onay Uyarısı & Yeniden Gönderme -->
-                    <div id="giris-unverified-alani" class="hidden p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs space-y-2.5 toast-enter">
+                    <div id="giris-unverified-alani" class="hidden p-4 bg-halo-surface border border-halo-warning/20 rounded-md text-halo-on-surface text-xs space-y-2.5 toast-enter">
                         <div class="flex items-start gap-2.5">
-                            <i data-lucide="alert-triangle" class="w-4.5 h-4.5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                            <i data-lucide="alert-triangle" class="w-4.5 h-4.5 text-halo-warning flex-shrink-0 mt-0.5"></i>
                             <div>
-                                <span class="font-bold text-slate-900">Hesabınız onaylanmamış!</span>
-                                <p class="text-amber-800 mt-1 leading-relaxed">
+                                <span class="font-bold text-halo-warning">Hesabınız onaylanmamış!</span>
+                                <p class="text-halo-on-surface-muted mt-1 leading-relaxed">
                                     Lütfen e-posta adresinize gönderilen doğrulama linkine tıklayarak hesabınızı aktif hale getirin. E-posta kutunuzda göremiyorsanız (Spam dahil), aşağıdaki butondan yeni bir link talep edebilirsiniz.
                                 </p>
                             </div>
                         </div>
-                        <button id="btn-resend" type="button" onclick="aktivasyonMailiGonder()" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-1.5 shadow-sm shadow-amber-100 hover:shadow-md hover:shadow-amber-200 text-[11px]">
+                        <button id="btn-resend" type="button" onclick="aktivasyonMailiGonder()" class="w-full bg-halo-primary hover:bg-halo-primary-hover active:bg-halo-primary-pressed text-white py-2 px-4 rounded-md font-semibold transition-all duration-300 flex items-center justify-center gap-1.5 shadow-halo-sm text-[11px]">
                             <i data-lucide="send" class="w-3.5 h-3.5"></i>
                             Aktivasyon E-postasını Yeniden Gönder
                         </button>
-                        <p id="resend-timer-text" class="hidden text-center text-amber-600 font-medium text-[10px] mt-1"></p>
+                        <p id="resend-timer-text" class="hidden text-center text-halo-warning font-medium text-[10px] mt-1"></p>
                     </div>
 
                     <!-- Giriş Butonu -->
                     <button onclick="girisYap()" id="btn-giris"
-                        class="btn-shine w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 flex items-center justify-center gap-2">
+                        class="w-full bg-halo-primary hover:bg-halo-primary-hover active:bg-halo-primary-pressed text-white py-3 rounded-md text-sm font-semibold transition-all duration-300 shadow-halo-sm flex items-center justify-center gap-2">
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         Giriş Yap
                     </button>
@@ -226,10 +211,10 @@
 
                 <!-- Alt Bilgi -->
                 <div class="mt-6 text-center">
-                    <p class="text-sm text-slate-500">
+                    <p class="text-sm text-halo-on-surface-muted">
                         Hesabınız yok mu?
                         <button onclick="sekmeDegistir('kayit')"
-                            class="text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
+                            class="text-halo-primary font-semibold hover:text-halo-primary-hover transition-colors">
                             Kayıt Olun
                         </button>
                     </p>
@@ -241,34 +226,34 @@
                 <div class="space-y-5">
                     <!-- Firma Adı -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Firma Adı</label>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">Firma Adı</label>
                         <div class="relative">
                             <i data-lucide="building-2"
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                             <input type="text" id="kayit-firma" placeholder="Firma adınız"
-                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                                class="w-full pl-10 pr-4 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
                         </div>
                     </div>
 
                     <!-- E-posta -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">E-posta Adresi</label>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">E-posta Adresi</label>
                         <div class="relative">
                             <i data-lucide="mail"
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                             <input type="email" id="kayit-email" placeholder="ornek@firma.com"
-                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                                class="w-full pl-10 pr-4 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
                         </div>
                         <!-- Doğrulama Bekleme Alanı -->
                         <div id="bekleme-alani"
-                            class="hidden mt-3 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-                            <div class="flex items-center gap-2 text-indigo-700 text-xs font-medium">
-                                <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
+                            class="hidden mt-3 p-3 bg-halo-elevated border border-halo-border rounded-md">
+                            <div class="flex items-center gap-2 text-halo-on-surface text-xs font-medium">
+                                <i data-lucide="loader-2" class="w-3.5 h-3.5 text-halo-primary animate-spin"></i>
                                 <span>E-posta doğrulaması bekleniyor...</span>
                                 <span id="sayac"
-                                    class="ml-auto bg-indigo-600 text-white px-2 py-0.5 rounded-full text-[10px]">120s</span>
+                                    class="ml-auto bg-halo-primary text-white px-2 py-0.5 rounded-full text-[10px] font-mono">120s</span>
                             </div>
-                            <p class="text-[10px] text-indigo-500 mt-1.5 leading-tight">
+                            <p class="text-[10px] text-halo-on-surface-muted mt-1.5 leading-tight">
                                 Lütfen e-postanızı (Spam dahil) kontrol edin. Linke tıkladıktan sonra giriş
                                 yapabilirsiniz.
                             </p>
@@ -277,14 +262,14 @@
 
                     <!-- Şifre -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Şifre</label>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">Şifre</label>
                         <div class="relative">
                             <i data-lucide="lock"
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                             <input type="password" id="kayit-sifre" placeholder="En az 4 karakter"
-                                class="input-glow w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                                class="w-full pl-10 pr-12 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
                             <button type="button" onclick="sifreGoster('kayit-sifre', this)"
-                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-halo-on-surface-muted hover:text-halo-on-surface transition-colors">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -292,14 +277,14 @@
 
                     <!-- Şifre Tekrar -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Şifre Tekrar</label>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">Şifre Tekrar</label>
                         <div class="relative">
                             <i data-lucide="lock"
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                             <input type="password" id="kayit-sifre-tekrar" placeholder="Şifrenizi tekrar girin"
-                                class="input-glow w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                                class="w-full pl-10 pr-12 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
                             <button type="button" onclick="sifreGoster('kayit-sifre-tekrar', this)"
-                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-halo-on-surface-muted hover:text-halo-on-surface transition-colors">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -307,19 +292,19 @@
 
                     <!-- Telefon (opsiyonel) -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Telefon <span
-                                class="text-slate-400 font-normal">(opsiyonel)</span></label>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">Telefon <span
+                                class="text-halo-on-surface-faint font-normal">(opsiyonel)</span></label>
                         <div class="relative">
                             <i data-lucide="phone"
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
                             <input type="tel" id="kayit-telefon" placeholder="+90 555 123 4567"
-                                class="input-glow w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all bg-slate-50/50 hover:bg-white" />
+                                class="w-full pl-10 pr-4 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
                         </div>
                     </div>
 
                     <!-- Kayıt Butonu -->
                     <button onclick="kayitOl()" id="btn-kayit"
-                        class="btn-shine w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 flex items-center justify-center gap-2">
+                        class="w-full bg-halo-primary hover:bg-halo-primary-hover active:bg-halo-primary-pressed text-white py-3 rounded-md text-sm font-semibold transition-all duration-300 shadow-halo-sm flex items-center justify-center gap-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
                         Kayıt Ol
                     </button>
@@ -327,13 +312,105 @@
 
                 <!-- Alt Bilgi -->
                 <div class="mt-6 text-center">
-                    <p class="text-sm text-slate-500">
+                    <p class="text-sm text-halo-on-surface-muted">
                         Zaten hesabınız var mı?
                         <button onclick="sekmeDegistir('giris')"
-                            class="text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
+                            class="text-halo-primary font-semibold hover:text-halo-primary-hover transition-colors">
                             Giriş Yapın
                         </button>
                     </p>
+                </div>
+            </div>
+
+            <!-- Şifremi Unuttum Formu -->
+            <div id="form-forgot" class="hidden p-8 form-slide">
+                <!-- Adım 1: E-posta Gönderme -->
+                <div id="forgot-adim1" class="space-y-5">
+                    <div class="text-center mb-2">
+                        <h3 class="text-lg font-bold text-halo-on-surface">Şifrenizi mi Unuttunuz?</h3>
+                        <p class="text-xs text-halo-on-surface-muted mt-1 leading-relaxed">Hesabınıza ait e-posta adresinizi girin, size 6 haneli şifre sıfırlama kodunu gönderelim.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">E-posta Adresi</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
+                            <input type="email" id="forgot-email" placeholder="ornek@firma.com"
+                                class="w-full pl-10 pr-4 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
+                        </div>
+                    </div>
+
+                    <button onclick="sifremiUnuttumKodGonder()" id="btn-forgot-send"
+                        class="w-full bg-halo-primary hover:bg-halo-primary-hover active:bg-halo-primary-pressed text-white py-3.5 px-4 rounded-md font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-halo-sm">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        Sıfırlama Kodu Gönder
+                    </button>
+
+                    <div class="text-center">
+                        <button onclick="sekmeDegistir('giris')" class="text-xs font-semibold text-halo-on-surface-muted hover:text-halo-on-surface transition-colors flex items-center justify-center gap-1 mx-auto">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                            Giriş Ekranına Dön
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Adım 2: PIN Kodu Doğrulama ve Yeni Şifre -->
+                <div id="forgot-adim2" class="hidden space-y-5">
+                    <div class="text-center mb-2">
+                        <h3 class="text-lg font-bold text-halo-on-surface">Yeni Şifre Belirleyin</h3>
+                        <p class="text-xs text-halo-on-surface-muted mt-1 leading-relaxed">E-posta adresinize gönderilen 6 haneli güvenlik kodunu ve yeni şifrenizi girin.</p>
+                    </div>
+
+                    <!-- 6 Haneli PIN Kodu -->
+                    <div>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">6 Haneli Güvenlik Kodu</label>
+                        <div class="relative">
+                            <i data-lucide="key-round" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
+                            <input type="text" id="forgot-pin" placeholder="123456" maxlength="6"
+                                class="w-full pl-10 pr-4 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong tracking-widest text-center font-bold font-mono" />
+                        </div>
+                    </div>
+
+                    <!-- Yeni Şifre -->
+                    <div>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">Yeni Şifre</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
+                            <input type="password" id="forgot-sifre" placeholder="••••••••"
+                                class="w-full pl-10 pr-12 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
+                            <button type="button" onclick="sifreGoster('forgot-sifre', this)"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-halo-on-surface-muted hover:text-halo-on-surface transition-colors">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Yeni Şifre Tekrar -->
+                    <div>
+                        <label class="block text-sm font-medium text-halo-on-surface-muted mb-1.5">Yeni Şifre (Tekrar)</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-halo-on-surface-faint"></i>
+                            <input type="password" id="forgot-sifre-tekrar" placeholder="••••••••"
+                                class="w-full pl-10 pr-12 py-3 border border-halo-border rounded-md text-sm focus:outline-none focus:border-halo-primary focus:ring-4 focus:ring-halo-primary/20 transition-all bg-halo-bg text-halo-on-surface placeholder:text-halo-on-surface-faint hover:border-halo-border-strong font-sans" />
+                            <button type="button" onclick="sifreGoster('forgot-sifre-tekrar', this)"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-halo-on-surface-muted hover:text-halo-on-surface transition-colors">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="sifremiGuncelle()" id="btn-forgot-reset"
+                        class="w-full bg-halo-success hover:bg-halo-success/90 text-halo-bg py-3 px-4 rounded-md font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-halo-sm font-sans">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        Şifremi Güncelle
+                    </button>
+
+                    <div class="text-center">
+                        <button onclick="sekmeDegistir('forgot-back')" class="text-xs font-semibold text-halo-on-surface-muted hover:text-halo-on-surface transition-colors flex items-center justify-center gap-1 mx-auto">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                            E-posta Adresini Değiştir
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -342,7 +419,7 @@
     <!-- Bildirim Kutusu (Toast) -->
     <div id="toast" class="fixed top-6 right-6 z-50 hidden">
         <div id="toast-content"
-            class="toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm">
+            class="toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-border max-w-sm">
             <i id="toast-icon" class="w-5 h-5 flex-shrink-0"></i>
             <div>
                 <p id="toast-baslik" class="font-semibold text-sm"></p>
@@ -374,35 +451,164 @@
             const tabKayit = document.getElementById('tab-kayit');
             const formGiris = document.getElementById('form-giris');
             const formKayit = document.getElementById('form-kayit');
+            const formForgot = document.getElementById('form-forgot');
             const btnKayit = document.getElementById('btn-kayit');
             const beklemeAlani = document.getElementById('bekleme-alani');
+            const tabBar = document.getElementById('tab-bar-container');
 
-            if (sekme === 'giris') {
-                // Giriş sekmesini aktif yap
-                tabGiris.classList.add('text-indigo-600', 'border-indigo-600');
-                tabGiris.classList.remove('text-slate-400', 'border-transparent');
-                tabKayit.classList.add('text-slate-400', 'border-transparent');
-                tabKayit.classList.remove('text-indigo-600', 'border-indigo-600');
-                formGiris.classList.remove('hidden');
+            if (sekme === 'forgot') {
+                // Şifremi unuttum ekranını aktif yap, sekme barını gizle
+                tabBar.classList.add('hidden');
+                formGiris.classList.add('hidden');
                 formKayit.classList.add('hidden');
-
-                // Kayıt formundaki sayaç ve UI durumunu sıfırla
-                if (sayacInterval) clearInterval(sayacInterval);
-                if (pollingInterval) clearInterval(pollingInterval);
-                beklemeAlani.classList.add('hidden');
-                btnKayit.disabled = false;
-                btnKayit.onclick = kayitOl;
-                btnKayit.classList.remove('opacity-50', 'cursor-not-allowed');
-                btnKayit.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4"></i> Kayıt Ol';
+                formForgot.classList.remove('hidden');
+                document.getElementById('forgot-adim1').classList.remove('hidden');
+                document.getElementById('forgot-adim2').classList.add('hidden');
+                lucide.createIcons();
+            } else if (sekme === 'forgot-back') {
+                // Şifremi unuttum adım 2'den adım 1'e geri dön
+                document.getElementById('forgot-adim2').classList.add('hidden');
+                document.getElementById('forgot-adim1').classList.remove('hidden');
                 lucide.createIcons();
             } else {
-                // Kayıt sekmesini aktif yap
-                tabKayit.classList.add('text-indigo-600', 'border-indigo-600');
-                tabKayit.classList.remove('text-slate-400', 'border-transparent');
-                tabGiris.classList.add('text-slate-400', 'border-transparent');
-                tabGiris.classList.remove('text-indigo-600', 'border-indigo-600');
-                formKayit.classList.remove('hidden');
-                formGiris.classList.add('hidden');
+                // Normal sekmeler
+                tabBar.classList.remove('hidden');
+                formForgot.classList.add('hidden');
+
+                if (sekme === 'giris') {
+                    // Giriş sekmesini aktif yap
+                    tabGiris.className = "flex-1 py-4 text-sm font-semibold text-halo-on-surface border-b border-halo-primary transition-all duration-150 flex items-center justify-center gap-2 focus:outline-none";
+                    tabKayit.className = "flex-1 py-4 text-sm font-semibold text-halo-on-surface-muted border-b border-transparent hover:text-halo-on-surface transition-all duration-150 flex items-center justify-center gap-2 focus:outline-none";
+                    formGiris.classList.remove('hidden');
+                    formKayit.classList.add('hidden');
+
+                    // Kayıt formundaki sayaç ve UI durumunu sıfırla
+                    if (sayacInterval) clearInterval(sayacInterval);
+                    if (pollingInterval) clearInterval(pollingInterval);
+                    beklemeAlani.classList.add('hidden');
+                    btnKayit.disabled = false;
+                    btnKayit.onclick = kayitOl;
+                    btnKayit.className = "w-full bg-halo-primary hover:bg-halo-primary-hover active:bg-halo-primary-pressed text-white py-3 rounded-md text-sm font-semibold transition-all duration-300 shadow-halo-sm flex items-center justify-center gap-2";
+                    btnKayit.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4"></i> Kayıt Ol';
+                    lucide.createIcons();
+                } else {
+                    // Kayıt sekmesini aktif yap
+                    tabKayit.className = "flex-1 py-4 text-sm font-semibold text-halo-on-surface border-b border-halo-primary transition-all duration-150 flex items-center justify-center gap-2 focus:outline-none";
+                    tabGiris.className = "flex-1 py-4 text-sm font-semibold text-halo-on-surface-muted border-b border-transparent hover:text-halo-on-surface transition-all duration-150 flex items-center justify-center gap-2 focus:outline-none";
+                    formKayit.classList.remove('hidden');
+                    formGiris.classList.add('hidden');
+                }
+            }
+        }
+
+        // ============================================================
+        // ŞİFREMİ UNUTTUM FONKSİYONLARI
+        // ============================================================
+        async function sifremiUnuttumKodGonder() {
+            const email = document.getElementById('forgot-email').value.trim();
+            const btn = document.getElementById('btn-forgot-send');
+
+            if (!email) {
+                toastGoster('hata', 'Eksik Bilgi', 'Lütfen e-posta adresinizi girin.');
+                return;
+            }
+
+            // Butonu yükleniyor durumuna al
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Kod gönderiliyor...';
+
+            try {
+                const yanit = await fetch(API_URL + '/api/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const veri = await yanit.json();
+
+                if (yanit.ok) {
+                    toastGoster('basarili', 'Kod Gönderildi!', veri.mesaj);
+                    
+                    // Adım 1'i gizle, Adım 2'yi göster
+                    document.getElementById('forgot-adim1').classList.add('hidden');
+                    document.getElementById('forgot-adim2').classList.remove('hidden');
+                    lucide.createIcons();
+                } else {
+                    toastGoster('hata', 'Hata', veri.hata);
+                }
+            } catch (hata) {
+                toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanılamadı.');
+            } finally {
+                // Butonu eski haline getir
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Sıfırlama Kodu Gönder';
+                lucide.createIcons();
+            }
+        }
+
+        async function sifremiGuncelle() {
+            const email = document.getElementById('forgot-email').value.trim();
+            const pin = document.getElementById('forgot-pin').value.trim();
+            const yeniSifre = document.getElementById('forgot-sifre').value;
+            const yeniSifreTekrar = document.getElementById('forgot-sifre-tekrar').value;
+            const btn = document.getElementById('btn-forgot-reset');
+
+            if (!pin || !yeniSifre || !yeniSifreTekrar) {
+                toastGoster('hata', 'Eksik Bilgi', 'Lütfen tüm alanları doldurun.');
+                return;
+            }
+
+            if (yeniSifre !== yeniSifreTekrar) {
+                toastGoster('hata', 'Şifre Uyuşmazlığı', 'Girdiğiniz yeni şifreler uyuşmuyor.');
+                return;
+            }
+
+            if (yeniSifre.length < 4) {
+                toastGoster('hata', 'Kısa Şifre', 'Şifre en az 4 karakter olmalıdır.');
+                return;
+            }
+
+            // Butonu yükleniyor durumuna al
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Şifre güncelleniyor...';
+
+            try {
+                const yanit = await fetch(API_URL + '/api/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, pin, yeniSifre })
+                });
+
+                const veri = await yanit.json();
+
+                if (yanit.ok) {
+                    toastGoster('basarili', 'Şifre Güncellendi!', veri.mesaj);
+                    
+                    // Alanları temizle
+                    document.getElementById('forgot-email').value = '';
+                    document.getElementById('forgot-pin').value = '';
+                    document.getElementById('forgot-sifre').value = '';
+                    document.getElementById('forgot-sifre-tekrar').value = '';
+
+                    // Adım durumlarını sıfırla
+                    document.getElementById('forgot-adim2').classList.add('hidden');
+                    document.getElementById('forgot-adim1').classList.remove('hidden');
+
+                    // Giriş ekranına dön
+                    setTimeout(() => {
+                        sekmeDegistir('giris');
+                        document.getElementById('giris-email').value = email;
+                    }, 1500);
+                } else {
+                    toastGoster('hata', 'Hata', veri.hata);
+                }
+            } catch (hata) {
+                toastGoster('hata', 'Bağlantı Hatası', 'Sunucuya bağlanılamadı.');
+            } finally {
+                // Butonu eski haline getir
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Şifremi Güncelle';
+                lucide.createIcons();
             }
         }
 
@@ -436,17 +642,17 @@
 
             // Türe göre renk ve ikon ayarla
             if (tur === 'basarili') {
-                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm bg-emerald-50 border-emerald-200 text-emerald-800';
+                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-success/20 max-w-sm bg-halo-surface text-halo-on-surface';
                 icon.setAttribute('data-lucide', 'check-circle');
-                icon.className = 'w-5 h-5 flex-shrink-0 text-emerald-600';
+                icon.className = 'w-5 h-5 flex-shrink-0 text-halo-success';
             } else if (tur === 'hata') {
-                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm bg-red-50 border-red-200 text-red-800';
+                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-error/20 max-w-sm bg-halo-surface text-halo-on-surface';
                 icon.setAttribute('data-lucide', 'alert-circle');
-                icon.className = 'w-5 h-5 flex-shrink-0 text-red-600';
+                icon.className = 'w-5 h-5 flex-shrink-0 text-halo-error';
             } else {
-                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border max-w-sm bg-blue-50 border-blue-200 text-blue-800';
+                content.className = 'toast-enter flex items-center gap-3 px-5 py-4 rounded-md shadow-halo-lg border border-halo-border max-w-sm bg-halo-surface text-halo-on-surface';
                 icon.setAttribute('data-lucide', 'info');
-                icon.className = 'w-5 h-5 flex-shrink-0 text-blue-600';
+                icon.className = 'w-5 h-5 flex-shrink-0 text-halo-primary';
             }
 
             baslikEl.textContent = baslik;
@@ -680,10 +886,20 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const girisFormu = document.getElementById('form-giris');
+                const kayitFormu = document.getElementById('form-kayit');
+                const forgotFormu = document.getElementById('form-forgot');
+                
                 if (!girisFormu.classList.contains('hidden')) {
                     girisYap();
-                } else {
+                } else if (!kayitFormu.classList.contains('hidden')) {
                     kayitOl();
+                } else if (!forgotFormu.classList.contains('hidden')) {
+                    const adim1 = document.getElementById('forgot-adim1');
+                    if (!adim1.classList.contains('hidden')) {
+                        sifremiUnuttumKodGonder();
+                    } else {
+                        sifremiGuncelle();
+                    }
                 }
             }
         });
